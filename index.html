@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamashita - Cyber Samurai | Penetration Tester</title>
+    <meta name="description" content="Cybersecurity Professional | Penetration Testing | PNPT, PJPT, CNSP Certified">
+    <meta property="og:title" content="Yamashita Moleya - Cyber Samurai">
+    <meta property="og:description" content="Professional Penetration Tester & Cybersecurity Specialist">
+    <link rel="icon" type="image/x-icon" href="img/puffin_favicon.ico">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Particle Background Canvas -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Cursor Follower -->
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">
+                <span class="logo-icon">侍</span>
+                <span class="logo-text">YAMASHITA</span>
+            </a>
+            
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#skills" class="nav-link">Skills</a></li>
+                    <li class="nav-item"><a href="#certifications" class="nav-link">Certifications</a></li>
+                    <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                    <li class="nav-item"><a href="Notes.html" class="nav-link">Notes</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background">
+            <div class="hero-grid"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-badge" data-aos="fade-down">
+                <i class="fas fa-shield-halved"></i>
+                <span>Penetration Testing Specialist</span>
+            </div>
+            
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+                I'm <span class="gradient-text" id="typed-name"></span>
+            </h1>
+            
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+                Cyber Samurai • Security Researcher • Digital Guardian
+            </p>
+            
+            <p class="hero-description" data-aos="fade-up" data-aos-delay="300">
+                Dedicated to identifying vulnerabilities before adversaries can exploit them.
+                <br>Protecting digital assets with precision, discipline, and unwavering vigilance.
+            </p>
+            
+            <div class="hero-cta" data-aos="fade-up" data-aos-delay="400">
+                <a href="#contact" class="btn btn-primary">
+                    <span>Get In Touch</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#projects" class="btn btn-secondary">
+                    <span>View Work</span>
+                    <i class="fas fa-code"></i>
+                </a>
+            </div>
+            
+            <div class="hero-stats" data-aos="fade-up" data-aos-delay="500">
+                <div class="stat-item">
+                    <div class="stat-number" data-count="4">0</div>
+                    <div class="stat-label">Certifications</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="100">0</div>
+                    <div class="stat-label">Projects+</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="5">0</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator" data-aos="fade-up" data-aos-delay="600">
+            <span class="scroll-text">Scroll Down</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about section" id="about">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Who Am I</span>
+                <h2 class="section-title">About Me</h2>
+                <p class="section-description">The path of the cyber samurai</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-image" data-aos="fade-right">
+                    <div class="about-image-wrapper">
+                        <img src="img/puffin.jpg" alt="Yamashita Profile">
+                        <div class="about-image-overlay"></div>
+                        <div class="about-image-border"></div>
+                    </div>
+                    <div class="about-floating-card">
+                        <i class="fas fa-terminal"></i>
+                        <div>
+                            <h4>Security First</h4>
+                            <p>Always Learning</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-text" data-aos="fade-left">
+                    <div class="about-text-content">
+                        <p class="lead-text">
+                            Like a samurai perfecting the art of the sword, I have dedicated myself to mastering the way of penetration testing and cybersecurity.
+                        </p>
+                        
+                        <p>
+                            My mission is to identify vulnerabilities before adversaries can exploit them, protecting digital assets with unwavering vigilance. I approach each engagement with the discipline and focus of a warrior, combining technical mastery with strategic thinking.
+                        </p>
+                        
+                        <p>
+                            The path of cybersecurity requires constant learning and adaptation—principles that guide my every action. Through rigorous training and real-world experience, I've developed expertise across multiple domains of offensive security.
+                        </p>
+                        
+                        <div class="about-highlights">
+                            <div class="highlight-item">
+                                <i class="fas fa-code"></i>
+                                <div>
+                                    <h4>Technical Excellence</h4>
+                                    <p>Proficient in Python, Bash, and security tooling</p>
+                                </div>
+                            </div>
+                            <div class="highlight-item">
+                                <i class="fas fa-brain"></i>
+                                <div>
+                                    <h4>Strategic Mindset</h4>
+                                    <p>Combining offensive and defensive perspectives</p>
+                                </div>
+                            </div>
+                            <div class="highlight-item">
+                                <i class="fas fa-award"></i>
+                                <div>
+                                    <h4>Certified Professional</h4>
+                                    <p>PNPT, PJPT, CNSP, Google Cybersecurity</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="about-cta">
+                            <a href="https://yamashita.co.za" target="_blank" class="btn btn-outline">
+                                <span>Visit Portfolio</span>
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills section section-dark" id="skills">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Expertise</span>
+                <h2 class="section-title">Arsenal of Skills</h2>
+                <p class="section-description">Tools and techniques for modern cybersecurity</p>
+            </div>
+            
+            <div class="skills-grid">
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="skill-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3>Network Penetration Testing</h3>
+                    <p>Advanced network reconnaissance, exploitation, and post-exploitation techniques</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="95"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>Nmap</span>
+                        <span>Metasploit</span>
+                        <span>NetExec</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="skill-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Web Application Security</h3>
+                    <p>OWASP Top 10 and beyond - comprehensive web app vulnerability assessment</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="90"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>Burp Suite</span>
+                        <span>OWASP ZAP</span>
+                        <span>SQLMap</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="skill-icon">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h3>Active Directory</h3>
+                    <p>AD enumeration, privilege escalation, lateral movement, and domain compromise</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="88"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>BloodHound</span>
+                        <span>Impacket</span>
+                        <span>Rubeus</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="skill-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3>API Security Testing</h3>
+                    <p>REST and GraphQL API vulnerability identification and exploitation</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="85"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>Postman</span>
+                        <span>GraphQL</span>
+                        <span>JWT</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="skill-icon">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                    <h3>Scripting & Automation</h3>
+                    <p>Custom tool development, exploit scripting, and automation frameworks</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="92"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>Python</span>
+                        <span>Bash</span>
+                        <span>PowerShell</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="skill-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3>Cloud Security</h3>
+                    <p>AWS, Azure, and GCP security assessment and exploitation</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="80"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>AWS</span>
+                        <span>Azure</span>
+                        <span>GCP</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="skill-icon">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h3>Social Engineering</h3>
+                    <p>Human factor security assessment and phishing campaign execution</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="87"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>Phishing</span>
+                        <span>OSINT</span>
+                        <span>Pretexting</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-aos="fade-up" data-aos-delay="700">
+                    <div class="skill-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Reporting & Documentation</h3>
+                    <p>Professional technical and executive reporting with remediation guidance</p>
+                    <div class="skill-progress">
+                        <div class="progress-bar" data-progress="93"></div>
+                    </div>
+                    <div class="skill-tags">
+                        <span>Technical</span>
+                        <span>Executive</span>
+                        <span>CVSS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section class="certifications section" id="certifications">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Credentials</span>
+                <h2 class="section-title">Professional Certifications</h2>
+                <p class="section-description">Validated expertise in cybersecurity</p>
+            </div>
+            
+            <div class="certifications-grid">
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="0">
+                    <div class="cert-badge">
+                        <img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/badge/139302753" alt="PNPT Certification">
+                    </div>
+                    <div class="cert-content">
+                        <h3>PNPT</h3>
+                        <p>Practical Network Penetration Tester</p>
+                        <span class="cert-issuer">TCM Security</span>
+                    </div>
+                </div>
+                
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="cert-badge">
+                        <img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/badge/156251430" alt="PJPT Certification">
+                    </div>
+                    <div class="cert-content">
+                        <h3>PJPT</h3>
+                        <p>Practical Junior Penetration Tester</p>
+                        <span class="cert-issuer">TCM Security</span>
+                    </div>
+                </div>
+                
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="cert-badge">
+                        <img src="https://pentestingexams.com/wp-content/uploads/2023/02/Certified-Network-Security-Practitioner-whbg.png" alt="CNSP Certification">
+                    </div>
+                    <div class="cert-content">
+                        <h3>CNSP</h3>
+                        <p>Certified Network Security Practitioner</p>
+                        <span class="cert-issuer">The SecOps Group</span>
+                    </div>
+                </div>
+                
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="cert-badge">
+                        <img src="img/google_cyber_sec_prof.jpg" alt="Google Cybersecurity Professional">
+                    </div>
+                    <div class="cert-content">
+                        <h3>Google Cybersecurity</h3>
+                        <p>Cybersecurity Professional Certificate</p>
+                        <span class="cert-issuer">Google</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects section section-dark" id="projects">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Portfolio</span>
+                <h2 class="section-title">Featured Projects</h2>
+                <p class="section-description">Campaigns and victories in the digital battlefield</p>
+            </div>
+            
+            <div class="projects-grid">
+                <div class="project-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Web Application Strike</h3>
+                            <span class="project-status">Completed</span>
+                        </div>
+                        <p class="project-description">
+                            Conducted comprehensive black-box testing on a complex e-commerce platform. 
+                            Identified critical SQLi, XSS, and Broken Access Control vulnerabilities.
+                        </p>
+                        <div class="project-tags">
+                            <span>Web Security</span>
+                            <span>SQLi</span>
+                            <span>XSS</span>
+                            <span>OWASP</span>
+                        </div>
+                        <div class="project-footer">
+                            <span class="project-impact">
+                                <i class="fas fa-bug"></i> 12 Vulnerabilities Found
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Network Fortress</h3>
+                            <span class="project-status">Completed</span>
+                        </div>
+                        <p class="project-description">
+                            Led internal network penetration test for enterprise organizations. 
+                            Uncovered misconfigured services and lateral movement vectors through AD.
+                        </p>
+                        <div class="project-tags">
+                            <span>Network Security</span>
+                            <span>Active Directory</span>
+                            <span>Lateral Movement</span>
+                            <span>PrivEsc</span>
+                        </div>
+                        <div class="project-footer">
+                            <span class="project-impact">
+                                <i class="fas fa-server"></i> Full Domain Compromise
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <i class="fas fa-terminal"></i>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>ReconQuest Framework</h3>
+                            <span class="project-status">Open Source</span>
+                        </div>
+                        <p class="project-description">
+                            Automated reconnaissance tool with intelligent filtering for directory and 
+                            subdomain scanning, reducing false positives during pentesting engagements.
+                        </p>
+                        <div class="project-tags">
+                            <span>Python</span>
+                            <span>Automation</span>
+                            <span>OSINT</span>
+                            <span>Recon</span>
+                        </div>
+                        <div class="project-footer">
+                            <span class="project-impact">
+                                <i class="fab fa-github"></i> Available on GitHub
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Cloud Security Assessment</h3>
+                            <span class="project-status">Completed</span>
+                        </div>
+                        <p class="project-description">
+                            Comprehensive cloud penetration testing covering AWS, Azure, and GCP. 
+                            Identified misconfigurations and privilege escalation paths.
+                        </p>
+                        <div class="project-tags">
+                            <span>AWS</span>
+                            <span>Azure</span>
+                            <span>GCP</span>
+                            <span>Cloud Security</span>
+                        </div>
+                        <div class="project-footer">
+                            <span class="project-impact">
+                                <i class="fas fa-exclamation-triangle"></i> 8 Critical Findings
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact section" id="contact">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Get In Touch</span>
+                <h2 class="section-title">Let's Connect</h2>
+                <p class="section-description">Ready to discuss security challenges or collaboration opportunities?</p>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-info" data-aos="fade-right">
+                    <div class="contact-card">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <a href="mailto:moleya.business16@gmail.com">moleya.business16@gmail.com</a>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <i class="fas fa-globe"></i>
+                        <h3>Website</h3>
+                        <a href="https://yamashita.co.za" target="_blank">yamashita.co.za</a>
+                    </div>
+                    
+                    <div class="contact-social">
+                        <h3>Follow Me</h3>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/owen-moleya-133151246" target="_blank" class="social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="https://github.com/Yamashita012" target="_blank" class="social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="mailto:moleya.business16@gmail.com" class="social-link" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-visual" data-aos="fade-left">
+                    <div class="terminal-window">
+                        <div class="terminal-header">
+                            <span class="terminal-dot" style="background: #ff5f57;"></span>
+                            <span class="terminal-dot" style="background: #ffbd2e;"></span>
+                            <span class="terminal-dot" style="background: #28ca42;"></span>
+                            <span class="terminal-title">contact.sh</span>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-line">
+                                <span class="terminal-prompt">$</span>
+                                <span class="terminal-command">./initiate_contact.sh</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="terminal-output">[*] Initializing secure connection...</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="terminal-output">[+] Ready to receive transmission</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="terminal-output">[*] Awaiting your message...</span>
+                            </div>
+                            <div class="terminal-line terminal-cursor">
+                                <span class="terminal-prompt">$</span>
+                                <span class="cursor-blink">_</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>侍 YAMASHITA</h3>
+                    <p>Cyber Samurai • Digital Guardian</p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#skills">Skills</a>
+                    <a href="#projects">Projects</a>
+                    <a href="Notes.html">Notes</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Yamashita. All rights reserved.</p>
+                <p class="footer-tagline">Forged with honor and <span class="code-highlight">&lt;code/&gt;</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scroll-top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="js/script.js"></script>
+</body>
+</html>

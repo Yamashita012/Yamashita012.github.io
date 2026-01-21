@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Arsenal - Yamashita</title>
+    <meta name="description" content="Comprehensive penetration testing notes and resources">
+    <link rel="icon" type="image/x-icon" href="img/puffin_favicon.ico">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Additional styles for Notes page */
+        .cards-section {
+            padding: 80px 40px;
+            flex: 1;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .note-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .note-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .note-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .note-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .card-header {
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(0, 255, 155, 0.05) 0%, transparent 100%);
+            text-align: center;
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 155, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .note-card:hover .card-icon {
+            background: var(--primary);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-icon i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            transition: color 0.3s ease;
+        }
+
+        .note-card:hover .card-icon i {
+            color: var(--dark-bg);
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .card-category {
+            display: inline-block;
+            padding: 6px 15px;
+            background: rgba(0, 255, 155, 0.1);
+            border: 1px solid rgba(0, 255, 155, 0.3);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-family: var(--font-mono);
+        }
+
+        .card-body {
+            padding: 30px 40px;
+        }
+
+        .card-description {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .card-features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+
+        .feature-item i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .card-footer {
+            padding: 25px 40px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .card-link:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+            transform: translateX(5px);
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1px solid var(--primary);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .cards-section {
+                padding: 60px 20px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .card-header,
+            .card-body,
+            .card-footer {
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">侍</span>
+                <span class="logo-text">YAMASHITA</span>
+            </a>
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Portfolio</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="hero-grid"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-book-open"></i>
+                <span>Knowledge Arsenal</span>
+            </div>
+            
+            <h1 class="hero-title">Hacking Arsenal</h1>
+            
+            <p class="hero-subtitle">
+                Comprehensive Penetration Testing Notes
+            </p>
+            
+            <p class="hero-description">
+                A collection of methodologies, techniques, and commands compiled from real-world 
+                penetration testing engagements and continuous learning.
+            </p>
+        </div>
+    </section>
+
+    <!-- Cards Section -->
+    <section class="cards-section">
+        <div class="container">
+            <div class="cards-grid">
+                <!-- Active Directory Card -->
+                <div class="note-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <h2>Active Directory Arsenal</h2>
+                        <span class="card-category">Windows • AD • Domain</span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <p class="card-description">
+                            Comprehensive guide to Active Directory penetration testing including enumeration, 
+                            exploitation, privilege escalation, lateral movement, and persistence techniques.
+                        </p>
+                        
+                        <div class="card-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Enumeration & Discovery</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Kerberos Attacks (AS-REP, Kerberoasting)</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Lateral Movement Techniques</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Privilege Escalation</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Password Attacks & DCSync</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Essential Tools & Commands</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <a href="active-directory-notes.html" class="card-link">
+                            <span>Explore AD Arsenal</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Web Hacking Card -->
+                <div class="note-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h2>Web Hacking Arsenal</h2>
+                        <span class="card-category">Web • API • OWASP</span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <p class="card-description">
+                            Complete web application security testing methodology covering OWASP Top 10, 
+                            advanced injection attacks, API security, and modern web exploitation techniques.
+                        </p>
+                        
+                        <div class="card-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>SQL Injection Techniques</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>XSS (Reflected, Stored, DOM-based)</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>File Inclusion (LFI/RFI)</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>SSRF & XXE Exploitation</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>API Security Testing</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Authentication & Session Management</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <a href="web-hacking-notes.html" class="card-link">
+                            <span>Explore Web Arsenal</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Yamashita. All rights reserved.</p>
+            <p>Forged with honor and <span class="code-highlight">&lt;code/&gt;</span></p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="js/script.js"></script>
+</body>
+</html>

