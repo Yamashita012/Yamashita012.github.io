@@ -33,8 +33,8 @@ function initTyped() {
     const typed = new Typed('#typed-name', {
         strings: [
             'Yamashita.',
-            'a Penetration Tester.',
-            'a Junior Red Team Operator.',
+            'a Penetration Tester',
+            'a Junior Red Team Operator',
             'a Cyber Samurai',
             'a Digital Guardian'
         ],
