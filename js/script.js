@@ -34,7 +34,7 @@ function initTyped() {
         strings: [
             'Yamashita.',
             'a Penetration Tester',
-            'a Junior Red Team Operator',
+            'an Intermediate Red Team Operator',
             'a Cyber Samurai',
             'a Digital Guardian'
         ],
