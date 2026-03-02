@@ -33,10 +33,10 @@ function initTyped() {
     const typed = new Typed('#typed-name', {
         strings: [
             'Yamashita.',
-            'a Penetration Tester',
-            'an Intermediate Red Team Operator',
-            'a Cyber Samurai',
-            'a Digital Guardian'
+            'a Penetration Tester.',
+            'an Intermediate Red Team Operator.',
+            'a Cyber Samurai.',
+            'a Digital Guardian.'
         ],
         typeSpeed: 80,
         backSpeed: 50,
