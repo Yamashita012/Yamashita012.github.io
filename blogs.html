@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Cyber Samurai Blog — Automotive Cybersecurity, Red Team Insights & Hacking Research"/>
+  <title>Blog — Yamashita | Cyber Samurai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg:        #050709;
+      --bg2:       #0a0d12;
+      --bg3:       #0f1319;
+      --surface:   #111620;
+      --border:    #1e2535;
+      --red:       #e63946;
+      --red-dim:   #9e1f28;
+      --gold:      #c9a84c;
+      --gold-dim:  #7a6128;
+      --cyan:      #48cae4;
+      --cyan-dim:  #1a6a7d;
+      --text:      #d4dae6;
+      --text-muted:#7a889e;
+      --text-dim:  #4a5568;
+      --mono:      'Share Tech Mono', monospace;
+      --sans:      'Rajdhani', sans-serif;
+      --serif:     'Noto Serif JP', serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.5;
+    }
+
+    /* ── SCANLINES ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.04) 2px,
+        rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 998;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(5,7,9,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-logo .kanji { font-size: 1.3rem; opacity: 0.8; }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--red); }
+    .nav-links a.active { color: var(--gold); }
+
+    /* ── HERO BANNER ── */
+    .hero {
+      margin-top: 60px;
+      padding: 5rem 2rem 3.5rem;
+      text-align: center;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(230,57,70,0.04) 0%, transparent 60%),
+        linear-gradient(0deg, var(--bg) 0%, transparent 100%),
+        var(--bg2);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 110%, rgba(230,57,70,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* decorative kanji background */
+    .hero-kanji-bg {
+      position: absolute;
+      font-family: var(--serif);
+      font-size: 22rem;
+      color: rgba(201,168,76,0.025);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      user-select: none;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--red);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .hero-label::before, .hero-label::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--red-dim);
+    }
+
+    .hero h1 {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      letter-spacing: 0.06em;
+      line-height: 1.1;
+      color: #fff;
+      position: relative;
+    }
+    .hero h1 span { color: var(--gold); }
+
+    .hero-sub {
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── FEATURED ARTICLE ── */
+    .featured-wrap {
+      padding: 4rem 0 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--gold);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-dim), transparent);
+    }
+
+    /* ── ARTICLE CARD ── */
+    .article-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .article-card:hover {
+      border-color: var(--red-dim);
+      box-shadow: 0 0 30px rgba(230,57,70,0.08), 0 8px 40px rgba(0,0,0,0.4);
+    }
+    .article-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), var(--gold), transparent);
+    }
+
+    /* ── FULL BLOG POST ── */
+    .post-header {
+      padding: 3rem 3rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      background: linear-gradient(135deg, rgba(230,57,70,0.04) 0%, transparent 50%);
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.7rem;
+      border-radius: 1px;
+    }
+    .tag-red   { background: rgba(230,57,70,0.15); color: var(--red); border: 1px solid rgba(230,57,70,0.3); }
+    .tag-gold  { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
+    .tag-cyan  { background: rgba(72,202,228,0.1); color: var(--cyan); border: 1px solid rgba(72,202,228,0.2); }
+
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    .post-header h2 {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: 0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .post-deck {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 72ch;
+    }
+
+    .post-body {
+      padding: 3rem;
+    }
+
+    /* ── TYPOGRAPHY INSIDE POST ── */
+    .post-body h2 {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 3rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .post-body h2 .h2-line {
+      width: 20px;
+      height: 2px;
+      background: var(--red);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .post-body h3 {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      margin: 2rem 0 0.6rem;
+    }
+
+    .post-body p {
+      color: var(--text);
+      line-height: 1.85;
+      margin-bottom: 1.2rem;
+    }
+
+    .post-body strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .post-body ul, .post-body ol {
+      padding-left: 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .post-body li {
+      color: var(--text);
+      margin-bottom: 0.45rem;
+      padding-left: 0.3rem;
+      line-height: 1.75;
+    }
+    .post-body li::marker { color: var(--red); }
+
+    /* ── CALLOUT BOXES ── */
+    .callout {
+      margin: 2rem 0;
+      padding: 1.2rem 1.5rem;
+      border-left: 3px solid var(--red);
+      background: rgba(230,57,70,0.06);
+      border-radius: 0 2px 2px 0;
+    }
+    .callout.gold {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.06);
+    }
+    .callout.cyan {
+      border-color: var(--cyan);
+      background: rgba(72,202,228,0.06);
+    }
+    .callout-title {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: var(--red);
+    }
+    .callout.gold .callout-title { color: var(--gold); }
+    .callout.cyan .callout-title  { color: var(--cyan); }
+
+    /* ── ATTACK SURFACE GRID ── */
+    .surface-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .surface-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.1rem 1.2rem;
+      transition: border-color 0.25s, background 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .surface-item::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--red-dim);
+      transition: background 0.25s;
+    }
+    .surface-item:hover { border-color: var(--red-dim); }
+    .surface-item:hover::after { background: var(--red); }
+
+    .surface-icon {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--red);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.4rem;
+    }
+
+    .surface-title {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+
+    .surface-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ── CONSEQUENCE TABLE ── */
+    .consequence-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .consequence-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      border-radius: 2px;
+      position: relative;
+    }
+    .consequence-num {
+      font-family: var(--mono);
+      font-size: 2rem;
+      font-weight: 700;
+      color: rgba(230,57,70,0.15);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .consequence-title {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .consequence-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 2.5rem 0;
+    }
+
+    /* ── AUTHOR STRIP ── */
+    .author-strip {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 1.8rem 3rem;
+      border-top: 1px solid var(--border);
+      background: rgba(201,168,76,0.03);
+    }
+
+    .author-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-dim);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+
+    .author-info {}
+    .author-name {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+    .author-role {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-top: 0.2rem;
+    }
+
+    /* ── BACK LINK ── */
+    .back-bar {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg2);
+    }
+
+    .back-link {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--red); }
+    .back-link .arrow { font-size: 1rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 5rem;
+      padding: 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    .footer-logo {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+    }
+    .footer-copy span { color: var(--red); }
+
+    /* ── TERMINAL INTRO ── */
+    .terminal-intro {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1rem 1.4rem;
+      margin: 0 3rem 2rem;
+      line-height: 1.9;
+    }
+    .t-prompt { color: var(--red); }
+    .t-cmd    { color: var(--cyan); }
+    .t-out    { color: var(--text-muted); }
+
+    /* ── READING TIME ── */
+    .reading-time {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-progress {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), var(--gold));
+      z-index: 101;
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .post-header, .post-body { padding: 1.8rem 1.4rem; }
+      .author-strip { padding: 1.4rem; }
+      .terminal-intro { margin: 0 1.4rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 3.5rem 1.5rem 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="https://www.yamashita.co.za/index.html" class="nav-logo">
+    <span class="kanji">侍</span> YAMASHITA
+  </a>
+  <ul class="nav-links">
+    <li><a href="https://www.yamashita.co.za/index.html#home">Home</a></li>
+    <li><a href="https://www.yamashita.co.za/index.html#about">About</a></li>
+    <li><a href="https://www.yamashita.co.za/index.html#projects">Projects</a></li>
+    <li><a href="https://www.yamashita.co.za/Notes.html">Notes</a></li>
+    <li><a href="#" class="active">Blog</a></li>
+    <li><a href="https://www.yamashita.co.za/index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-kanji-bg">刃</div>
+  <div class="hero-label">Transmissions from the field</div>
+  <h1>Cyber Samurai <span>Blog</span></h1>
+  <p class="hero-sub">// Red Team Insights &nbsp;·&nbsp; Automotive Security &nbsp;·&nbsp; Research &nbsp;·&nbsp; Tradecraft</p>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="container">
+
+  <!-- SECTION LABEL -->
+  <div class="featured-wrap">
+    <div class="section-label">Latest Post</div>
+
+    <!-- FULL ARTICLE CARD -->
+    <article class="article-card">
+
+      <!-- POST HEADER -->
+      <header class="post-header">
+        <div class="post-meta">
+          <span class="tag tag-red">Automotive Security</span>
+          <span class="tag tag-gold">Intro</span>
+          <span class="tag tag-cyan">Education</span>
+          <span class="post-date">// 2026.05.30</span>
+          <span class="reading-time">⏱ ~8 min read</span>
+        </div>
+        <h2>Car Hacking: An Introduction to Automotive Cybersecurity</h2>
+        <p class="post-deck">
+          Modern vehicles are sophisticated computer networks on wheels. As connectivity expands — from Bluetooth to over-the-air updates to cellular telematics — the attack surface grows. Here's what every security professional needs to understand about automotive cybersecurity.
+        </p>
+      </header>
+
+      <!-- TERMINAL INTRO -->
+      <div class="terminal-intro">
+        <span class="t-prompt">yamashita@cyber-samurai</span>:<span class="t-cmd">~/blog</span>$ cat automotive-cybersecurity.md<br/>
+        <span class="t-out">[*] Loading: Car Hacking — An Introduction to Automotive Cybersecurity</span><br/>
+        <span class="t-out">[+] Topics: ECUs · Attack Surface · Wireless Vectors · Responsible Disclosure</span><br/>
+        <span class="t-out">[+] Status: UNCLASSIFIED — Public Research</span>
+      </div>
+
+      <!-- POST BODY -->
+      <div class="post-body">
+
+        <!-- INTRO -->
+        <p>
+          For decades, vehicles were primarily mechanical machines. While electronics played a role in engine management and comfort features, most functions were isolated and difficult to access without physical interaction. Today, that reality has changed dramatically.
+        </p>
+        <p>
+          Modern vehicles are sophisticated computer networks on wheels, containing dozens of interconnected systems responsible for everything from braking and steering to navigation and entertainment. As vehicles become increasingly connected through Bluetooth, Wi-Fi, cellular networks, and cloud-based services, <strong>cybersecurity has become just as important as traditional vehicle safety.</strong>
+        </p>
+        <p>
+          This emerging field of study and research is commonly referred to as <strong>automotive cybersecurity</strong> or <strong>car hacking</strong>. While the term "car hacking" may sound alarming, it often refers to the ethical practice of identifying and understanding security weaknesses in vehicle systems so they can be addressed before they are exploited by malicious actors.
+        </p>
+
+        <hr class="divider"/>
+
+        <!-- SECTION: EVOLUTION -->
+        <h2><span class="h2-line"></span>The Evolution of Modern Vehicles</h2>
+        <p>
+          The average modern vehicle contains between <strong>30 and 100 Electronic Control Units (ECUs)</strong>, depending on its complexity and features. An ECU is a specialized computer designed to perform a specific task within the vehicle.
+        </p>
+        <p>Each of these systems communicates with others through internal vehicle networks, allowing the vehicle to operate as a coordinated system — responding in milliseconds to driver input across engine, transmission, traction control, and dashboard systems simultaneously.</p>
+
+        <div class="callout gold">
+          <div class="callout-title">// Key Insight</div>
+          In many ways, modern vehicles now resemble distributed computer systems more than traditional mechanical machines. Manufacturers have introduced advanced driver assistance systems, smartphone integration, remote diagnostics, and over-the-air software updates — all of which increase software dependence and connectivity.
+        </div>
+
+        <!-- SECTION: WHY CONNECTED -->
+        <h2><span class="h2-line"></span>Why Vehicles Are Connected</h2>
+        <p>Connectivity has enabled numerous innovations that improve the driving experience. Common connected vehicle features include:</p>
+
+        <h3>Smartphone Integration</h3>
+        <p>Drivers can connect their devices using technologies such as <strong>Bluetooth</strong>, <strong>Apple CarPlay</strong>, and <strong>Android Auto</strong> — enabling hands-free calling, navigation, music streaming, and messaging.</p>
+
+        <h3>Remote Vehicle Services</h3>
+        <p>Many manufacturers now offer mobile applications that allow owners to remotely lock and unlock doors, start the vehicle, track location, monitor vehicle health, and schedule maintenance.</p>
+
+        <h3>Over-the-Air Updates</h3>
+        <p>Rather than visiting a dealership for every software update, manufacturers can deploy updates remotely through cellular or Wi-Fi connections — allowing security vulnerabilities and software defects to be addressed more efficiently.</p>
+
+        <h3>Telematics Systems</h3>
+        <p>Telematics platforms collect and transmit vehicle information for emergency assistance, fleet management, vehicle diagnostics, and usage analytics.</p>
+
+        <div class="callout">
+          <div class="callout-title">// Operator Note</div>
+          While these technologies provide significant benefits, they also create new pathways through which attackers may attempt to access vehicle systems. Every connected feature is a potential attack vector.
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION: ATTACK SURFACE -->
+        <h2><span class="h2-line"></span>Understanding the Automotive Attack Surface</h2>
+        <p>In cybersecurity, the term <strong>attack surface</strong> refers to all possible points through which a system can be accessed or influenced. As vehicles become more connected, their attack surfaces continue to expand.</p>
+
+        <div class="surface-grid">
+          <div class="surface-item">
+            <div class="surface-icon">[ 01 ]</div>
+            <div class="surface-title">Physical Interfaces</div>
+            <p class="surface-desc">OBD-II diagnostic ports, USB interfaces, SD card readers, and maintenance connectors designed for technicians — but potentially exploitable.</p>
+          </div>
+          <div class="surface-item">
+            <div class="surface-icon">[ 02 ]</div>
+            <div class="surface-title">Wireless Technologies</div>
+            <p class="surface-desc">Bluetooth, Wi-Fi, TPMS, and keyless entry systems offer convenience but require robust security controls.</p>
+          </div>
+          <div class="surface-item">
+            <div class="surface-icon">[ 03 ]</div>
+            <div class="surface-title">Cellular Connectivity</div>
+            <p class="surface-desc">Telematics modules communicating over cellular networks for emergency services, remote commands, OTA updates, and vehicle tracking.</p>
+          </div>
+          <div class="surface-item">
+            <div class="surface-icon">[ 04 ]</div>
+            <div class="surface-title">Third-Party Integrations</div>
+            <p class="surface-desc">Mobile applications, cloud services, fleet management platforms, and connected infrastructure — each introducing new security considerations.</p>
+          </div>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION: WHAT IS CAR HACKING -->
+        <h2><span class="h2-line"></span>What Is Car Hacking?</h2>
+        <p>Car hacking refers to the analysis, testing, and security research of vehicle systems. The objective of ethical automotive security research is <strong>not to damage vehicles or endanger drivers</strong>. Instead, researchers work to identify vulnerabilities and help manufacturers improve vehicle security.</p>
+
+        <p>Activities within automotive cybersecurity may include:</p>
+        <ul>
+          <li>Analyzing vehicle communication protocols</li>
+          <li>Reviewing firmware and embedded software</li>
+          <li>Assessing wireless technologies for unauthorized access vectors</li>
+          <li>Evaluating authentication mechanisms</li>
+          <li>Testing secure update processes</li>
+        </ul>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Responsible Disclosure</div>
+          Much like traditional penetration testing in enterprise environments, automotive security assessments help identify weaknesses before they can be exploited by malicious actors. Responsible disclosure practices allow researchers to report findings to manufacturers so corrective measures can be implemented.
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION: WHY IT MATTERS -->
+        <h2><span class="h2-line"></span>Why Automotive Cybersecurity Matters</h2>
+        <p>
+          The consequences of security failures in vehicles can be significantly different from those in traditional IT environments. A compromised web application may expose sensitive information, while <strong>a compromised vehicle system could potentially impact safety-critical functions.</strong>
+        </p>
+
+        <div class="consequence-list">
+          <div class="consequence-item">
+            <div class="consequence-num">01</div>
+            <div class="consequence-title">Safety Risks</div>
+            <p class="consequence-desc">Vehicle systems control steering assistance, braking, engine management, and driver assistance technologies. Security weaknesses affecting these systems may create life-threatening safety concerns.</p>
+          </div>
+          <div class="consequence-item">
+            <div class="consequence-num">02</div>
+            <div class="consequence-title">Privacy Concerns</div>
+            <p class="consequence-desc">Connected vehicles process GPS location data, driving habits, contact information, and vehicle usage history. Protecting this data is critical to maintaining user privacy.</p>
+          </div>
+          <div class="consequence-item">
+            <div class="consequence-num">03</div>
+            <div class="consequence-title">Financial Impact</div>
+            <p class="consequence-desc">Cybersecurity incidents may result in costly product recalls, regulatory penalties, warranty expenses, and significant reputation damage for manufacturers.</p>
+          </div>
+          <div class="consequence-item">
+            <div class="consequence-num">04</div>
+            <div class="consequence-title">Regulatory Requirements</div>
+            <p class="consequence-desc">Governments and international organizations have introduced regulations requiring automotive cybersecurity programs throughout the vehicle lifecycle, with continuous risk monitoring.</p>
+          </div>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION: CAREERS -->
+        <h2><span class="h2-line"></span>The Growing Importance of Automotive Security Professionals</h2>
+        <p>As software becomes a defining component of modern vehicles, demand for automotive cybersecurity expertise continues to grow. Organizations seek professionals with skills in:</p>
+
+        <ul>
+          <li><strong>Penetration Testing</strong> — identifying exploitable weaknesses across vehicle systems</li>
+          <li><strong>Embedded Systems Security</strong> — understanding firmware, ECUs, and low-level hardware interaction</li>
+          <li><strong>Reverse Engineering</strong> — analyzing proprietary protocols and binaries</li>
+          <li><strong>Network Security</strong> — securing CAN bus, LIN, and Ethernet-based vehicle networks</li>
+          <li><strong>Secure Software Development</strong> — building resilient systems from the ground up</li>
+          <li><strong>Threat Modeling</strong> — identifying risks systematically across complex attack surfaces</li>
+        </ul>
+
+        <p>Automotive cybersecurity roles may be found within vehicle manufacturers, automotive suppliers, security consultancies, research organizations, and regulatory bodies.</p>
+
+        <hr class="divider"/>
+
+        <!-- SECTION: LOOKING AHEAD -->
+        <h2><span class="h2-line"></span>Looking Ahead</h2>
+        <p>
+          The automotive industry is undergoing one of the most significant technological transformations in its history. Connected vehicles, autonomous driving capabilities, vehicle-to-everything (V2X) communication, and software-defined architectures are rapidly reshaping the transportation landscape.
+        </p>
+        <p>
+          These innovations offer tremendous opportunities but also require strong cybersecurity foundations. Protecting modern vehicles is no longer solely an engineering challenge — <strong>it is a cybersecurity challenge as well.</strong>
+        </p>
+        <p>
+          As connectivity continues to expand, manufacturers, researchers, regulators, and security professionals must work together to ensure that vehicles remain both innovative and secure.
+        </p>
+
+        <hr class="divider"/>
+
+        <!-- CONCLUSION -->
+        <div class="callout gold">
+          <div class="callout-title">// Conclusion</div>
+          Modern vehicles have evolved into highly connected computing platforms that rely on complex software and communication networks. Automotive cybersecurity seeks to address the resulting challenges by identifying vulnerabilities, improving security controls, and protecting both drivers and vehicle systems from emerging threats. For cybersecurity professionals, automotive security offers a fascinating and rapidly expanding field where software, networking, embedded systems, and real-world safety converge.
+        </div>
+
+      </div>
+      <!-- /post-body -->
+
+      <!-- AUTHOR STRIP -->
+      <div class="author-strip">
+        <div class="author-avatar">侍</div>
+        <div class="author-info">
+          <div class="author-name">Yamashita Moleya</div>
+          <div class="author-role">// PNPT · PJPT · CRTA · Cyber Samurai</div>
+        </div>
+      </div>
+
+      <!-- BACK BAR -->
+      <div class="back-bar">
+        <a href="https://www.yamashita.co.za/index.html" class="back-link">
+          <span class="arrow">←</span> Back to Portfolio
+        </a>
+        <a href="https://www.yamashita.co.za/Notes.html" class="back-link">
+          Hacking Arsenal <span class="arrow">→</span>
+        </a>
+      </div>
+
+    </article>
+  </div>
+  <!-- /featured-wrap -->
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">侍 YAMASHITA</div>
+  <p style="font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.8rem;">
+    Cyber Samurai · Digital Guardian
+  </p>
+  <div class="footer-links">
+    <a href="https://www.yamashita.co.za/index.html#home">Home</a>
+    <a href="https://www.yamashita.co.za/index.html#about">About</a>
+    <a href="https://www.yamashita.co.za/index.html#skills">Skills</a>
+    <a href="https://www.yamashita.co.za/index.html#projects">Projects</a>
+    <a href="https://www.yamashita.co.za/Notes.html">Notes</a>
+    <a href="https://www.yamashita.co.za/index.html#contact">Contact</a>
+  </div>
+  <p class="footer-copy">© 2026 Yamashita. All rights reserved. &nbsp;·&nbsp; Forged with honor and <span>&lt;code/&gt;</span></p>
+</footer>
+
+<script>
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('scrollProgress');
+    const docH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    el.style.width = (window.scrollY / docH * 100) + '%';
+  });
+</script>
+
+</body>
+</html>
