@@ -183,7 +183,7 @@ button:focus-visible,
 
 .logo-text {
     color: var(--text-primary);
-    letter-spacing: 1.5px;
+    letter-spacing: 2.5px;
     font-family: var(--font-display);
 }
 
