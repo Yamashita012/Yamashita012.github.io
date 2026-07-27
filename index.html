@@ -3,57 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yamashita - Cyber Samurai | Penetration Tester</title>
-    <meta name="description" content="Cybersecurity Professional | Penetration Testing | PNPT, PJPT, CNSP Certified">
-    <meta property="og:title" content="Yamashita Moleya - Cyber Samurai">
-    <meta property="og:description" content="Professional Penetration Tester & Cybersecurity Specialist">
+    <title>Yamashita Moleya — Red Team Operator | Penetration Tester</title>
+    <meta name="description" content="Yamashita Moleya — Offensive Security Specialist. PNPT, PJPT, CRTA, CNSP certified penetration tester specializing in network, web, cloud and Active Directory red team operations.">
+    <meta property="og:title" content="Yamashita Moleya — Red Team Operator">
+    <meta property="og:description" content="Offensive Security Specialist & Penetration Tester">
     <link rel="icon" type="image/x-icon" href="img/puffin_favicon.ico">
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Particle Background Canvas -->
+
     <canvas id="particles-canvas"></canvas>
-    
-    <!-- Cursor Follower -->
     <div class="cursor-dot" data-cursor-dot></div>
     <div class="cursor-outline" data-cursor-outline></div>
+
+    <!-- Classification strip -->
+    <div class="tlp-strip" aria-hidden="true"></div>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#home" class="nav-logo">
-                <span class="logo-icon">侍</span>
-                <span class="logo-text">YAMASHITA</span>
+                <span class="logo-mark">Y</span>
+                <span class="logo-text">YAMASHITA<span class="logo-suffix">.SEC</span></span>
             </a>
-            
+
             <div class="nav-menu" id="nav-menu">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#about" class="nav-link">Profile</a></li>
                     <li class="nav-item"><a href="/content/blogs.html" class="nav-link">Blogs</a></li>
-                    <li class="nav-item"><a href="#skills" class="nav-link">Skills</a></li>
-                    <li class="nav-item"><a href="#certifications" class="nav-link">Certifications</a></li>
+                    <li class="nav-item"><a href="#skills" class="nav-link">Capabilities</a></li>
+                    <li class="nav-item"><a href="#certifications" class="nav-link">Credentials</a></li>
                     <li class="nav-item"><a href="network-map.html" class="nav-link">Path-Mapper</a></li>
-                    <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                    <li class="nav-item"><a href="#projects" class="nav-link">Case Files</a></li>
                     <li class="nav-item"><a href="Notes.html" class="nav-link">Notes</a></li>
                     <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
+                <div class="nav-badge">TLP:AMBER</div>
             </div>
-            
+
             <div class="nav-toggle" id="nav-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </div>
         </div>
     </nav>
@@ -63,57 +63,65 @@
         <div class="hero-background">
             <div class="hero-grid"></div>
         </div>
-        
+
         <div class="hero-content">
-            <div class="hero-badge" data-aos="fade-down">
-                <i class="fas fa-shield-halved"></i>
-                <span>Penetration Testing Specialist</span>
+            <div class="report-meta" data-aos="fade-down">
+                <span class="report-meta-item"><i class="fas fa-file-shield"></i> ENGAGEMENT REPORT</span>
+                <span class="report-meta-divider">//</span>
+                <span class="report-meta-item">REF: YM-2026-OPS</span>
+                <span class="report-meta-divider">//</span>
+                <span class="report-meta-item status-live"><i class="fas fa-circle"></i> ACTIVE</span>
             </div>
-            
+
             <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
-                I'm <span class="gradient-text" id="typed-name"></span>
+                <span class="redact-wrap" id="redact-name">Yamashita Moleya</span>
             </h1>
-            
+
             <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
-                Cyber Samurai • Intermediate Red Team Operator • Digital Guardian
+                <span id="typed-role"></span>
             </p>
-            
+
             <p class="hero-description" data-aos="fade-up" data-aos-delay="300">
-                Dedicated to identifying vulnerabilities before adversaries can exploit them.
-                <br>Protecting digital assets with precision, discipline, and unwavering vigilance.
+                I identify the paths an adversary would take before they get the chance to walk them —
+                mapping attack surfaces, chaining misconfigurations, and turning findings into fixes.
+                <br>Offense in service of defense.
             </p>
-            
+
             <div class="hero-cta" data-aos="fade-up" data-aos-delay="400">
                 <a href="#contact" class="btn btn-primary">
-                    <span>Get In Touch</span>
+                    <span>Request an Engagement</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
                 <a href="#projects" class="btn btn-secondary">
-                    <span>View Work</span>
-                    <i class="fas fa-code"></i>
+                    <span>Review Case Files</span>
+                    <i class="fas fa-folder-open"></i>
                 </a>
             </div>
-            
-            <div class="hero-stats" data-aos="fade-up" data-aos-delay="500">
-                <div class="stat-item">
-                    <div class="stat-number" data-count="11">0</div>
-                    <div class="stat-label">Certifications</div>
+
+            <div class="findings-summary" data-aos="fade-up" data-aos-delay="500">
+                <div class="findings-header">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Findings Summary</span>
                 </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <div class="stat-number" data-count="100">0</div>
-                    <div class="stat-label">Projects+</div>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <div class="stat-number" data-count="2">0</div>
-                    <div class="stat-label">Years Real-world Experience</div>
+                <div class="findings-grid">
+                    <div class="finding-stat">
+                        <div class="stat-number" data-count="11">0</div>
+                        <div class="stat-label">Certifications</div>
+                    </div>
+                    <div class="finding-stat">
+                        <div class="stat-number" data-count="100">0</div>
+                        <div class="stat-label">Projects Delivered</div>
+                    </div>
+                    <div class="finding-stat">
+                        <div class="stat-number" data-count="2">0</div>
+                        <div class="stat-label">Years in the Field</div>
+                    </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="scroll-indicator" data-aos="fade-up" data-aos-delay="600">
-            <span class="scroll-text">Scroll Down</span>
+            <span class="scroll-text">Scroll to Declassify</span>
             <div class="scroll-line"></div>
         </div>
     </section>
@@ -122,17 +130,21 @@
     <section class="about section" id="about">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <span class="section-tag">Who Am I</span>
-                <h2 class="section-title">About Me</h2>
-                <p class="section-description">The path of the cyber samurai</p>
+                <span class="section-tag"><span class="tag-index">// 01</span> Analyst Profile</span>
+                <h2 class="section-title">Who Am I</h2>
+                <p class="section-description">The discipline of the sword, applied to the shell</p>
             </div>
-            
+
             <div class="about-content">
                 <div class="about-image" data-aos="fade-right">
                     <div class="about-image-wrapper">
-                        <img src="img/puffin.jpg" alt="Yamashita Profile">
+                        <img src="img/puffin.jpg" alt="Yamashita Moleya, penetration tester profile photo">
                         <div class="about-image-overlay"></div>
                         <div class="about-image-border"></div>
+                        <div class="id-badge">
+                            <span class="id-badge-label">CLEARANCE</span>
+                            <span class="id-badge-value">OPERATOR</span>
+                        </div>
                     </div>
                     <div class="about-floating-card">
                         <i class="fas fa-terminal"></i>
@@ -142,34 +154,40 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="about-text" data-aos="fade-left">
                     <div class="about-text-content">
                         <p class="lead-text">
-                            Like a samurai perfecting the art of the sword, I have dedicated myself to mastering the way of penetration testing and cybersecurity.
+                            Like a samurai perfecting the art of the sword, I've dedicated myself to mastering
+                            the discipline of penetration testing and offensive security.
                         </p>
-                        
+
                         <p>
-                            My mission is to identify vulnerabilities before adversaries can exploit them, protecting digital assets with unwavering vigilance. I approach each engagement with the discipline and focus of a warrior, combining technical mastery with strategic thinking.
+                            My work is finding the vulnerabilities an adversary would find first, and closing
+                            them before that happens. Every engagement gets the same treatment: rigorous
+                            reconnaissance, disciplined exploitation, and reporting that a defender can actually
+                            act on.
                         </p>
-                        
+
                         <p>
-                            The path of cybersecurity requires constant learning and adaptation—principles that guide my every action. Through rigorous training and real-world experience, I've developed expertise across multiple domains of offensive security.
+                            Cybersecurity rewards the people who never stop training. Through hands-on labs,
+                            real engagements, and continuous certification, I've built coverage across the
+                            domains that matter most to modern organizations.
                         </p>
-                        
+
                         <div class="about-highlights">
                             <div class="highlight-item">
                                 <i class="fas fa-code"></i>
                                 <div>
                                     <h4>Technical Excellence</h4>
-                                    <p>Proficient in Python, Bash, and security tooling</p>
+                                    <p>Proficient in Python, Bash, and modern security tooling</p>
                                 </div>
                             </div>
                             <div class="highlight-item">
                                 <i class="fas fa-brain"></i>
                                 <div>
                                     <h4>Strategic Mindset</h4>
-                                    <p>Combining offensive and defensive perspectives</p>
+                                    <p>Reasoning from both the attacker's and defender's side of the wire</p>
                                 </div>
                             </div>
                             <div class="highlight-item">
@@ -180,10 +198,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="about-cta">
                             <a href="https://yamashita.co.za" target="_blank" class="btn btn-outline">
-                                <span>Visit Portfolio</span>
+                                <span>Visit Full Portfolio</span>
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -197,138 +215,74 @@
     <section class="skills section section-dark" id="skills">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <span class="section-tag">Expertise</span>
+                <span class="section-tag"><span class="tag-index">// 02</span> Capability Matrix</span>
                 <h2 class="section-title">Arsenal of Skills</h2>
-                <p class="section-description">Tools and techniques for modern cybersecurity</p>
+                <p class="section-description">Tools and tradecraft for modern offensive security</p>
             </div>
-            
+
             <div class="skills-grid">
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="0">
-                    <div class="skill-icon">
-                        <i class="fas fa-network-wired"></i>
-                    </div>
+                    <div class="skill-icon"><i class="fas fa-network-wired"></i></div>
                     <h3>Network Penetration Testing</h3>
                     <p>Advanced network reconnaissance, exploitation, and post-exploitation techniques</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="95"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>Nmap</span>
-                        <span>Metasploit</span>
-                        <span>NetExec</span>
-                    </div>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="95"></div></div>
+                    <div class="skill-tags"><span>Nmap</span><span>Metasploit</span><span>NetExec</span></div>
                 </div>
-                
+
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="skill-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
+                    <div class="skill-icon"><i class="fas fa-globe"></i></div>
                     <h3>Web Application Security</h3>
-                    <p>OWASP Top 10 and beyond - comprehensive web app vulnerability assessment</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="90"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>Burp Suite</span>
-                        <span>OWASP ZAP</span>
-                        <span>SQLMap</span>
-                    </div>
+                    <p>OWASP Top 10 and beyond — comprehensive web app vulnerability assessment</p>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="90"></div></div>
+                    <div class="skill-tags"><span>Burp Suite</span><span>OWASP ZAP</span><span>SQLMap</span></div>
                 </div>
-                
+
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="skill-icon">
-                        <i class="fas fa-sitemap"></i>
-                    </div>
+                    <div class="skill-icon"><i class="fas fa-sitemap"></i></div>
                     <h3>Active Directory</h3>
                     <p>AD enumeration, privilege escalation, lateral movement, and domain compromise</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="88"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>BloodHound</span>
-                        <span>Impacket</span>
-                        <span>Rubeus</span>
-                    </div>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="88"></div></div>
+                    <div class="skill-tags"><span>BloodHound</span><span>Impacket</span><span>Rubeus</span></div>
                 </div>
-                
+
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="skill-icon">
-                        <i class="fas fa-plug"></i>
-                    </div>
+                    <div class="skill-icon"><i class="fas fa-plug"></i></div>
                     <h3>API Security Testing</h3>
                     <p>REST and GraphQL API vulnerability identification and exploitation</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="85"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>Postman</span>
-                        <span>GraphQL</span>
-                        <span>JWT</span>
-                    </div>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="85"></div></div>
+                    <div class="skill-tags"><span>Postman</span><span>GraphQL</span><span>JWT</span></div>
                 </div>
-                
+
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="400">
-                    <div class="skill-icon">
-                        <i class="fas fa-terminal"></i>
-                    </div>
-                    <h3>Scripting & Automation</h3>
+                    <div class="skill-icon"><i class="fas fa-terminal"></i></div>
+                    <h3>Scripting &amp; Automation</h3>
                     <p>Custom tool development, exploit scripting, and automation frameworks</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="92"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>Python</span>
-                        <span>Bash</span>
-                        <span>PowerShell</span>
-                    </div>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="92"></div></div>
+                    <div class="skill-tags"><span>Python</span><span>Bash</span><span>PowerShell</span></div>
                 </div>
-                
+
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="500">
-                    <div class="skill-icon">
-                        <i class="fas fa-cloud"></i>
-                    </div>
+                    <div class="skill-icon"><i class="fas fa-cloud"></i></div>
                     <h3>Cloud Security</h3>
                     <p>AWS, Azure, and GCP security assessment and exploitation</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="80"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>AWS</span>
-                        <span>Azure</span>
-                        <span>GCP</span>
-                    </div>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="80"></div></div>
+                    <div class="skill-tags"><span>AWS</span><span>Azure</span><span>GCP</span></div>
                 </div>
-                
+
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="600">
-                    <div class="skill-icon">
-                        <i class="fas fa-user-secret"></i>
-                    </div>
+                    <div class="skill-icon"><i class="fas fa-user-secret"></i></div>
                     <h3>Social Engineering</h3>
                     <p>Human factor security assessment and phishing campaign execution</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="87"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>Phishing</span>
-                        <span>OSINT</span>
-                        <span>Pretexting</span>
-                    </div>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="87"></div></div>
+                    <div class="skill-tags"><span>Phishing</span><span>OSINT</span><span>Pretexting</span></div>
                 </div>
-                
+
                 <div class="skill-card" data-aos="fade-up" data-aos-delay="700">
-                    <div class="skill-icon">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <h3>Reporting & Documentation</h3>
+                    <div class="skill-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3>Reporting &amp; Documentation</h3>
                     <p>Professional technical and executive reporting with remediation guidance</p>
-                    <div class="skill-progress">
-                        <div class="progress-bar" data-progress="93"></div>
-                    </div>
-                    <div class="skill-tags">
-                        <span>Technical</span>
-                        <span>Executive</span>
-                        <span>CVSS</span>
-                    </div>
+                    <div class="skill-progress"><div class="progress-bar" data-progress="93"></div></div>
+                    <div class="skill-tags"><span>Technical</span><span>Executive</span><span>CVSS</span></div>
                 </div>
             </div>
         </div>
@@ -338,27 +292,23 @@
     <section class="certifications section" id="certifications">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <span class="section-tag">Credentials</span>
+                <span class="section-tag"><span class="tag-index">// 03</span> Verified Credentials</span>
                 <h2 class="section-title">Professional Certifications</h2>
-                <p class="section-description">Validated expertise in cybersecurity</p>
+                <p class="section-description">Validated expertise, engagement by engagement</p>
             </div>
-            
+
             <div class="certifications-grid">
                 <div class="cert-card" data-aos="zoom-in" data-aos-delay="0">
-                    <div class="cert-badge">
-                        <img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/badge/156251430" alt="PJPT Certification">
-                    </div>
+                    <div class="cert-badge"><img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/badge/156251430" alt="PNPT Certification badge"></div>
                     <div class="cert-content">
                         <h3>PNPT</h3>
                         <p>Practical Network Penetration Tester</p>
                         <span class="cert-issuer">TCM Security</span>
                     </div>
                 </div>
-                
+
                 <div class="cert-card" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="cert-badge">
-                        <img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/badge/139302753" alt="PNPT Certification">
-                    </div>
+                    <div class="cert-badge"><img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/badge/139302753" alt="PJPT Certification badge"></div>
                     <div class="cert-content">
                         <h3>PJPT</h3>
                         <p>Practical Junior Penetration Tester</p>
@@ -366,10 +316,8 @@
                     </div>
                 </div>
 
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/crta.png" alt="Certified Red Team Analyst">
-                    </div>
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="150">
+                    <div class="cert-badge"><img src="img/crta.png" alt="Certified Red Team Analyst badge"></div>
                     <div class="cert-content">
                         <h3>CRTA</h3>
                         <p>Certified Red Team Analyst</p>
@@ -377,10 +325,8 @@
                     </div>
                 </div>
 
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/AD-RTS.png" alt="Active Directory Red Team Specialist">
-                    </div>
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="cert-badge"><img src="img/AD-RTS.png" alt="Active Directory Red Team Specialist badge"></div>
                     <div class="cert-content">
                         <h3>AD-RTS</h3>
                         <p>Certified Active Directory Red Team Specialist</p>
@@ -388,10 +334,8 @@
                     </div>
                 </div>
 
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/MCRTA.png" alt="MULTI-CLOUD RED TEAM ANALYST">
-                    </div>
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="cert-badge"><img src="img/MCRTA.png" alt="Multi-Cloud Red Team Analyst badge"></div>
                     <div class="cert-content">
                         <h3>MCRTA</h3>
                         <p>Certified Multi-Cloud Red Team Analyst</p>
@@ -400,74 +344,58 @@
                 </div>
 
                 <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/WEB-RTA.png" alt="Certified Web Red Team Analyst">
-                    </div>
+                    <div class="cert-badge"><img src="img/WEB-RTA.png" alt="Web Red Team Analyst badge"></div>
                     <div class="cert-content">
                         <h3>WEB-RTA</h3>
                         <p>Certified Web Red Team Analyst</p>
                         <span class="cert-issuer">Cyberwarfare Labs</span>
                     </div>
                 </div>
-                
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="cert-badge">
-                        <img src="img/CNSP.png" alt="CNSP Certification">
-                    </div>
+
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="350">
+                    <div class="cert-badge"><img src="img/CNSP.png" alt="CNSP Certification badge"></div>
                     <div class="cert-content">
                         <h3>CNSP</h3>
                         <p>Certified Network Security Practitioner</p>
                         <span class="cert-issuer">The SecOps Group</span>
                     </div>
                 </div>
-                
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/google_cyber_sec_prof.jpg" alt="Google Cybersecurity Professional">
-                    </div>
+
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="cert-badge"><img src="img/google_cyber_sec_prof.jpg" alt="Google Cybersecurity Professional badge"></div>
                     <div class="cert-content">
                         <h3>Google Cybersecurity</h3>
                         <p>Cybersecurity Professional Certificate</p>
                         <span class="cert-issuer">Google</span>
                     </div>
                 </div>
-<!-- JUST ADDED -->
-                
-                
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/CRTOM.png" alt="Certified Red Team Management">
-                    </div>
+
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="450">
+                    <div class="cert-badge"><img src="img/CRTOM.png" alt="Certified Red Team Management badge"></div>
                     <div class="cert-content">
                         <h3>CRTOM</h3>
                         <p>Certified Red Team Management</p>
-                        <span class="cert-issuer">ReadTeamLeaders</span>
+                        <span class="cert-issuer">RedTeamLeaders</span>
                     </div>
                 </div>
 
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/ccep.png" alt="Certified Cybersecurity Educator Professional">
-                    </div>
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="cert-badge"><img src="img/ccep.png" alt="Certified Cybersecurity Educator Professional badge"></div>
                     <div class="cert-content">
                         <h3>CCEP</h3>
                         <p>Certified Cybersecurity Educator Professional</p>
-                        <span class="cert-issuer">ReadTeamLeaders</span>
+                        <span class="cert-issuer">RedTeamLeaders</span>
                     </div>
                 </div>
 
-                <div class="cert-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="cert-badge">
-                        <img src="img/ccpc.png" alt="Certified C++ Practitioner">
-                    </div>
+                <div class="cert-card" data-aos="zoom-in" data-aos-delay="550">
+                    <div class="cert-badge"><img src="img/ccpc.png" alt="Certified C++ Practitioner badge"></div>
                     <div class="cert-content">
                         <h3>CCPP</h3>
                         <p>Certified C++ Practitioner</p>
-                        <span class="cert-issuer">ReadTeamLeaders</span>
+                        <span class="cert-issuer">RedTeamLeaders</span>
                     </div>
                 </div>
-
-                
             </div>
         </div>
     </section>
@@ -476,17 +404,16 @@
     <section class="projects section section-dark" id="projects">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <span class="section-tag">Portfolio</span>
-                <h2 class="section-title">Featured Projects</h2>
-                <p class="section-description">Campaigns and victories in the digital battlefield</p>
+                <span class="section-tag"><span class="tag-index">// 04</span> Case Files</span>
+                <h2 class="section-title">Featured Engagements</h2>
+                <p class="section-description">Campaigns and outcomes from the digital battlefield</p>
             </div>
-            
+
             <div class="projects-grid">
                 <div class="project-card" data-aos="fade-up" data-aos-delay="0">
                     <div class="project-image">
-                        <div class="project-overlay">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
+                        <div class="project-overlay"><i class="fas fa-shield-alt"></i></div>
+                        <span class="project-severity severity-critical">Critical</span>
                     </div>
                     <div class="project-content">
                         <div class="project-header">
@@ -494,28 +421,22 @@
                             <span class="project-status">Completed</span>
                         </div>
                         <p class="project-description">
-                            Conducted comprehensive black-box testing on a complex e-commerce platform. 
-                            Identified critical SQLi, XSS, and Broken Access Control vulnerabilities.
+                            Conducted comprehensive black-box testing on a complex e-commerce platform.
+                            Identified critical SQLi, XSS, and broken access control vulnerabilities.
                         </p>
                         <div class="project-tags">
-                            <span>Web Security</span>
-                            <span>SQLi</span>
-                            <span>XSS</span>
-                            <span>OWASP</span>
+                            <span>Web Security</span><span>SQLi</span><span>XSS</span><span>OWASP</span>
                         </div>
                         <div class="project-footer">
-                            <span class="project-impact">
-                                <i class="fas fa-bug"></i> Compromised 
-                            </span>
+                            <span class="project-impact"><i class="fas fa-bug"></i> Application Compromised</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="project-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="project-image">
-                        <div class="project-overlay">
-                            <i class="fas fa-network-wired"></i>
-                        </div>
+                        <div class="project-overlay"><i class="fas fa-network-wired"></i></div>
+                        <span class="project-severity severity-critical">Critical</span>
                     </div>
                     <div class="project-content">
                         <div class="project-header">
@@ -523,28 +444,22 @@
                             <span class="project-status">Completed</span>
                         </div>
                         <p class="project-description">
-                            Led internal network penetration test for enterprise organizations. 
+                            Led an internal network penetration test for an enterprise organization.
                             Uncovered misconfigured services and lateral movement vectors through AD.
                         </p>
                         <div class="project-tags">
-                            <span>Network Security</span>
-                            <span>Active Directory</span>
-                            <span>Lateral Movement</span>
-                            <span>PrivEsc</span>
+                            <span>Network Security</span><span>Active Directory</span><span>Lateral Movement</span><span>PrivEsc</span>
                         </div>
                         <div class="project-footer">
-                            <span class="project-impact">
-                                <i class="fas fa-server"></i> Full Domain Compromise
-                            </span>
+                            <span class="project-impact"><i class="fas fa-server"></i> Full Domain Compromise</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="project-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="project-image">
-                        <div class="project-overlay">
-                            <i class="fas fa-terminal"></i>
-                        </div>
+                        <div class="project-overlay"><i class="fas fa-terminal"></i></div>
+                        <span class="project-severity severity-open">Open Source</span>
                     </div>
                     <div class="project-content">
                         <div class="project-header">
@@ -552,28 +467,22 @@
                             <span class="project-status">Open Source</span>
                         </div>
                         <p class="project-description">
-                            Automated reconnaissance tool with intelligent filtering for directory and 
-                            subdomain scanning, reducing false positives during pentesting engagements.
+                            Automated reconnaissance tool with intelligent filtering for directory and
+                            subdomain scanning, reducing false positives during engagements.
                         </p>
                         <div class="project-tags">
-                            <span>Python</span>
-                            <span>Automation</span>
-                            <span>OSINT</span>
-                            <span>Recon</span>
+                            <span>Python</span><span>Automation</span><span>OSINT</span><span>Recon</span>
                         </div>
                         <div class="project-footer">
-                            <span class="project-impact">
-                                <i class="fab fa-github"></i> Available on GitHub
-                            </span>
+                            <span class="project-impact"><i class="fab fa-github"></i> Available on GitHub</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="project-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="project-image">
-                        <div class="project-overlay">
-                            <i class="fas fa-cloud"></i>
-                        </div>
+                        <div class="project-overlay"><i class="fas fa-cloud"></i></div>
+                        <span class="project-severity severity-critical">Critical</span>
                     </div>
                     <div class="project-content">
                         <div class="project-header">
@@ -581,53 +490,41 @@
                             <span class="project-status">Completed</span>
                         </div>
                         <p class="project-description">
-                            Comprehensive cloud penetration testing covering AWS, Azure, and GCP. 
+                            Comprehensive cloud penetration testing covering AWS, Azure, and GCP.
                             Identified misconfigurations and privilege escalation paths.
                         </p>
                         <div class="project-tags">
-                            <span>AWS</span>
-                            <span>Azure</span>
-                            <span>GCP</span>
-                            <span>Cloud Security</span>
+                            <span>AWS</span><span>Azure</span><span>GCP</span><span>Cloud Security</span>
                         </div>
                         <div class="project-footer">
-                            <span class="project-impact">
-                                <i class="fas fa-exclamation-triangle"></i> Global Compromise
-                            </span>
+                            <span class="project-impact"><i class="fas fa-exclamation-triangle"></i> Global Compromise</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="project-card" data-aos="fade-up" data-aos-delay="200">
-    <div class="project-image">
-        <div class="project-overlay">
-            <i class="fas fa-project-diagram"></i>
-        </div>
-    </div>
-    <div class="project-content">
-        <div class="project-header">
-            <h3>Net-Mapper</h3>
-            <span class="project-status">Open Source</span>
-        </div>
-        <p class="project-description">
-            A professional network topology visualization platform built for security teams, network engineers, and penetration testers. Net-Mapper enables interactive infrastructure mapping, subnet segmentation, route analysis, and offline network documentation through a high-performance, client-side architecture.
-        </p>
-        <div class="project-tags">
-            <span>Networking</span>
-            <span>Cybersecurity</span>
-            <span>Visualization</span>
-            <span>Topology Mapping</span>
-        </div>
-        <div class="project-footer">
-            <span class="project-impact">
-                <i class="fab fa-github"></i> Available on GitHub
-            </span>
-        </div>
-    </div>
-</div>
-
-
-                
+                <div class="project-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="project-image">
+                        <div class="project-overlay"><i class="fas fa-project-diagram"></i></div>
+                        <span class="project-severity severity-open">Open Source</span>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Net-Mapper</h3>
+                            <span class="project-status">Open Source</span>
+                        </div>
+                        <p class="project-description">
+                            A professional network topology visualization platform for security teams,
+                            network engineers, and penetration testers — interactive infrastructure mapping,
+                            subnet segmentation, route analysis, and offline documentation.
+                        </p>
+                        <div class="project-tags">
+                            <span>Networking</span><span>Cybersecurity</span><span>Visualization</span><span>Topology Mapping</span>
+                        </div>
+                        <div class="project-footer">
+                            <span class="project-impact"><i class="fab fa-github"></i> Available on GitHub</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -636,11 +533,11 @@
     <section class="contact section" id="contact">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <span class="section-tag">Get In Touch</span>
+                <span class="section-tag"><span class="tag-index">// 05</span> Secure Channel</span>
                 <h2 class="section-title">Let's Connect</h2>
-                <p class="section-description">Ready to discuss security challenges or collaboration opportunities?</p>
+                <p class="section-description">Ready to discuss a security challenge or an engagement?</p>
             </div>
-            
+
             <div class="contact-content">
                 <div class="contact-info" data-aos="fade-right">
                     <div class="contact-card">
@@ -648,13 +545,13 @@
                         <h3>Email</h3>
                         <a href="mailto:moleya.business16@gmail.com">moleya.business16@gmail.com</a>
                     </div>
-                    
+
                     <div class="contact-card">
                         <i class="fas fa-globe"></i>
                         <h3>Website</h3>
                         <a href="https://yamashita.co.za" target="_blank">yamashita.co.za</a>
                     </div>
-                    
+
                     <div class="contact-social">
                         <h3>Follow Me</h3>
                         <div class="social-links">
@@ -670,14 +567,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="contact-visual" data-aos="fade-left">
                     <div class="terminal-window">
                         <div class="terminal-header">
                             <span class="terminal-dot" style="background: #ff5f57;"></span>
                             <span class="terminal-dot" style="background: #ffbd2e;"></span>
                             <span class="terminal-dot" style="background: #28ca42;"></span>
-                            <span class="terminal-title">contact.sh</span>
+                            <span class="terminal-title">secure_channel.sh</span>
                         </div>
                         <div class="terminal-body">
                             <div class="terminal-line">
@@ -688,10 +585,10 @@
                                 <span class="terminal-output">[*] Initializing secure connection...</span>
                             </div>
                             <div class="terminal-line">
-                                <span class="terminal-output">[+] Ready to receive transmission</span>
+                                <span class="terminal-output">[+] Handshake complete</span>
                             </div>
                             <div class="terminal-line">
-                                <span class="terminal-output">[*] Awaiting your message...</span>
+                                <span class="terminal-output">[+] Ready to receive transmission</span>
                             </div>
                             <div class="terminal-line terminal-cursor">
                                 <span class="terminal-prompt">$</span>
@@ -709,28 +606,27 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <h3>侍 YAMASHITA</h3>
-                    <p>Cyber Samurai • Digital Guardian</p>
+                    <h3>YAMASHITA<span class="logo-suffix">.SEC</span></h3>
+                    <p>Red Team Operator • Digital Guardian</p>
                 </div>
-                
+
                 <div class="footer-links">
                     <a href="#home">Home</a>
-                    <a href="#about">About</a>
-                    <a href="#skills">Skills</a>
-                    <a href="#projects">Projects</a>
+                    <a href="#about">Profile</a>
+                    <a href="#skills">Capabilities</a>
+                    <a href="#projects">Case Files</a>
                     <a href="Notes.html">Notes</a>
                     <a href="#contact">Contact</a>
                 </div>
             </div>
-            
+
             <div class="footer-bottom">
-                <p>&copy; 2026 Yamashita. All rights reserved.</p>
-                <p class="footer-tagline">Forged with honor and <span class="code-highlight">&lt;code/&gt;</span></p>
+                <p>&copy; 2026 Yamashita Moleya. All rights reserved.</p>
+                <p class="footer-tagline">Forged with discipline and <span class="code-highlight">&lt;code/&gt;</span></p>
             </div>
         </div>
     </footer>
 
-    <!-- Scroll to Top Button -->
     <button class="scroll-top" id="scroll-top">
         <i class="fas fa-chevron-up"></i>
     </button>
