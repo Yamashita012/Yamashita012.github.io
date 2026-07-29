@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Learn exactly how Active Directory authenticates users — NTLM, Kerberos, LDAP, and certificate-based authentication — with packet-level detail, diagrams, and hands-on commands for pentesters and sysadmins."/>
+  <title>Active Directory Authentication Explained — Yamashita | Cyber Samurai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg:        #050709;
+      --bg2:       #0a0d12;
+      --bg3:       #0f1319;
+      --surface:   #111620;
+      --border:    #1e2535;
+      --red:       #e63946;
+      --red-dim:   #9e1f28;
+      --gold:      #c9a84c;
+      --gold-dim:  #7a6128;
+      --cyan:      #48cae4;
+      --cyan-dim:  #1a6a7d;
+      --text:      #d4dae6;
+      --text-muted:#7a889e;
+      --text-dim:  #4a5568;
+      --mono:      'Share Tech Mono', monospace;
+      --sans:      'Rajdhani', sans-serif;
+      --serif:     'Noto Serif JP', serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.5;
+    }
+
+    /* ── SCANLINES ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 998;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(5,7,9,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-logo .kanji { font-size: 1.3rem; opacity: 0.8; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--red); }
+    .nav-links a.active { color: var(--gold); }
+
+    /* ── HERO BANNER ── */
+    .hero {
+      margin-top: 60px;
+      padding: 4.5rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(230,57,70,0.04) 0%, transparent 60%),
+        linear-gradient(0deg, var(--bg) 0%, transparent 100%),
+        var(--bg2);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 110%, rgba(230,57,70,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-kanji-bg {
+      position: absolute;
+      font-family: var(--serif);
+      font-size: 20rem;
+      color: rgba(201,168,76,0.025);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      user-select: none;
+      pointer-events: none;
+      line-height: 1;
+    }
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--red);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .hero-label::before, .hero-label::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--red-dim);
+    }
+    .hero h1 {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: clamp(1.8rem, 4.2vw, 3rem);
+      letter-spacing: 0.03em;
+      line-height: 1.15;
+      color: #fff;
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero-sub {
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    .featured-wrap { padding: 4rem 0 2rem; }
+
+    /* ── ARTICLE CARD ── */
+    .article-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .article-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), var(--gold), transparent);
+    }
+
+    /* ── POST HEADER ── */
+    .post-header {
+      padding: 3rem 3rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      background: linear-gradient(135deg, rgba(230,57,70,0.04) 0%, transparent 50%);
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.7rem;
+      border-radius: 1px;
+    }
+    .tag-red  { background: rgba(230,57,70,0.15); color: var(--red); border: 1px solid rgba(230,57,70,0.3); }
+    .tag-gold { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
+    .tag-cyan { background: rgba(72,202,228,0.1); color: var(--cyan); border: 1px solid rgba(72,202,228,0.2); }
+    .post-date {
+      font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.1em;
+    }
+    .post-header h2 {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+      color: #fff;
+      line-height: 1.25;
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+    }
+    .post-deck { font-size: 1.02rem; color: var(--text-muted); line-height: 1.7; max-width: 72ch; }
+    .post-body { padding: 3rem; }
+
+    /* ── TYPOGRAPHY INSIDE POST ── */
+    .post-body h2 {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 3rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      scroll-margin-top: 80px;
+    }
+    .post-body h2 .h2-line { width: 20px; height: 2px; background: var(--red); display: inline-block; flex-shrink: 0; }
+    .post-body h3 {
+      font-family: var(--sans); font-weight: 600; font-size: 1.1rem;
+      color: var(--cyan); letter-spacing: 0.05em; margin: 2rem 0 0.6rem;
+      scroll-margin-top: 80px;
+    }
+    .post-body h4 {
+      font-family: var(--mono); font-weight: 400; font-size: 0.85rem;
+      color: var(--text); letter-spacing: 0.06em; text-transform: uppercase;
+      margin: 1.6rem 0 0.6rem; opacity: 0.85;
+    }
+    .post-body p { color: var(--text); line-height: 1.85; margin-bottom: 1.2rem; }
+    .post-body strong { color: #fff; font-weight: 600; }
+    .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.2rem; }
+    .post-body li { color: var(--text); margin-bottom: 0.45rem; padding-left: 0.3rem; line-height: 1.75; }
+    .post-body li::marker { color: var(--red); }
+    .post-body a { color: var(--cyan); text-decoration: none; border-bottom: 1px dotted var(--cyan-dim); }
+    .post-body a:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+    /* ── INLINE CODE ── */
+    .post-body code {
+      font-family: var(--mono);
+      font-size: 0.85em;
+      color: var(--gold);
+      background: rgba(255,255,255,0.05);
+      padding: 0.12rem 0.4rem;
+      border-radius: 2px;
+    }
+
+    /* ── CODE BLOCKS ── */
+    .code-block-wrap {
+      margin: 1.6rem 0;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+    .code-block-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .code-block-wrap pre {
+      margin: 0;
+      padding: 1rem 1.3rem;
+      overflow-x: auto;
+    }
+    .code-block-wrap code {
+      background: none;
+      padding: 0;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      white-space: pre;
+    }
+
+    /* ── TABLES ── */
+    .table-wrap { overflow-x: auto; margin: 1.6rem 0; border: 1px solid var(--border); border-radius: 2px; }
+    .post-body table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 480px; }
+    .post-body th {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,0.08);
+      text-align: left;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .post-body td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .post-body tr:last-child td { border-bottom: none; }
+    .post-body tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+    .post-body td strong { color: var(--text); }
+
+    /* ── MERMAID DIAGRAMS ── */
+    .mermaid-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .mermaid-caption {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 0.8rem;
+      text-align: left;
+    }
+
+    /* ── CALLOUT BOXES ── */
+    .callout {
+      margin: 2rem 0;
+      padding: 1.2rem 1.5rem;
+      border-left: 3px solid var(--red);
+      background: rgba(230,57,70,0.06);
+      border-radius: 0 2px 2px 0;
+    }
+    .callout.gold { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+    .callout.cyan { border-color: var(--cyan); background: rgba(72,202,228,0.06); }
+    .callout-title {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em;
+      text-transform: uppercase; margin-bottom: 0.5rem; color: var(--red);
+    }
+    .callout.gold .callout-title { color: var(--gold); }
+    .callout.cyan .callout-title { color: var(--cyan); }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout p { color: var(--text); margin-bottom: 0.5rem; }
+
+    /* ── TOC BOX ── */
+    .toc-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.5rem 1.8rem;
+      margin: 0 0 1rem;
+    }
+    .toc-title {
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 1rem;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem 2rem;
+      list-style: none;
+      counter-reset: toc;
+    }
+    .toc-grid li { counter-increment: toc; }
+    .toc-grid a {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      display: flex;
+      gap: 0.6rem;
+      transition: color 0.2s;
+    }
+    .toc-grid a::before {
+      content: counter(toc, decimal-leading-zero);
+      color: var(--red-dim);
+      flex-shrink: 0;
+    }
+    .toc-grid a:hover { color: var(--gold); }
+
+    /* ── SURFACE / GRID CARDS (protocol steps, components) ── */
+    .surface-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .surface-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.1rem 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .surface-item::after {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--red-dim);
+    }
+    .surface-icon {
+      font-family: var(--mono); font-size: 0.65rem; color: var(--red);
+      letter-spacing: 0.15em; margin-bottom: 0.4rem;
+    }
+    .surface-title { font-family: var(--sans); font-weight: 600; font-size: 0.9rem; color: #fff; margin-bottom: 0.3rem; }
+    .surface-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin: 0; }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 2.5rem 0; }
+
+    /* ── AUTHOR STRIP ── */
+    .author-strip {
+      display: flex; align-items: center; gap: 1.2rem;
+      padding: 1.8rem 3rem; border-top: 1px solid var(--border);
+      background: rgba(201,168,76,0.03);
+    }
+    .author-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2px solid var(--gold-dim); object-fit: cover; flex-shrink: 0;
+      background: var(--surface); display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 1.5rem; color: var(--gold);
+    }
+    .author-name { font-family: var(--sans); font-weight: 600; font-size: 0.95rem; color: #fff; }
+    .author-role { font-family: var(--mono); font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.1em; margin-top: 0.2rem; }
+
+    /* ── BACK BAR ── */
+    .back-bar {
+      padding: 1.5rem 2rem; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; background: var(--bg2);
+      flex-wrap: wrap; gap: 0.8rem;
+    }
+    .back-link {
+      font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); text-decoration: none;
+      letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--red); }
+    .back-link .arrow { font-size: 1rem; }
+
+    /* ── FOOTER ── */
+    footer { margin-top: 5rem; padding: 2rem; text-align: center; border-top: 1px solid var(--border); background: var(--bg2); }
+    .footer-logo { font-family: var(--serif); font-size: 1.1rem; color: var(--gold); margin-bottom: 0.5rem; }
+    .footer-links { display: flex; justify-content: center; gap: 2rem; margin: 1rem 0; flex-wrap: wrap; }
+    .footer-links a {
+      font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); text-decoration: none;
+      letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.08em; }
+    .footer-copy span { color: var(--red); }
+
+    /* ── TERMINAL INTRO ── */
+    .terminal-intro {
+      font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted);
+      background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 2px;
+      padding: 1rem 1.4rem; margin: 0 3rem 2rem; line-height: 1.9;
+    }
+    .t-prompt { color: var(--red); }
+    .t-cmd { color: var(--cyan); }
+    .t-out { color: var(--text-muted); }
+
+    /* ── READING TIME ── */
+    .reading-time {
+      font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
+      letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.4rem;
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-progress {
+      position: fixed; top: 60px; left: 0; height: 2px;
+      background: linear-gradient(90deg, var(--red), var(--gold));
+      z-index: 101; width: 0%; transition: width 0.1s;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .post-header, .post-body { padding: 1.8rem 1.4rem; }
+      .author-strip { padding: 1.4rem; }
+      .terminal-intro { margin: 0 1.4rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 3.5rem 1.5rem 2.5rem; }
+      .toc-grid { grid-template-columns: 1fr; }
+      .post-body table { min-width: 380px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="https://www.yamashita.co.za/index.html" class="nav-logo">
+    <span class="kanji">侍</span> YAMASHITA
+  </a>
+  <ul class="nav-links">
+    <li><a href="https://www.yamashita.co.za/index.html#home">Home</a></li>
+    <li><a href="https://www.yamashita.co.za/index.html#about">About</a></li>
+    <li><a href="https://www.yamashita.co.za/index.html#projects">Projects</a></li>
+    <li><a href="https://www.yamashita.co.za/Notes.html">Notes</a></li>
+    <li><a href="https://www.yamashita.co.za/content/blogs.html" class="active">Blog</a></li>
+    <li><a href="https://www.yamashita.co.za/index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-kanji-bg">刃</div>
+  <div class="hero-label">Field Transmission</div>
+  <h1>Active Directory Authentication Explained: <span>How Windows Authenticates Users</span></h1>
+  <p class="hero-sub">// NTLM &nbsp;·&nbsp; Kerberos &nbsp;·&nbsp; LDAP &nbsp;·&nbsp; Certificate Authentication</p>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="container">
+  <div class="featured-wrap">
+
+    <article class="article-card">
+
+      <!-- POST HEADER -->
+      <header class="post-header">
+        <div class="post-meta">
+          <span class="tag tag-red">Active Directory</span>
+          <span class="tag tag-gold">Kerberos</span>
+          <span class="tag tag-cyan">Windows Authentication</span>
+          <span class="post-date">// 2026.07.29</span>
+          <span class="reading-time">⏱ ~28 min read</span>
+        </div>
+        <h2>Active Directory Authentication Explained: How Windows Authenticates Users</h2>
+        <p class="post-deck">
+          Every offensive AD technique — Kerberoasting, Pass-the-Hash, Golden Tickets, ASREPRoasting, NTLM relay — is a deviation from normal authentication behavior. This is the baseline: exactly what happens between a keystroke on the logon screen and a fully authenticated session, packet by packet.
+        </p>
+      </header>
+
+      <!-- TERMINAL INTRO -->
+      <div class="terminal-intro">
+        <span class="t-prompt">yamashita@cyber-samurai</span>:<span class="t-cmd">~/blog</span>$ cat ad-authentication-explained.md<br/>
+        <span class="t-out">[*] Loading: Active Directory Authentication Explained</span><br/>
+        <span class="t-out">[+] Topics: NTLM · Kerberos · LDAP · PKINIT · IWA · Attack Surface Map</span><br/>
+        <span class="t-out">[+] Status: UNCLASSIFIED — Public Research / Pre-requisite reading for Kerberos attacks</span>
+      </div>
+
+      <!-- POST BODY -->
+      <div class="post-body">
+
+        <!-- TOC -->
+        <div class="toc-box">
+          <div class="toc-title">// Table of Contents</div>
+          <ul class="toc-grid">
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#why-auth-matters">Why Authentication Matters</a></li>
+            <li><a href="#authn-vs-authz">Authentication vs Authorization</a></li>
+            <li><a href="#ad-components">Active Directory Components</a></li>
+            <li><a href="#s1">S1 — How Windows Auth Works</a></li>
+            <li><a href="#s2">S2 — NTLM Authentication</a></li>
+            <li><a href="#s3">S3 — Kerberos Authentication</a></li>
+            <li><a href="#s4">S4 — LDAP Authentication</a></li>
+            <li><a href="#s5">S5 — Certificate Authentication</a></li>
+            <li><a href="#s6">S6 — Integrated Windows Auth</a></li>
+            <li><a href="#s7">S7 — Protocol Comparison</a></li>
+            <li><a href="#s8">S8 — Live Demonstrations</a></li>
+            <li><a href="#s9">S9 — Common Auth Failures</a></li>
+            <li><a href="#s10">S10 — Commands Cheat Sheet</a></li>
+            <li><a href="#s11">S11 — Packet Capture Walkthrough</a></li>
+            <li><a href="#s12">S12 — Attack Surface Overview</a></li>
+            <li><a href="#s13">S13 — Key Takeaways</a></li>
+          </ul>
+        </div>
+
+        <div class="callout gold">
+          <div class="callout-title">// 刃 Field Transmission</div>
+          <p>Before you can break Kerberos, you have to understand how it actually works. This is the foundational transmission: how Windows proves who you are.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- INTRODUCTION -->
+        <h2 id="introduction"><span class="h2-line"></span>Introduction</h2>
+        <p>Every offensive Active Directory technique you will ever learn — Kerberoasting, Pass-the-Hash, Golden Tickets, ASREPRoasting, NTLM relay — is a deviation from <strong>normal</strong> authentication behavior. You cannot understand the deviation until you understand the baseline.</p>
+        <p>This article is that baseline. It walks through exactly what happens between the moment a user presses <code>ENTER</code> on the Windows logon screen and the moment they're sitting on their desktop with a mapped drive and an Outlook inbox open. No shortcuts, no hand-waving — packet by packet, message by message.</p>
+        <p>By the end, you'll understand:</p>
+        <ul>
+          <li>How Windows turns a typed password into cryptographic material</li>
+          <li>Why NTLM still exists, and exactly how it works</li>
+          <li>Every message in the Kerberos exchange (AS-REQ → AS-REP → TGS-REQ → TGS-REP → AP-REQ → AP-REP)</li>
+          <li>How LDAP, certificate-based authentication, and Integrated Windows Authentication fit into the picture</li>
+          <li>Where common attack techniques intersect with the authentication flow — without turning this into an exploitation guide</li>
+        </ul>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>This is a <strong>pre-requisite</strong> article for learning Kerberos attacks, not an attack tutorial itself. Exploitation techniques are mentioned only to show <strong>where</strong> they occur in the authentication process.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- WHY AUTH MATTERS -->
+        <h2 id="why-auth-matters"><span class="h2-line"></span>Why Authentication Matters</h2>
+        <p>Active Directory is the identity backbone of most enterprise networks. Every file share, every SQL Server, every internal web app, every RDP session ultimately trusts a decision made by the authentication layer: <em>"is this really who they claim to be?"</em></p>
+        <p>If authentication is compromised, everything downstream is compromised too — because Windows authorization decisions (ACLs, group membership, delegation rights) are only as trustworthy as the identity they're built on. This is why domain compromise chains almost always start by attacking authentication itself, not authorization.</p>
+
+        <div class="callout">
+          <div class="callout-title">// Warning</div>
+          <p>A huge percentage of real-world AD compromises trace back to authentication weaknesses — weak NTLM fallback, unconstrained delegation, or crackable Kerberos tickets — rather than a software exploit. Authentication is the attack surface, not just a gatekeeper in front of it.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- AUTHN VS AUTHZ -->
+        <h2 id="authn-vs-authz"><span class="h2-line"></span>Authentication vs Authorization</h2>
+        <p>These two terms get conflated constantly, and the distinction matters for understanding the rest of this article.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Concept</th><th>Question It Answers</th><th>AD Mechanism</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Authentication</strong></td><td>Who are you?</td><td>NTLM, Kerberos, LDAP bind, certificates</td></tr>
+              <tr><td><strong>Authorization</strong></td><td>What are you allowed to do?</td><td>Access Control Lists (ACLs), group membership, the PAC</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>A Kerberos ticket proves <em>identity</em>. What that identity is allowed to touch is a completely separate decision made by the resource (a file server, SQL Server, etc.) using the <strong>Privilege Attribute Certificate (PAC)</strong> embedded in the ticket, cross-referenced against the resource's ACL.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">concept</div>
+          <pre><code>Authentication  →  "This is CONTOSO\jsmith, and I can prove it cryptographically."
+Authorization   →  "CONTOSO\jsmith is a member of Finance-ReadOnly. Grant read access."</code></pre>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- AD COMPONENTS -->
+        <h2 id="ad-components"><span class="h2-line"></span>Active Directory Components Involved</h2>
+        <p>Before diving into protocol mechanics, here's a quick reference for every component that participates in the authentication process.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Component</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Domain Controller (DC)</strong></td><td>Server running AD DS; stores the domain database (<code>ntds.dit</code>), authenticates users, issues tickets</td></tr>
+              <tr><td><strong>KDC (Key Distribution Center)</strong></td><td>A service running on every DC; issues Kerberos tickets (combines AS + TGS roles)</td></tr>
+              <tr><td><strong>DNS</strong></td><td>Resolves domain names to DC IP addresses; used to locate services via SRV records</td></tr>
+              <tr><td><strong>LDAP</strong></td><td>Protocol used to query and modify the AD database (users, groups, computers, GPOs)</td></tr>
+              <tr><td><strong>SMB</strong></td><td>File-sharing protocol; also transports NTLM authentication in many contexts</td></tr>
+              <tr><td><strong>Netlogon</strong></td><td>Secure channel service used for domain trust, DC location, and pass-through authentication</td></tr>
+              <tr><td><strong>LSASS</strong></td><td>Local Windows process that handles logon, caches credentials/tickets, enforces security policy client-side</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    A["User Workstation"] -->|DNS Query| B["DNS Server"]
+    A -->|Authentication Request| C["Domain Controller"]
+    C --> D["KDC - Key Distribution Center"]
+    C --> E["LDAP - Directory Database"]
+    C --> F["Netlogon Service"]
+    A -->|Ticket / Credential| G["SMB / LDAP / HTTP Resource"]
+    A --> H["LSASS - Local Security Authority"]
+          </div>
+          <div class="mermaid-caption">Fig. 1 — Components involved in a domain authentication request</div>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 1 -->
+        <h2 id="s1"><span class="h2-line"></span>Section 1 — How Windows Authentication Works</h2>
+        <p>This section covers the full journey from keystroke to Domain Controller contact — before we even get into NTLM or Kerberos specifics.</p>
+
+        <h3>1.1 The User Enters a Username and Password</h3>
+        <p>When a user types their credentials into the Windows logon screen (<code>winlogon.exe</code> → <code>LogonUI.exe</code>) and presses Enter, the plaintext password briefly exists in memory but is <strong>never</strong> sent across the network in plaintext, and Windows does not store it in plaintext on disk.</p>
+
+        <h3>1.2 Password Hashing</h3>
+        <h4>NT Hash</h4>
+        <p>Windows stores (and primarily uses) the <strong>NT Hash</strong>, which is simply the MD4 hash of the UTF-16LE encoded password.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">formula</div>
+          <pre><code>NT Hash = MD4( UTF16-LE( password ) )</code></pre>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>Despite the name, this has nothing to do with "NTLM" as a protocol version — the <em>NT Hash</em> is the credential material; <em>NTLM</em> is the authentication protocol that uses it.</p>
+        </div>
+
+        <h4>Why Windows Doesn't Store Plaintext Passwords</h4>
+        <p>Storing plaintext passwords would mean a single database compromise (<code>ntds.dit</code> on a DC, or the SAM database on a local machine) instantly exposes every credential. Hashing is a one-way transformation — you can verify a password without ever needing to store it.</p>
+
+        <div class="callout">
+          <div class="callout-title">// Warning</div>
+          <p>The NT Hash is <strong>not</strong> salted and uses MD4, a cryptographically broken algorithm. This is precisely why NT Hashes can be used directly for Pass-the-Hash attacks — the hash itself is valid credential material, not just a "proof" of the password.</p>
+        </div>
+
+        <h4>Where Hashes Are Stored</h4>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Location</th><th>Scope</th><th>File</th></tr></thead>
+            <tbody>
+              <tr><td>SAM database</td><td>Local accounts</td><td><code>C:\Windows\System32\config\SAM</code></td></tr>
+              <tr><td>NTDS.dit</td><td>Domain accounts</td><td><code>%SystemRoot%\NTDS\ntds.dit</code> on each DC</td></tr>
+              <tr><td>LSASS memory</td><td>Currently logged-on sessions (cached)</td><td>In-memory only, volatile</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.3 Client Contacts the Domain Controller</h3>
+        <p>Before any authentication protocol can run, the client has to answer a basic question: <em>which server is my Domain Controller?</em></p>
+
+        <h4>DNS Lookup and SRV Records</h4>
+        <p>Windows doesn't hardcode a DC's IP address. Instead, it queries DNS for <strong>SRV (service) records</strong> that advertise which hosts provide the <code>_kerberos</code>, <code>_ldap</code>, and <code>_kpasswd</code> services for the domain.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">dns srv records</div>
+          <pre><code>_ldap._tcp.dc._msdcs.contoso.local
+_kerberos._tcp.dc._msdcs.contoso.local
+_kerberos._udp.contoso.local
+_gc._tcp.contoso.local</code></pre>
+        </div>
+
+        <p>This process is called <strong>DC Locator</strong> (<code>DsGetDcName</code>) and is handled by the Netlogon service on the client.</p>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant DNS
+    participant DC as Domain Controller
+    Client->>DNS: SRV query: _ldap._tcp.dc._msdcs.contoso.local
+    DNS-->>Client: dc01.contoso.local (priority, weight, port)
+    Client->>DNS: A record query: dc01.contoso.local
+    DNS-->>Client: 10.0.0.10
+    Client->>DC: LDAP ping (CLDAP) to verify DC is alive
+    DC-->>Client: NetLogon response (domain info)
+    Client->>DC: Begin authentication (Kerberos/NTLM)
+          </div>
+          <div class="mermaid-caption">Fig. 2 — DC Locator process before authentication begins</div>
+        </div>
+
+        <h4>Demonstrating DC Discovery</h4>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">bash — nslookup</div>
+          <pre><code>nslookup -type=SRV _ldap._tcp.dc._msdcs.contoso.local</code></pre>
+        </div>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell — nltest</div>
+          <pre><code>nltest /dsgetdc:contoso.local
+nltest /dclist:contoso.local</code></pre>
+        </div>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code>Resolve-DnsName -Type SRV -Name _ldap._tcp.dc._msdcs.contoso.local
+[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain().FindDomainController()</code></pre>
+        </div>
+
+        <div class="callout gold">
+          <div class="callout-title">// Tip</div>
+          <p>If DC discovery fails, nothing downstream works — no Kerberos, no LDAP, no Group Policy. When troubleshooting a "can't log on" issue, always verify DNS and DC Locator first (see Section 9).</p>
+        </div>
+
+        <p>Once the client has located a DC, it proceeds to authenticate using either <strong>NTLM</strong> or <strong>Kerberos</strong> — which one depends on the context, and that's exactly what the next two sections cover.</p>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 2 -->
+        <h2 id="s2"><span class="h2-line"></span>Section 2 — NTLM Authentication</h2>
+
+        <h3>2.1 History</h3>
+        <p>NTLM (NT LAN Manager) is Microsoft's legacy challenge-response authentication protocol, originally built to replace the even weaker LM (LAN Manager) protocol from the OS/2 era. Kerberos became the default for domain authentication starting with Windows 2000, but NTLM never fully disappeared.</p>
+
+        <h3>2.2 When NTLM Is Still Used</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scenario</th><th>Why NTLM Instead of Kerberos</th></tr></thead>
+            <tbody>
+              <tr><td>Authenticating to an IP address instead of a hostname</td><td>Kerberos requires an SPN tied to a name, not an IP</td></tr>
+              <tr><td>Workgroup (non-domain) authentication</td><td>No KDC available</td></tr>
+              <tr><td>Legacy applications hardcoded to NTLM</td><td>Application-level limitation</td></tr>
+              <tr><td>Cross-forest scenarios without proper trust/SPN setup</td><td>SPN resolution failure</td></tr>
+              <tr><td>Kerberos failure (clock skew, missing SPN, etc.)</td><td>Windows silently falls back to NTLM</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">// Warning</div>
+          <p>This automatic fallback behavior is a major attack surface. An attacker who can force a Kerberos failure (or who targets a protocol that never supported Kerberos, like older SMB clients) can coerce a system into using the weaker NTLM protocol.</p>
+        </div>
+
+        <h3>2.3 NTLMv1 vs NTLMv2</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>NTLMv1</th><th>NTLMv2</th></tr></thead>
+            <tbody>
+              <tr><td>Challenge size</td><td>8 bytes</td><td>8 bytes (client also sends its own)</td></tr>
+              <tr><td>Hashing</td><td>DES-based, weaker</td><td>HMAC-MD5, stronger</td></tr>
+              <tr><td>Vulnerable to rainbow tables</td><td>Yes (especially with LM)</td><td>Much more resistant</td></tr>
+              <tr><td>Timestamp included</td><td>No</td><td>Yes (replay protection)</td></tr>
+              <tr><td>Default in modern Windows</td><td>Disabled by policy</td><td>Enabled</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>2.4 Challenge-Response: The Core Concept</h3>
+        <p>NTLM never sends a password — or even a hash — directly over the wire. Instead, it proves knowledge of the hash through a <strong>challenge-response</strong> mechanism.</p>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant Server
+    participant DC as Domain Controller (Netlogon)
+    Client->>Server: NEGOTIATE_MESSAGE
+    Server-->>Client: CHALLENGE_MESSAGE (8-byte server nonce)
+    Client->>Server: AUTHENTICATE_MESSAGE (response = HMAC(NT Hash, challenge))
+    Server->>DC: Forward challenge + response via Netlogon (pass-through auth)
+    DC-->>Server: Validated / Denied
+    Server-->>Client: Access Granted / Denied
+          </div>
+          <div class="mermaid-caption">Fig. 3 — NTLM challenge-response flow</div>
+        </div>
+
+        <h3>2.5 The Three NTLM Messages Explained</h3>
+
+        <h4>NEGOTIATE_MESSAGE</h4>
+        <p>Sent by the client to initiate NTLM authentication. It advertises which NTLM capabilities the client supports (session security, signing, 128-bit encryption, Unicode support, etc.) via a set of negotiate flags.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">ntlmssp_negotiate</div>
+          <pre><code>NTLMSSP_NEGOTIATE
+  Signature: NTLMSSP\0
+  MessageType: 0x00000001
+  NegotiateFlags: NTLMSSP_NEGOTIATE_UNICODE | NTLMSSP_NEGOTIATE_NTLM | ...</code></pre>
+        </div>
+
+        <h4>CHALLENGE_MESSAGE</h4>
+        <p>Sent by the server (or resource) in response. It contains an 8-byte random nonce (the "server challenge") that the client must incorporate into its response — this is what prevents simple replay of a captured response.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">ntlmssp_challenge</div>
+          <pre><code>NTLMSSP_CHALLENGE
+  Signature: NTLMSSP\0
+  MessageType: 0x00000002
+  ServerChallenge: 0x0123456789ABCDEF
+  TargetInfo: (domain name, computer name, DNS info)</code></pre>
+        </div>
+
+        <h4>AUTHENTICATE_MESSAGE</h4>
+        <p>The client computes a response using its NT Hash and the server's challenge, then sends this response — never the hash itself, never the password.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">ntlmssp_authenticate</div>
+          <pre><code>NTLMSSP_AUTHENTICATE
+  Signature: NTLMSSP\0
+  MessageType: 0x00000003
+  LmChallengeResponse: ...
+  NtChallengeResponse: HMAC-MD5(NTHash, ServerChallenge + ClientChallenge + ...)
+  Domain / User / Workstation</code></pre>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>Why doesn't the password cross the network? Because the server never needs the password itself — only proof that the client <em>possesses</em> the correct NT Hash. The server (or the DC, via Netlogon pass-through authentication) independently computes the expected response using its own copy of the NT Hash and compares it.</p>
+        </div>
+
+        <h3>2.6 Demonstrating NTLM</h3>
+
+        <p><strong>Capturing the exchange in Wireshark:</strong> filter for the NTLMSSP messages inside SMB2 or HTTP traffic:</p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">wireshark filter</div>
+          <pre><code>ntlmssp</code></pre>
+        </div>
+        <p>You'll see three frames corresponding to <code>NEGOTIATE_MESSAGE</code>, <code>CHALLENGE_MESSAGE</code>, and <code>AUTHENTICATE_MESSAGE</code> — typically nested inside <code>SMB2 Session Setup</code> requests/responses.</p>
+
+        <p><strong>Checking NTLM usage on Windows:</strong></p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code># Check current NTLM audit/restriction settings
+Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel"
+
+# Enable NTLM auditing to see where it's still used in your environment
+auditpol /set /subcategory:"Audit NTLM Authentication" /success:enable /failure:enable</code></pre>
+        </div>
+
+        <h3>2.7 NTLM Vulnerabilities (Where They Fit In)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Attack</th><th>What It Targets</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Pass-the-Hash</strong></td><td>Uses a stolen NT Hash directly in the <code>AUTHENTICATE_MESSAGE</code> computation — no need to know or crack the plaintext password</td></tr>
+              <tr><td><strong>NTLM Relay</strong></td><td>An attacker relays a captured NEGOTIATE/AUTHENTICATE exchange to a different server before it expires, authenticating as the victim elsewhere</td></tr>
+              <tr><td><strong>NTLM Downgrade</strong></td><td>Forcing a client to use NTLMv1 or LM instead of NTLMv2, making offline cracking dramatically easier</td></tr>
+              <tr><td><strong>Missing SMB Signing</strong></td><td>Without signing, relayed NTLM traffic can be tampered with or replayed against SMB targets</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout gold">
+          <div class="callout-title">// Mitigation</div>
+          <p>Disable NTLMv1, enforce SMB/LDAP signing, restrict NTLM via Group Policy (<code>Network security: Restrict NTLM</code>), and prefer Kerberos wherever possible. Enable Extended Protection for Authentication (EPA) on services that support it.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 3 -->
+        <h2 id="s3"><span class="h2-line"></span>Section 3 — Kerberos Authentication</h2>
+        <p>Kerberos is the default, preferred authentication protocol in Active Directory. It's also the protocol behind the majority of modern AD attack techniques, which is why understanding it thoroughly is non-negotiable for anyone working in this space.</p>
+
+        <h3>3.1 History</h3>
+        <p>Kerberos originated at MIT in the 1980s as part of Project Athena. Microsoft adopted a modified version (RFC 4120-compliant, with a proprietary extension called the PAC) as the default authentication protocol starting with Windows 2000.</p>
+
+        <h3>3.2 Advantages Over NTLM</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Advantage</th><th>Explanation</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Mutual authentication</strong></td><td>Both the client and the server prove their identity — NTLM only proves the client's</td></tr>
+              <tr><td><strong>No pass-through auth needed</strong></td><td>The DC isn't contacted for every single resource access — tickets are reusable within their lifetime</td></tr>
+              <tr><td><strong>Stronger cryptography</strong></td><td>Uses AES (in modern Windows) instead of MD4/DES-derived hashing</td></tr>
+              <tr><td><strong>Delegation support</strong></td><td>Services can act on a user's behalf against other services (when configured)</td></tr>
+              <tr><td><strong>Ticket-based, not challenge-based</strong></td><td>Reduces the number of round trips per resource access</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>Microsoft prefers Kerberos because it dramatically reduces load on Domain Controllers (no pass-through validation per connection) while offering stronger cryptographic guarantees and mutual authentication that NTLM structurally cannot provide.</p>
+        </div>
+
+        <h3>3.3 Core Kerberos Components</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Component</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Client (Principal)</strong></td><td>The user or service requesting authentication</td></tr>
+              <tr><td><strong>KDC</strong></td><td>Runs on every DC; combines the AS and TGS roles</td></tr>
+              <tr><td><strong>AS (Authentication Service)</strong></td><td>Issues the initial Ticket Granting Ticket (TGT)</td></tr>
+              <tr><td><strong>TGS (Ticket Granting Service)</strong></td><td>Issues service tickets based on a valid TGT</td></tr>
+              <tr><td><strong>SPN</strong></td><td>Uniquely identifies a service instance tied to an account, e.g., <code>MSSQLSvc/sql01.contoso.local:1433</code></td></tr>
+              <tr><td><strong>Ticket</strong></td><td>Encrypted data structure proving identity, encrypted with the target's key</td></tr>
+              <tr><td><strong>PAC</strong></td><td>Microsoft's extension embedding group membership/authorization data inside the ticket</td></tr>
+              <tr><td><strong>Session Key</strong></td><td>Symmetric key shared between client and service for the duration of a ticket's use</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph LR
+    subgraph KDC["Key Distribution Center (on every DC)"]
+        AS["Authentication Service (AS)"]
+        TGS["Ticket Granting Service (TGS)"]
+    end
+    Client -->|1. AS-REQ| AS
+    AS -->|2. AS-REP: TGT| Client
+    Client -->|3. TGS-REQ: TGT + SPN| TGS
+    TGS -->|4. TGS-REP: Service Ticket| Client
+    Client -->|5. AP-REQ: Service Ticket| Service["Target Service"]
+    Service -->|6. AP-REP - optional mutual auth| Client
+          </div>
+          <div class="mermaid-caption">Fig. 4 — The full six-message Kerberos flow</div>
+        </div>
+
+        <h3>3.4 The Full Kerberos Flow, Step by Step</h3>
+
+        <h4>Step 1 — AS-REQ (Authentication Service Request)</h4>
+        <p>The client sends a request to the AS for a <strong>Ticket Granting Ticket (TGT)</strong>. Modern Kerberos requires <strong>pre-authentication</strong>: the client encrypts a timestamp with a key derived from the user's password (AES key, derived via the NT Hash in legacy mode) and includes it in the request.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">krb_as_req</div>
+          <pre><code>KRB_AS_REQ
+  cname: jsmith
+  realm: CONTOSO.LOCAL
+  sname: krbtgt/CONTOSO.LOCAL
+  PA-ENC-TIMESTAMP: Encrypted(timestamp, key=derived from password)</code></pre>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>Pre-authentication exists specifically to prevent an attacker from requesting a TGT for <em>any</em> username without knowing that user's key — this is what makes <strong>AS-REP Roasting</strong> possible only against accounts that have pre-authentication disabled.</p>
+        </div>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant AS as Authentication Service (KDC)
+    Client->>AS: AS-REQ (username, encrypted timestamp)
+    AS->>AS: Decrypt timestamp using stored user key
+    AS-->>Client: AS-REP (TGT encrypted with krbtgt key, session key encrypted with user key)
+          </div>
+          <div class="mermaid-caption">Fig. 5 — AS-REQ / AS-REP exchange</div>
+        </div>
+
+        <h4>Step 2 — AS-REP (Authentication Service Response)</h4>
+        <p>If pre-authentication succeeds, the KDC returns a TGT encrypted with the <strong>krbtgt account's</strong> secret key (unreadable by the client), and a session key encrypted with the user's own key.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">krb_as_rep</div>
+          <pre><code>KRB_AS_REP
+  cname: jsmith
+  ticket (TGT): Encrypted(session_key, client_name, PAC, validity) [encrypted with krbtgt hash]
+  enc-part: Encrypted(session_key, ...) [encrypted with user's key]</code></pre>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">// Warning</div>
+          <p>Because the TGT is encrypted with the krbtgt account's key — never the requesting user's key — the client <strong>cannot</strong> read or forge its contents. This is exactly why the krbtgt account's hash is the single most sensitive credential in the domain (compromising it enables <strong>Golden Ticket</strong> forgery).</p>
+        </div>
+
+        <h4>Step 3 — TGS-REQ (Ticket Granting Service Request)</h4>
+        <p>When the client wants to access a specific resource (e.g., a file server), it presents its TGT to the TGS along with the SPN of the target service.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">krb_tgs_req</div>
+          <pre><code>KRB_TGS_REQ
+  ticket: (the TGT from AS-REP)
+  authenticator: Encrypted(client timestamp, session_key)
+  sname: cifs/fileserver01.contoso.local</code></pre>
+        </div>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant TGS as Ticket Granting Service (KDC)
+    Client->>TGS: TGS-REQ (TGT + authenticator + target SPN)
+    TGS->>TGS: Decrypt TGT with krbtgt key, validate PAC & authenticator
+    TGS-->>Client: TGS-REP (Service Ticket encrypted with target service's key)
+          </div>
+          <div class="mermaid-caption">Fig. 6 — TGS-REQ / TGS-REP exchange</div>
+        </div>
+
+        <h4>Step 4 — TGS-REP (Ticket Granting Service Response)</h4>
+        <p>The TGS validates the TGT and authenticator, then issues a <strong>service ticket</strong> encrypted with the target service's own secret key (derived from that service account's password), plus a fresh session key.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">krb_tgs_rep</div>
+          <pre><code>KRB_TGS_REP
+  ticket: Encrypted(session_key2, client_name, PAC) [encrypted with target service's key]
+  enc-part: Encrypted(session_key2) [encrypted with previous session_key]</code></pre>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>This is a critical detail: the service ticket is encrypted with the <strong>target service account's</strong> password-derived key — not the krbtgt key. This is exactly what <strong>Kerberoasting</strong> and <strong>Silver Ticket</strong> attacks target.</p>
+        </div>
+
+        <h4>Step 5 — AP-REQ (Application Request)</h4>
+        <p>The client presents the service ticket directly to the target service (no DC round-trip needed).</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">krb_ap_req</div>
+          <pre><code>KRB_AP_REQ
+  ticket: (the service ticket from TGS-REP)
+  authenticator: Encrypted(client timestamp, session_key2)</code></pre>
+        </div>
+
+        <p>The service decrypts the ticket using its own key, extracts the PAC, and validates the authenticator's timestamp to prevent replay.</p>
+
+        <h4>Step 6 — AP-REP (Application Response) — Mutual Authentication</h4>
+        <p>If mutual authentication is requested, the service proves its own identity back to the client by encrypting the client's timestamp with the shared session key.</p>
+
+        <div class="code-block-wrap">
+          <div class="code-block-label">krb_ap_rep</div>
+          <pre><code>KRB_AP_REP
+  enc-part: Encrypted(client timestamp) [encrypted with session_key2]</code></pre>
+        </div>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant Service as Target Service
+    Client->>Service: AP-REQ (Service Ticket + Authenticator)
+    Service->>Service: Decrypt ticket with own key, extract PAC, validate authenticator
+    Service-->>Client: AP-REP (mutual authentication, optional)
+    Note over Client,Service: Session established — resource access begins
+          </div>
+          <div class="mermaid-caption">Fig. 7 — AP-REQ / AP-REP exchange</div>
+        </div>
+
+        <h3>3.5 Demonstrating Kerberos</h3>
+
+        <p><strong>Viewing cached tickets:</strong></p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code>klist
+klist tickets</code></pre>
+        </div>
+
+        <p><strong>Verifying SPN registration:</strong></p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code>setspn -L svc_sql01
+setspn -Q MSSQLSvc/sql01.contoso.local</code></pre>
+        </div>
+
+        <p><strong>Capturing Kerberos in Wireshark:</strong></p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">wireshark filter</div>
+          <pre><code>kerberos</code></pre>
+        </div>
+        <p>Look for <code>AS-REQ</code>, <code>AS-REP</code>, <code>TGS-REQ</code>, <code>TGS-REP</code> message types in the protocol column.</p>
+
+        <p><strong>Ticket structure analysis with Rubeus (defensive/educational use):</strong></p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code>Rubeus.exe klist
+Rubeus.exe describe /ticket:&lt;base64ticket&gt;</code></pre>
+        </div>
+
+        <div class="callout gold">
+          <div class="callout-title">// Tip</div>
+          <p>In Wireshark, the <code>cname</code>, <code>sname</code>, and <code>PA-ENC-TIMESTAMP</code> fields are visible in AS-REQ even though the ticket contents themselves are encrypted — useful for confirming <em>which account</em> is authenticating without ever seeing credential material.</p>
+        </div>
+
+        <h3>3.6 Ticket Lifetime and Renewal</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Setting</th><th>Default Value (Domain Policy)</th></tr></thead>
+            <tbody>
+              <tr><td>Maximum TGT lifetime</td><td>10 hours</td></tr>
+              <tr><td>Maximum TGT renewal</td><td>7 days</td></tr>
+              <tr><td>Maximum service ticket lifetime</td><td>10 hours</td></tr>
+              <tr><td>Clock skew tolerance</td><td>5 minutes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Tickets don't need to be re-requested from scratch — Kerberos supports <strong>renewal</strong>, where a still-valid (but expiring) TGT can be exchanged for a fresh one without re-entering credentials, up to the maximum renewal window.</p>
+
+        <h3>3.7 Delegation</h3>
+        <p>Delegation allows a service to act <em>as the user</em> against a second, downstream service — necessary for scenarios like a web server that needs to query a SQL Server on the user's behalf.</p>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph LR
+    User -->|1. Authenticates| WebServer["Web Server"]
+    WebServer -->|2. Acts as User| SQLServer["SQL Server"]
+          </div>
+          <div class="mermaid-caption">Fig. 8 — Basic delegation concept</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Delegation Type</th><th>How It Works</th><th>Risk Level</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Unconstrained Delegation</strong></td><td>The service can impersonate the user to any other service in the domain; the user's TGT is forwarded and cached in memory on the delegating server</td><td>Very High</td></tr>
+              <tr><td><strong>Constrained Delegation</strong></td><td>The service can only impersonate the user to a pre-defined list of target SPNs (<code>msDS-AllowedToDelegateTo</code>)</td><td>Moderate</td></tr>
+              <tr><td><strong>Resource-Based Constrained Delegation (RBCD)</strong></td><td>The target resource defines which accounts are allowed to delegate to it (<code>msDS-AllowedToActOnBehalfOfOtherIdentity</code>) — inverts the trust model</td><td>Moderate</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">// Warning</div>
+          <p>Unconstrained delegation is one of the highest-risk misconfigurations in AD because a compromised server with this setting caches the TGTs of every user who authenticates to it — including Domain Admins.</p>
+        </div>
+
+        <h3>3.8 Where Attack Techniques Fit In (Conceptual Only)</h3>
+        <p>This section explains <strong>where</strong> these techniques intersect with the authentication flow described above — not how to execute them.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Technique</th><th>Where It Fits</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Golden Ticket</strong></td><td>Forges a TGT from scratch using a stolen krbtgt hash, bypassing Step 1–2 entirely</td></tr>
+              <tr><td><strong>Silver Ticket</strong></td><td>Forges a service ticket using a stolen service account hash, bypassing Steps 3–4</td></tr>
+              <tr><td><strong>Kerberoasting</strong></td><td>Requests a legitimate service ticket (Step 3–4) for offline analysis, targeting weak service account passwords</td></tr>
+              <tr><td><strong>AS-REP Roasting</strong></td><td>Targets Step 1–2 against accounts with Kerberos pre-authentication disabled</td></tr>
+              <tr><td><strong>Pass-the-Ticket</strong></td><td>Reuses a captured/exported ticket (TGT or service ticket) on a different host, skipping the normal request steps</td></tr>
+              <tr><td><strong>Overpass-the-Hash</strong></td><td>Uses an NT Hash (or AES key) to request a legitimate TGT at Step 1, converting an NTLM-style credential into a Kerberos ticket</td></tr>
+              <tr><td><strong>Skeleton Key</strong></td><td>A malware technique that patches LSASS on a DC to accept a master password for any account, bypassing normal Step 1–2 validation</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>Every one of these techniques targets a specific message or key in the six-step flow above. That's the entire point of learning the protocol first — attack techniques stop looking like magic once you can point to the exact step they abuse.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 4 -->
+        <h2 id="s4"><span class="h2-line"></span>Section 4 — LDAP Authentication</h2>
+        <p>LDAP (Lightweight Directory Access Protocol) is how clients query and modify the Active Directory database itself. Authentication to LDAP is a separate concern from Kerberos/NTLM, though it's often layered on top of them.</p>
+
+        <h3>4.1 Bind Types</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Bind Type</th><th>Description</th><th>Security</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Anonymous Bind</strong></td><td>No credentials supplied at all</td><td>Should be disabled; only base-level info exposed by default</td></tr>
+              <tr><td><strong>Simple Bind</strong></td><td>Plaintext username + password sent to the DC</td><td>Insecure unless combined with TLS (LDAPS)</td></tr>
+              <tr><td><strong>SASL Bind (Kerberos/NTLM)</strong></td><td>Uses Kerberos or NTLM under the hood via SASL/GSSAPI</td><td>Secure — no plaintext credentials on the wire</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">// Warning</div>
+          <p>A Simple Bind over unencrypted LDAP (port 389) sends the password in cleartext. This is one of the most common findings in internal penetration tests — applications and scripts hardcoding LDAP simple binds without SSL.</p>
+        </div>
+
+        <h3>4.2 LDAP Signing and LDAP over SSL</h3>
+        <ul>
+          <li><strong>LDAP Signing</strong> cryptographically signs LDAP traffic to prevent tampering/relay, without necessarily encrypting the contents.</li>
+          <li><strong>LDAPS</strong> (LDAP over SSL/TLS), port 636, encrypts the entire session, protecting simple binds from cleartext exposure.</li>
+        </ul>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    A["Client"] -->|Port 389 - Simple Bind, no signing| B["DC - Cleartext credentials exposed"]
+    A2["Client"] -->|Port 389 + LDAP Signing| C["DC - Signed, tamper-resistant"]
+    A3["Client"] -->|Port 636 - LDAPS| D["DC - Fully encrypted"]
+          </div>
+          <div class="mermaid-caption">Fig. 9 — LDAP bind security comparison</div>
+        </div>
+
+        <h3>4.3 How LDAP Is Used After Authentication</h3>
+        <p>Once bound, LDAP is the query language for essentially everything in AD: user lookups, group enumeration, GPO reads, computer object attributes, and schema queries. Kerberos and NTLM tell the DC <em>who you are</em>; LDAP is how you then <em>ask questions</em> about the directory.</p>
+
+        <h3>4.4 Demonstrating LDAP</h3>
+        <div class="code-block-wrap">
+          <div class="code-block-label">bash — ldapsearch</div>
+          <pre><code>ldapsearch -x -H ldap://dc01.contoso.local -D "jsmith@contoso.local" -w 'password' \
+  -b "DC=contoso,DC=local" "(objectClass=user)"</code></pre>
+        </div>
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code>Get-ADUser -Filter * -SearchBase "DC=contoso,DC=local"</code></pre>
+        </div>
+        <div class="code-block-wrap">
+          <div class="code-block-label">wireshark filter</div>
+          <pre><code>ldap</code></pre>
+        </div>
+
+        <div class="callout gold">
+          <div class="callout-title">// Tip</div>
+          <p>If you see <code>bindRequest</code> frames in Wireshark carrying a visible <code>password</code> field, that's a simple bind over an unencrypted channel — flag it immediately in an assessment.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 5 -->
+        <h2 id="s5"><span class="h2-line"></span>Section 5 — Certificate Authentication</h2>
+
+        <h3>5.1 Active Directory Certificate Services (AD CS)</h3>
+        <p>AD CS is Microsoft's PKI implementation, allowing certificates to be issued for authentication (among other uses like code signing and TLS). Certificate-based authentication provides an alternative to password-based logon entirely.</p>
+
+        <h3>5.2 PKINIT</h3>
+        <p><strong>PKINIT</strong> is the Kerberos pre-authentication extension that allows a client to authenticate to the AS (Step 1 of the Kerberos flow) using a certificate and private key instead of a password-derived key.</p>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant CA as Certificate Authority
+    participant AS as Authentication Service (KDC)
+    Client->>CA: Enroll for certificate (smart card / auto-enrollment)
+    CA-->>Client: Issued certificate + private key
+    Client->>AS: AS-REQ signed with certificate private key (PKINIT)
+    AS->>AS: Validate certificate chain, map to AD account
+    AS-->>Client: AS-REP (TGT) — same as password-based flow from here on
+          </div>
+          <div class="mermaid-caption">Fig. 10 — PKINIT certificate-based authentication</div>
+        </div>
+
+        <h3>5.3 Smart Cards</h3>
+        <p>Smart cards store the private key on a hardware token, requiring physical possession plus a PIN — turning authentication into a true multi-factor scheme (something you have + something you know).</p>
+
+        <h3>5.4 Authentication Flow Summary</h3>
+        <ol>
+          <li>Client presents a certificate to the KDC via PKINIT during AS-REQ</li>
+          <li>The KDC validates the certificate against a trusted CA chain and maps it to an AD account (via UPN or explicit mapping)</li>
+          <li>From AS-REP onward, the flow is <strong>identical to standard Kerberos</strong> — TGS-REQ, TGS-REP, AP-REQ, AP-REP all proceed unchanged</li>
+        </ol>
+
+        <h3>5.5 AD CS Misconfigurations (Brief Overview Only)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Category</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ESC1</strong></td><td>Misconfigured certificate template allows a requester to specify an arbitrary SAN</td><td>Template misconfiguration</td></tr>
+              <tr><td><strong>ESC2</strong></td><td>Template permits "Any Purpose" or no defined EKU, allowing broad certificate misuse</td><td>Template misconfiguration</td></tr>
+              <tr><td><strong>ESC8</strong></td><td>AD CS web enrollment endpoint (HTTP) is vulnerable to NTLM relay for certificate requests</td><td>Relay-based</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>These are named here only for completeness and orientation — a full technical treatment of AD CS abuse belongs in a dedicated article on Kerberos/PKI attacks, not this foundational guide.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 6 -->
+        <h2 id="s6"><span class="h2-line"></span>Section 6 — Integrated Windows Authentication</h2>
+        <p><strong>Integrated Windows Authentication (IWA)</strong> allows browsers and applications to authenticate transparently using the user's current domain session — no credential prompt required.</p>
+
+        <h3>6.1 How Browsers Authenticate</h3>
+        <p>When a browser encounters a <code>WWW-Authenticate: Negotiate</code> header from a web server, it attempts to use the currently logged-on user's Kerberos ticket (if the site is in the browser's trusted intranet zone) rather than prompting for credentials.</p>
+
+        <h3>6.2 How IIS Authenticates</h3>
+        <p>IIS supports multiple authentication providers, negotiated via the <code>Negotiate</code> mechanism:</p>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    A["Browser Request"] --> B{"WWW-Authenticate: Negotiate"}
+    B --> C{"Kerberos ticket available and SPN valid?"}
+    C -->|Yes| D["Kerberos authentication (AP-REQ/AP-REP)"]
+    C -->|No| E["Fallback to NTLM challenge-response"]
+          </div>
+          <div class="mermaid-caption">Fig. 11 — IIS Negotiate authentication decision path</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Provider</th><th>Mechanism</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Negotiate</strong></td><td>Chooses Kerberos first, NTLM as fallback</td><td>Recommended default</td></tr>
+              <tr><td><strong>Kerberos (explicit)</strong></td><td>Kerberos only, no NTLM fallback</td><td>Requires correct SPN registration on the IIS app pool identity</td></tr>
+              <tr><td><strong>NTLM (explicit)</strong></td><td>NTLM only</td><td>Used when Kerberos isn't viable</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><strong>Demonstrating with IIS:</strong></p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code># Check configured authentication providers for a site
+Get-WebConfiguration -Filter /system.webServer/security/authentication/windowsAuthentication -PSPath "IIS:\Sites\Default Web Site"
+
+# Verify SPN registration for the app pool identity
+setspn -L IIS_APPPOOL_IDENTITY</code></pre>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">// Warning</div>
+          <p>If the SPN for a web application isn't registered correctly, IIS silently falls back to NTLM — reintroducing the weaker protocol even in an environment that "should" be using Kerberos.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 7 -->
+        <h2 id="s7"><span class="h2-line"></span>Section 7 — Authentication Protocol Comparison</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Protocol</th><th>Password</th><th>Tickets</th><th>Mutual Auth</th><th>Encryption</th><th>Delegation</th><th>Recommended</th><th>Typical Use</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>NTLM</strong></td><td>Yes (hash-derived)</td><td>No</td><td>No</td>
+                <td>Session-key based, weaker</td><td>No</td><td>Fallback only</td>
+                <td>Legacy apps, workgroups, IP-based access</td>
+              </tr>
+              <tr>
+                <td><strong>Kerberos</strong></td><td>Yes (key-derived) or certificate</td><td>Yes (TGT + service tickets)</td><td>Yes</td>
+                <td>AES (modern), strong</td><td>Yes</td><td>✅ Primary choice</td>
+                <td>Domain logon, file shares, SQL, RDP, apps</td>
+              </tr>
+              <tr>
+                <td><strong>LDAP (Simple Bind)</strong></td><td>Yes (plaintext unless LDAPS)</td><td>No</td><td>No</td>
+                <td>None unless LDAPS/signing</td><td>No</td><td>Only with LDAPS/signing</td>
+                <td>Directory queries, app service accounts</td>
+              </tr>
+              <tr>
+                <td><strong>Certificate (PKINIT)</strong></td><td>No (private key based)</td><td>Yes (feeds into Kerberos)</td><td>Yes</td>
+                <td>Public-key crypto</td><td>Yes (via resulting Kerberos ticket)</td><td>✅ Strongest option</td>
+                <td>Smart cards, high-security environments</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 8 -->
+        <h2 id="s8"><span class="h2-line"></span>Section 8 — Live Demonstrations</h2>
+        <p>Each demo below traces a real, everyday action back to the protocols covered in this article.</p>
+
+        <h3>Demo 1 — Logging Into a Domain</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><td><strong>Client</strong></td><td>Windows workstation</td></tr>
+              <tr><td><strong>Server</strong></td><td>Domain Controller</td></tr>
+              <tr><td><strong>Protocol</strong></td><td>Kerberos (default)</td></tr>
+              <tr><td><strong>Tickets</strong></td><td>TGT issued (AS-REQ/AS-REP), followed by a service ticket for <code>cifs/dc01</code> (to read Group Policy)</td></tr>
+              <tr><td><strong>Packets</strong></td><td>DNS SRV query → CLDAP ping → AS-REQ → AS-REP → TGS-REQ/TGS-REP for the DC's own SMB share</td></tr>
+              <tr><td><strong>Sequence</strong></td><td>DC Locator → Kerberos AS exchange → TGS exchange for GPO retrieval via SMB → policy applied</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Demo 2 — Accessing a File Share</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><td><strong>Client</strong></td><td>Workstation with existing TGT</td></tr>
+              <tr><td><strong>Server</strong></td><td>File server (<code>fileserver01</code>)</td></tr>
+              <tr><td><strong>Protocol</strong></td><td>Kerberos (SPN: <code>cifs/fileserver01.contoso.local</code>)</td></tr>
+              <tr><td><strong>Tickets</strong></td><td>New service ticket requested via TGS-REQ/TGS-REP</td></tr>
+              <tr><td><strong>Packets</strong></td><td>TGS-REQ → TGS-REP → SMB2 Session Setup (AP-REQ embedded) → SMB Tree Connect</td></tr>
+              <tr><td><strong>Sequence</strong></td><td>Client already has TGT → requests ticket for <code>cifs/fileserver01</code> → presents via SMB2 → access granted</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Demo 3 — Accessing SQL Server</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><td><strong>Client</strong></td><td>Application or DBA workstation</td></tr>
+              <tr><td><strong>Server</strong></td><td>SQL Server (<code>sql01</code>)</td></tr>
+              <tr><td><strong>Protocol</strong></td><td>Kerberos (SPN: <code>MSSQLSvc/sql01.contoso.local:1433</code>)</td></tr>
+              <tr><td><strong>Tickets</strong></td><td>Service ticket for the SQL SPN</td></tr>
+              <tr><td><strong>Packets</strong></td><td>TGS-REQ/TGS-REP → TDS login packet carrying AP-REQ</td></tr>
+              <tr><td><strong>Sequence</strong></td><td>Requires the SPN to be correctly registered against the SQL service account, or authentication silently falls back to NTLM</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout gold">
+          <div class="callout-title">// Tip</div>
+          <p>"SQL Server login failures with Kerberos" are almost always an SPN registration problem — see Section 9.</p>
+        </div>
+
+        <h3>Demo 4 — Opening Outlook (Exchange/Autodiscover)</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><td><strong>Client</strong></td><td>Outlook desktop client</td></tr>
+              <tr><td><strong>Server</strong></td><td>Exchange Server / Exchange Online hybrid</td></tr>
+              <tr><td><strong>Protocol</strong></td><td>Kerberos (on-prem) or modern auth/OAuth (cloud), with NTLM fallback historically</td></tr>
+              <tr><td><strong>Tickets</strong></td><td>Service ticket for the Exchange service SPN (<code>exchangeMDB/...</code> or HTTP SPN)</td></tr>
+              <tr><td><strong>Packets</strong></td><td>Autodiscover HTTP request → Negotiate challenge → AP-REQ over HTTP → mailbox access</td></tr>
+              <tr><td><strong>Sequence</strong></td><td>Autodiscover locates the mailbox server → IWA negotiates Kerberos/NTLM → session established</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Demo 5 — Using Remote Desktop</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><td><strong>Client</strong></td><td>RDP client (<code>mstsc.exe</code>)</td></tr>
+              <tr><td><strong>Server</strong></td><td>Target RDP host</td></tr>
+              <tr><td><strong>Protocol</strong></td><td>Kerberos (SPN: <code>TERMSRV/hostname</code>), CredSSP wraps it at the network level</td></tr>
+              <tr><td><strong>Tickets</strong></td><td>Service ticket for <code>TERMSRV/targethost</code></td></tr>
+              <tr><td><strong>Packets</strong></td><td>TGS-REQ/TGS-REP → CredSSP negotiation (TLS) → AP-REQ inside CredSSP → RDP session</td></tr>
+              <tr><td><strong>Sequence</strong></td><td>Network Level Authentication (NLA) forces credential validation <em>before</em> a full RDP session is established, reducing exposure to unauthenticated session attacks</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 9 -->
+        <h2 id="s9"><span class="h2-line"></span>Section 9 — Common Authentication Failures</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Issue</th><th>Symptoms</th><th>Typical Error</th><th>Cause</th><th>Troubleshooting</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Clock skew</strong></td><td>Intermittent Kerberos failures</td><td><code>KRB_AP_ERR_SKEW</code></td><td>Client/DC time difference exceeds 5-minute default tolerance</td><td><code>w32tm /query /status</code>, sync to a reliable NTP/PDC source</td></tr>
+              <tr><td><strong>SPN issues</strong></td><td>Kerberos fails, silently falls back to NTLM</td><td><code>KRB_AP_ERR_MODIFIED</code></td><td>SPN missing, duplicate, or registered on wrong account</td><td><code>setspn -L accountname</code>, <code>setspn -X</code></td></tr>
+              <tr><td><strong>DNS failures</strong></td><td>Can't locate DC at all</td><td>"The specified domain either does not exist or could not be contacted"</td><td>Missing/incorrect SRV records, wrong DNS server configured</td><td><code>nslookup</code>, <code>Resolve-DnsName</code>, <code>nltest /dsgetdc:</code></td></tr>
+              <tr><td><strong>Expired tickets</strong></td><td>Sudden access denial mid-session</td><td><code>KRB_AP_ERR_TKT_EXPIRED</code></td><td>TGT/service ticket exceeded lifetime</td><td><code>klist purge</code> then re-authenticate</td></tr>
+              <tr><td><strong>Duplicate SPNs</strong></td><td>Random authentication failures for a service</td><td><code>KRB_AP_ERR_MODIFIED</code></td><td>Same SPN registered on two different accounts</td><td><code>setspn -X</code> to find domain-wide duplicates</td></tr>
+              <tr><td><strong>Disabled accounts</strong></td><td>Logon fails immediately</td><td><code>STATUS_ACCOUNT_DISABLED</code></td><td>Account disabled in AD</td><td><code>Get-ADUser -Identity user -Properties Enabled</code></td></tr>
+              <tr><td><strong>Password mismatch</strong></td><td>Repeated logon failures</td><td><code>STATUS_LOGON_FAILURE</code></td><td>Incorrect password, or cached credential mismatch</td><td><code>Test-NetConnection</code>, verify with <code>runas</code></td></tr>
+              <tr><td><strong>Trust issues</strong></td><td>Cross-domain authentication fails</td><td><code>STATUS_TRUSTED_DOMAIN_FAILURE</code></td><td>Broken trust relationship, expired trust password</td><td><code>nltest /sc_verify:domainname</code></td></tr>
+              <tr><td><strong>KDC unavailable</strong></td><td>Total authentication outage</td><td><code>KDC_ERR_SVC_UNAVAILABLE</code> / can't reach DC</td><td>DC service down or network partition</td><td><code>Test-NetConnection dc01 -Port 88</code>, check DC health</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout gold">
+          <div class="callout-title">// Tip</div>
+          <p>When a Kerberos error code is unclear, decode it — Windows Kerberos error codes (<code>KRB_AP_ERR_*</code>, <code>KDC_ERR_*</code>) are extremely specific and almost always point directly to the root cause once you look them up.</p>
+        </div>
+
+        <p><strong>Useful diagnostic PowerShell:</strong></p>
+        <div class="code-block-wrap">
+          <div class="code-block-label">powershell</div>
+          <pre><code># Check current Kerberos tickets
+klist
+
+# Verify domain controller connectivity
+Test-NetConnection dc01.contoso.local -Port 88
+
+# Check time sync
+w32tm /query /status
+
+# Verify SPN duplicates domain-wide
+setspn -X</code></pre>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 10 -->
+        <h2 id="s10"><span class="h2-line"></span>Section 10 — Useful Commands Cheat Sheet</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><code>klist</code></td><td>View cached Kerberos tickets</td></tr>
+              <tr><td><code>nltest /dsgetdc:domain</code></td><td>Locate a Domain Controller</td></tr>
+              <tr><td><code>whoami /all</code></td><td>Show current user, groups, and privileges</td></tr>
+              <tr><td><code>setspn -L account</code></td><td>List SPNs registered on an account</td></tr>
+              <tr><td><code>runas /user:domain\user cmd</code></td><td>Run a command as a different user</td></tr>
+              <tr><td><code>gpresult /r</code></td><td>Show applied Group Policy results</td></tr>
+              <tr><td><code>gpupdate /force</code></td><td>Force Group Policy refresh</td></tr>
+              <tr><td><code>Get-ADComputer -Identity name</code></td><td>Query computer object details</td></tr>
+              <tr><td><code>Get-ADUser -Identity user -Properties *</code></td><td>Query user object details</td></tr>
+              <tr><td><code>Test-NetConnection host -Port 88</code></td><td>Test connectivity to Kerberos port</td></tr>
+              <tr><td><code>Resolve-DnsName name -Type SRV</code></td><td>Resolve SRV records for service discovery</td></tr>
+              <tr><td><code>net use \\server\share</code></td><td>Map a network share (triggers authentication)</td></tr>
+              <tr><td><code>dir \\server\share</code></td><td>List share contents (triggers authentication)</td></tr>
+              <tr><td><code>ipconfig /all</code></td><td>Show network config, including DNS servers in use</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 11 -->
+        <h2 id="s11"><span class="h2-line"></span>Section 11 — Packet Capture Walkthrough</h2>
+        <p>A typical domain logon touches all four core protocols in sequence. Here's what to expect when following the traffic in Wireshark, in the order it appears on the wire.</p>
+
+        <h3>DNS</h3>
+        <div class="code-block-wrap">
+          <div class="code-block-label">wireshark filter</div>
+          <pre><code>dns</code></pre>
+        </div>
+        <p>Expect an SRV query for <code>_ldap._tcp.dc._msdcs.&lt;domain&gt;</code>, followed by an A record lookup for the returned hostname.</p>
+
+        <h3>Kerberos</h3>
+        <div class="code-block-wrap">
+          <div class="code-block-label">wireshark filter</div>
+          <pre><code>kerberos</code></pre>
+        </div>
+        <p>Expect <code>AS-REQ</code> → <code>AS-REP</code> for the initial TGT, followed by one or more <code>TGS-REQ</code>/<code>TGS-REP</code> pairs as the client requests service tickets for each resource it touches.</p>
+
+        <h3>LDAP</h3>
+        <div class="code-block-wrap">
+          <div class="code-block-label">wireshark filter</div>
+          <pre><code>ldap</code></pre>
+        </div>
+        <p>Expect <code>bindRequest</code> (usually SASL/GSS-SPNEGO wrapped, not simple bind, on a properly configured domain), followed by <code>searchRequest</code>/<code>searchResEntry</code> pairs as Group Policy and directory lookups occur.</p>
+
+        <h3>SMB</h3>
+        <div class="code-block-wrap">
+          <div class="code-block-label">wireshark filter</div>
+          <pre><code>smb2</code></pre>
+        </div>
+        <p>Expect <code>Session Setup Request/Response</code> frames carrying the Kerberos AP-REQ/AP-REP (or NTLM messages, if Kerberos wasn't used), followed by <code>Tree Connect</code> to the specific share.</p>
+
+        <div class="callout gold">
+          <div class="callout-title">// Tip</div>
+          <p>Correlate frames by timestamp proximity and source/destination IP — a real logon produces a tight, predictable cluster: DNS → Kerberos AS exchange → Kerberos TGS exchange → LDAP → SMB, typically all within a couple of seconds.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 12 -->
+        <h2 id="s12"><span class="h2-line"></span>Section 12 — Attack Surface Overview</h2>
+        <p>The diagram below maps common authentication-related attack techniques to the specific stage of the process they target. This is an orientation map, not a how-to.</p>
+
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart TD
+    A["User Logon Attempt"] --> B["DNS / DC Locator"]
+    B --> C["NTLM Challenge-Response"]
+    B --> D["Kerberos AS-REQ / AS-REP"]
+    D --> E["Kerberos TGS-REQ / TGS-REP"]
+    E --> F["AP-REQ to Target Service"]
+    C -.->|Targets weak/reused credentials| G["Password Spraying"]
+    C -.->|Captures hash from challenge-response| H["Relay Attacks"]
+    D -.->|Targets accounts w/o pre-auth| I["AS-REP Roasting"]
+    D -.->|Requires krbtgt hash| J["Golden Ticket"]
+    E -.->|Targets service account password| K["Kerberoasting"]
+    E -.->|Requires service account hash| L["Silver Ticket"]
+    F -.->|Reuses captured tickets| M["Pass-the-Ticket"]
+    C -.->|Reuses stolen NT Hash| N["Pass-the-Hash"]
+          </div>
+          <div class="mermaid-caption">Fig. 12 — Attack surface mapped to authentication stages</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Stage</th><th>Attack Technique</th><th>Targets</th></tr></thead>
+            <tbody>
+              <tr><td>Credential guessing at any authentication point</td><td>Password Spraying</td><td>Weak/reused passwords across many accounts</td></tr>
+              <tr><td>NTLM challenge-response</td><td>Relay Attacks</td><td>Captured NTLM exchange, relayed to another server</td></tr>
+              <tr><td>NTLM authentication material</td><td>Pass-the-Hash</td><td>Stolen NT Hash used directly</td></tr>
+              <tr><td>Kerberos AS exchange (pre-auth disabled accounts)</td><td>AS-REP Roasting</td><td>Offline crackable AS-REP material</td></tr>
+              <tr><td>Kerberos AS exchange (krbtgt compromise)</td><td>Golden Ticket</td><td>Forged TGTs, domain-wide impact</td></tr>
+              <tr><td>Kerberos TGS exchange</td><td>Kerberoasting</td><td>Weak service account passwords</td></tr>
+              <tr><td>Kerberos TGS exchange (service key compromise)</td><td>Silver Ticket</td><td>Forged service tickets, single-service impact</td></tr>
+              <tr><td>Ticket reuse across hosts</td><td>Pass-the-Ticket</td><td>Exported/stolen Kerberos tickets</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout cyan">
+          <div class="callout-title">// Note</div>
+          <p>As with Section 3.8, this section is intentionally scoped to orientation, not exploitation. Each of these techniques warrants its own dedicated, hands-on article.</p>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- SECTION 13 -->
+        <h2 id="s13"><span class="h2-line"></span>Section 13 — Key Takeaways</h2>
+        <ul>
+          <li>Windows never sends or stores plaintext passwords — everything downstream is built on the <strong>NT Hash</strong>, derived once and reused for all subsequent cryptographic operations.</li>
+          <li><strong>DC Locator</strong> (DNS SRV records + Netlogon) has to succeed before any authentication protocol can even begin.</li>
+          <li><strong>NTLM</strong> is a challenge-response protocol: three messages (NEGOTIATE → CHALLENGE → AUTHENTICATE), no ticket, no mutual authentication, and a persistent fallback risk.</li>
+          <li><strong>Kerberos</strong> is a six-message ticket-based protocol (AS-REQ → AS-REP → TGS-REQ → TGS-REP → AP-REQ → AP-REP) offering mutual authentication and reduced DC load.</li>
+          <li>The <strong>krbtgt account</strong> and individual <strong>service account</strong> keys are the highest-value credentials in the domain because they encrypt TGTs and service tickets respectively.</li>
+          <li><strong>LDAP</strong> authentication (bind) is a separate concern from Kerberos/NTLM, but is frequently layered on top of it via SASL/GSSAPI.</li>
+          <li><strong>Certificate-based authentication (PKINIT)</strong> replaces only the first Kerberos step — everything from AS-REP onward is unchanged.</li>
+          <li><strong>Integrated Windows Authentication</strong> is just Kerberos/NTLM wrapped in the Negotiate HTTP mechanism — the same rules and failure modes apply.</li>
+          <li>Every major AD attack technique maps directly onto a specific message or key in the flows described in this article. Once you can point to exactly which step an attack targets, the attack itself becomes far easier to understand — and to defend against.</li>
+        </ul>
+
+        <div class="callout gold">
+          <div class="callout-title">// 刃 Field Transmission — End</div>
+          <p>The baseline is set. From here, Kerberos attacks stop looking like magic tricks and start looking like protocol deviations you can actually reason about.</p>
+        </div>
+
+      </div>
+      <!-- /post-body -->
+
+      <!-- AUTHOR STRIP -->
+      <div class="author-strip">
+        <div class="author-avatar">侍</div>
+        <div class="author-info">
+          <div class="author-name">Yamashita Moleya</div>
+          <div class="author-role">// PNPT · PJPT · CRTA · AD-RTS · Cyber Samurai</div>
+        </div>
+      </div>
+
+      <!-- BACK BAR -->
+      <div class="back-bar">
+        <a href="https://www.yamashita.co.za/content/blogs.html" class="back-link">
+          <span class="arrow">←</span> Back to Blog
+        </a>
+        <a href="https://www.yamashita.co.za/Notes.html" class="back-link">
+          Hacking Arsenal <span class="arrow">→</span>
+        </a>
+      </div>
+
+    </article>
+  </div>
+  <!-- /featured-wrap -->
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">侍 YAMASHITA</div>
+  <p style="font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.8rem;">
+    Cyber Samurai · Digital Guardian
+  </p>
+  <div class="footer-links">
+    <a href="https://www.yamashita.co.za/index.html#home">Home</a>
+    <a href="https://www.yamashita.co.za/index.html#about">About</a>
+    <a href="https://www.yamashita.co.za/index.html#skills">Skills</a>
+    <a href="https://www.yamashita.co.za/index.html#projects">Projects</a>
+    <a href="https://www.yamashita.co.za/Notes.html">Notes</a>
+    <a href="https://www.yamashita.co.za/index.html#contact">Contact</a>
+  </div>
+  <p class="footer-copy">© 2026 Yamashita. All rights reserved. &nbsp;·&nbsp; Forged with honor and <span>&lt;code/&gt;</span></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      background: '#0a0d12',
+      primaryColor: '#111620',
+      primaryTextColor: '#d4dae6',
+      primaryBorderColor: '#c9a84c',
+      lineColor: '#7a889e',
+      secondaryColor: '#0f1319',
+      tertiaryColor: '#0a0d12',
+      fontFamily: 'Share Tech Mono, monospace',
+      fontSize: '13px',
+      actorBkg: '#111620',
+      actorBorder: '#c9a84c',
+      actorTextColor: '#d4dae6',
+      signalColor: '#7a889e',
+      signalTextColor: '#d4dae6',
+      labelBoxBkgColor: '#111620',
+      labelBoxBorderColor: '#e63946',
+      labelTextColor: '#d4dae6',
+      loopTextColor: '#d4dae6',
+      noteBkgColor: '#0f1319',
+      noteTextColor: '#d4dae6',
+      noteBorderColor: '#48cae4',
+      activationBorderColor: '#e63946',
+      activationBkgColor: '#111620',
+      sequenceNumberColor: '#050709'
+    },
+    securityLevel: 'loose'
+  });
+
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('scrollProgress');
+    const docH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    el.style.width = (window.scrollY / docH * 100) + '%';
+  });
+</script>
+
+</body>
+</html>
